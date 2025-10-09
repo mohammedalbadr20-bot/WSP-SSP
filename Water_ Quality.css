@@ -249,7 +249,7 @@ input[type="number"]{
   border-collapse: collapse;
   width:90vw;
   height: fit-content;
-  position: fixed;
+  position: relative;
   bottom:10%;
   transform: translateX(50px);
   
@@ -261,4 +261,5 @@ thead th{
   border-right-color: black;
 
 }
+
 
