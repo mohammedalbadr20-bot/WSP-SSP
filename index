@@ -318,3 +318,4 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
 }
 </script>
+
