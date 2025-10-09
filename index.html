@@ -201,7 +201,7 @@
 </body> 
 </html>
 <script>
-const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec"; // ضع رابط Google Script Web App هنا
+const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
 
 // تحميل البيانات عند فتح الصفحة
 window.onload = fetchData;
@@ -272,46 +272,48 @@ document.querySelectorAll(".button-content")[2].addEventListener("click", functi
 
 // الدالة المشتركة للإرسال
 function sendData(action) {
-  const data = {
-    action: action,
-    id: document.getElementById("entry-id").value,
-    date: document.getElementById("date").value,
-    markz: document.getElementById("markz").value,
-    location: document.getElementById("sample").value,
-    turbidity: document.getElementById("turbidity").value,
-    ph: document.getElementById("pH").value,
-    temp: document.getElementById("temp").value,
-    tds: document.getElementById("tds").value,
-    chlorides: document.getElementById("ch").value,
-    sulfates: document.getElementById("sulf").value,
-    fe: document.getElementById("fe").value,
-    mn: document.getElementById("mn").value,
-    nh3: document.getElementById("nh3").value,
-    no2: document.getElementById("no2").value,
-    no3: document.getElementById("no3").value,
-    do: document.getElementById("do").value,
-    cod: document.getElementById("cod").value,
-    bod: document.getElementById("bod").value,
-    og: document.getElementById("og").value,
-    tc: document.getElementById("tc").value,
-    ta: document.getElementById("ta").value
-  };
+  const formData = new URLSearchParams();
+
+  formData.append("action", action);
+  formData.append("id", document.getElementById("entry-id").value);
+  formData.append("date", document.getElementById("date").value);
+  formData.append("markz", document.getElementById("markz").value);
+  formData.append("location", document.getElementById("sample").value);
+  formData.append("turbidity", document.getElementById("turbidity").value);
+  formData.append("ph", document.getElementById("pH").value);
+  formData.append("temp", document.getElementById("temp").value);
+  formData.append("tds", document.getElementById("tds").value);
+  formData.append("chlorides", document.getElementById("ch").value);
+  formData.append("sulfates", document.getElementById("sulf").value);
+  formData.append("fe", document.getElementById("fe").value);
+  formData.append("mn", document.getElementById("mn").value);
+  formData.append("nh3", document.getElementById("nh3").value);
+  formData.append("no2", document.getElementById("no2").value);
+  formData.append("no3", document.getElementById("no3").value);
+  formData.append("do", document.getElementById("do").value);
+  formData.append("cod", document.getElementById("cod").value);
+  formData.append("bod", document.getElementById("bod").value);
+  formData.append("og", document.getElementById("og").value);
+  formData.append("tc", document.getElementById("tc").value);
+  formData.append("ta", document.getElementById("ta").value);
 
   fetch(scriptURL, {
     method: "POST",
-    body: JSON.stringify(data),
     headers: {
-      "Content-Type": "application/json"
-    }
-  }).then(response => {
-    if (response.ok) {
+      "Content-Type": "application/x-www-form-urlencoded"
+    },
+    body: formData.toString()
+  })
+    .then(response => response.text())
+    .then(result => {
       alert(`Data ${action}ed successfully`);
       clearForm();
       fetchData();
-    } else {
+    })
+    .catch(error => {
+      console.error("Error:", error);
       alert("Something went wrong!");
-    }
-  });
+    });
 }
 
 function clearForm() {
@@ -319,6 +321,7 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
 }
 </script>
+
 
 
 
