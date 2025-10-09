@@ -252,7 +252,7 @@ input[type="number"]{
   position: relative;
   bottom:10%;
   transform: translateX(50px);
-  margin-top:20px;
+  margin-top:70px;
   
 }
 thead th{
@@ -262,6 +262,7 @@ thead th{
   border-right-color: black;
 
 }
+
 
 
 
