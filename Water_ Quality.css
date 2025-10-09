@@ -1,0 +1,264 @@
+body{
+  position: relative;
+  min-height: 100vh;
+ }
+ 
+body::before{     /* لادراج الصورة خلفية تتأثر بالشفافية دون ان يقع التاثير على العناصر والمحتويات*/  
+  content:"";
+  top: 0;
+  bottom: 0;
+  width: 100vw; /*ضرورى*/
+  height: 100vh; /*ضرورى*/
+  position: fixed;
+  background-image: url("Water-Quality-Monitoring-5R-scaled-1000x847_c.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: scroll;
+  opacity:0.85;
+  z-index:-1;
+}
+.username{
+  display: inline;
+  margin-left: 78%;
+  border-style: groove;
+  padding-block-start:0px;
+  text-align: left;
+  box-sizing:content-box;
+  margin-block-start: 20px;
+  margin-right: -20px;
+  direction:ltr;
+  padding: 5px;
+  font-weight: bolder;
+}
+
+
+#username{
+  color: #6c757d;
+  font-weight: 20px;
+  font-family: fantasy;
+  text-align: left;
+  direction: ltr;
+  width: 180px;
+  padding-right: 5px;
+}
+
+.region{
+  display: inline;
+  margin-left: 78%;
+  border-style: groove;
+  padding-block-start:0px;
+  text-align: left;
+  box-sizing:content-box;
+  margin-block-start: 20px;
+  margin-right: -20px;
+  direction:ltr;
+  padding: 5px;
+  font-weight: bolder;
+  margin-top: 8px;
+}
+
+#section{
+  color: #6c757d;
+  font-weight: 20px;
+  font-family: fantasy;
+  text-align: center;
+  direction: ltr;
+  width: 165px;
+  padding-right:19px;
+  margin-top: 8px;
+  margin-left:-8px;
+}
+
+.dislabel{
+  color:black;
+  font-weight: bolder;
+  padding-right: 5px;
+  background-color: rgba(225, 225, 225, 0.5);
+  border-color: rgba(225, 225, 225, 0.5);
+}
+
+
+h1{
+  padding: 0px;
+  margin-left: 35%;
+  text-align: center;
+  color: black;
+  border-color: grey;
+  border-width: 10px;
+  border-style: outset;
+  background-color: rgb(0, 195, 255);
+  box-sizing: content-box;
+  display:inline-flex  
+}
+
+.essdata{
+    border:gray;
+    border-width: 10px;
+    border-bottom-style: groove;
+    text-align: center;
+    font-size: 20px;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-around;
+    box-sizing: border-box;
+    gap:0.5%;
+    padding:10px;
+  
+}
+
+.dat{
+    font-size: 20px;
+    font-weight:bold;
+    border-style: groove;
+    color: black;
+    background-color: rgb(255, 255, 255,0.5);
+    background-size: cover;
+    background-origin:border-box ;
+    width: 200px;   /* يمكنك تغيير القيمة حسب الحاجة */
+    height: 30px;   /* نفس الشيء */
+    padding:0px 20px;  
+    width: 200px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+#date[type="date"],
+#markz[type="optgroup"],
+#sample[type="location"]
+{
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    color: black;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    box-sizing: border-box;
+    transition: 0.3s;
+    
+}
+
+#sample[type="location"]{
+  cursor: not-allowed;
+}
+
+#date:hover,
+#markz:hover,
+#date:focus,
+#markz:focus {
+  border-color: red;
+  border-width: 2px;
+  background-color: lightblue;
+}
+
+input[type="radio"]{
+  display: none;
+}
+
+.para-label{
+  display: inline-block;
+  font-size:20px;
+  font-weight: bolder;
+  border: black;
+  padding: 10px;
+  background-color: rgb(255, 255, 255,0.5);
+  border: grey groove;
+  cursor: grab;
+}
+
+.para-label:hover{
+  background-color: lightskyblue;
+}
+
+/*تفعيل الاختيار*/
+input[type="radio"]:checked + label{
+  background-color: lightblue;
+  border-bottom: blue solid;
+}
+
+.content {
+    display:none;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    padding: 10px;
+    border: 10px solid #ccc;
+    background-color: rgba(225, 225, 225, 0.50);
+    box-sizing:content-box;
+    justify-content:space-evenly;
+    text-justify: auto;
+    text-align: center;
+    
+}
+
+input[type="number"]{
+    color:red;
+    font: 25px; 
+    font-weight:bold;
+    width: 60px;
+    height: 10px;
+    padding: 10px;
+    margin-block: 5px;
+    display: inline-flex;
+    justify-content: space-around;
+    box-sizing: content-box; 
+}
+
+
+/*اظهار محتويات كل اختيار*/
+#physical:checked ~.contents #physical-content,
+#chemical:checked ~.contents #chemical-content,
+#biological:checked ~.contents #biological-content {
+  display: block;
+}
+
+
+.buttons{
+  position:fixed;
+  bottom: 20%;
+  left: 50%;
+  transform:translateX(-50%);
+  display: inline-flex;
+  gap: 20px;
+  font-size: 50px;
+  
+}
+
+.button-content{
+  font-size:20px;
+  font-weight: bolder;
+  color: black;
+  background-color: rgba(225, 225, 225, 0.5);
+  border: #6c757d;
+  border-style: outset;
+}
+
+.button-content:hover{
+  background-color: lightskyblue;
+}
+
+.table-data{
+  border: 3px;
+  border-color: black;
+  border-style: double;
+  border-collapse: collapse;
+  width:90vw;
+  height: fit-content;
+  position: fixed;
+  bottom:10%;
+  transform: translateX(50px);
+  
+}
+thead th{
+  background-color: #6c757d;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: black;
+
+}
+
