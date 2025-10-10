@@ -71,7 +71,7 @@
     const url = `${scriptURL}?action=login&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`;
 
 
-    fetch(URL, {
+    fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
@@ -96,6 +96,7 @@
 
 </body>
 </html>
+
 
 
 
