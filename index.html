@@ -210,11 +210,22 @@ window.onload = fetchData;
 function fetchData() {
   fetch(scriptURL)
     .then(response => response.json())
-    .then(rows => {
+    .then(data => {
+      if (data.status === "unauthorized") {
+        alert("غير مصرح لك بالوصول");
+        return;
+      }
+
+      // تعبئة البريد والمنطقة
+      document.getElementById("username").value = data.email;
+      document.getElementById("section").value = data.department;
+
+      // عرض جدول جودة المياه
+      const rows = data.water_data;
       const tbody = document.querySelector("table.table-data tbody");
       tbody.innerHTML = "";
 
-      rows.slice(1).forEach((row, index) => {
+      rows.slice(1).forEach((row) => {
         const tr = document.createElement("tr");
         row.forEach(cell => {
           const td = document.createElement("td");
@@ -222,10 +233,13 @@ function fetchData() {
           tr.appendChild(td);
         });
 
-        // عند الضغط على صف، يتم تعبئة البيانات في النموذج
         tr.addEventListener("click", () => fillFormWithRow(row));
         tbody.appendChild(tr);
       });
+    })
+    .catch(error => {
+      console.error("خطأ:", error);
+      alert("حدث خطأ أثناء تحميل البيانات.");
     });
 }
 
@@ -322,6 +336,7 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
 }
 </script>
+
 
 
 
