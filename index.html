@@ -210,12 +210,12 @@ window.onload = fetchData;
 
 function fetchData() {
   fetch(scriptURL)
-    .then(response => response.json())
-     if (!response.ok) {
+    .then(response => {
+      if (!response.ok) {
         throw new Error("HTTP Error: " + response.status + " " + response.statusText);
       }
-      return response.json(); // قد يفشل هنا إذا لم يكن الرد JSON فعلاً
-    }
+      return response.json(); // فقط مرة واحدة
+    })
     .then(data => {
       if (data.status === "unauthorized") {
         alert("غير مصرح لك بالوصول");
@@ -342,6 +342,7 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
 }
 </script>
+
 
 
 
