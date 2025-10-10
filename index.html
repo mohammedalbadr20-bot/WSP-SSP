@@ -70,18 +70,17 @@
 
     const url = `${scriptURL}?action=login&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`;
 
-
-    fetch( url, {
+    fetch(url, {
       method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
       },
     })
-    .then(res => res.json())
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json();
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
     })
     .then(data => {
       if (data.status.toLowerCase() === "authorized") {
@@ -89,18 +88,19 @@
         sessionStorage.setItem("department", data.department);
         window.location = "waterqualitymonitoring.html";
       } else {
-        document.getElementById("login-message").textContent = "Unauthorized";
+        document.getElementById("login-message").textContent = "غير مصرح لك بالدخول.";
       }
     })
     .catch(err => {
       console.error("خطأ:", err);
-      document.getElementById("login-message").textContent = "Connection Error";
+      document.getElementById("login-message").textContent = "حدث خطأ أثناء الاتصال بالخادم.";
     });
-  );
+  });
 </script>
 
 </body>
 </html>
+
 
 
 
