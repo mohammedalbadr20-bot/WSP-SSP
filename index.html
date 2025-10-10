@@ -58,43 +58,47 @@
         <button type="submit">تسجيل الدخول</button>
         <div id="login-message"></div>
     </form>
+<script>
+  const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
 
-    <script>
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec"; // ضع الـ ID الصحيح هنا
+  // حذف fetch غير الضروري في بداية السكريبت
 
-        document.getElementById("loginForm").addEventListener("submit", e => {
-            e.preventDefault();
-            const email = document.getElementById("login-email").value.trim();
-            const department = document.getElementById("login-department").value;
+  document.getElementById("loginForm").addEventListener("submit", e => {
+    e.preventDefault();
 
-            fetch(scriptURL + "?action=login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    email: email,
-                    department: department
-                })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.status.toLowerCase() === "authorized") {
-                    sessionStorage.setItem("email", data.email);
-                    sessionStorage.setItem("department", data.department);
-                    window.location = "waterqualitymonitoring.html";
-                } else {
-                    document.getElementById("login-message").textContent = "Unauthorized";
-                }
-            })
-            .catch(err => {
-                console.error("خطأ:", err);
-                document.getElementById("login-message").textContent = "Conection Error";
-            });
-        });
-    </script>
+    const email = document.getElementById("login-email").value.trim();
+    const department = document.getElementById("login-department").value;
+
+    fetch(`${scriptURL}?action=login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        email: email,
+        department: department
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.status.toLowerCase() === "authorized") {
+        sessionStorage.setItem("email", data.email);
+        sessionStorage.setItem("department", data.department);
+        window.location = "waterqualitymonitoring.html";
+      } else {
+        document.getElementById("login-message").textContent = "Unauthorized";
+      }
+    })
+    .catch(err => {
+      console.error("خطأ:", err);
+      document.getElementById("login-message").textContent = "Connection Error";
+    });
+  });
+</script>
+
 
 </body>
+
 
 
 
