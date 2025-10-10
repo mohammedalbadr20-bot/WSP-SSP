@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>المأمونية - تسجيل الدخول</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            direction: rtl;
+            padding: 40px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        form {
+            background: #fff;
+            padding: 30px;
+            display: inline-block;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+        input, select, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+        #login-message {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>شركة المنيا لمياه الشرب والصرف الصحى</h1>
+    <h2>قطاع المعامل والجودة وشئون البيئة</h2>
+    <h3>الإدارة العامة لمأمونية المياه وتداول الصرف الصحى</h3>
+
+    <form id="loginForm">
+        <label for="login-email"><b>البريد الإلكتروني</b></label>
+        <input required id="login-email" type="email" placeholder="ادخل البريد الإلكتروني">
+
+        <label for="login-department"><b>المنطقة</b></label>
+        <select required id="login-department">
+            <option value="">اختر المنطقة</option>
+            <option value="العدوه">العدوه</option>
+            <option value="مغاغة">مغاغة</option>
+            <option value="بنى مزار">بنى مزار</option>
+            <option value="مطاى">مطاى</option>
+            <option value="سمالوط">سمالوط</option>
+            <option value="المنيا">المنيا</option>
+            <option value="ابوقرقاص">ابوقرقاص</option>
+            <option value="ملوى">ملوى</option>
+            <option value="ديرمواس">ديرمواس</option>
+            <option value="WSP">WSP</option>
+        </select>
+
+        <button type="submit">تسجيل الدخول</button>
+        <div id="login-message"></div>
+    </form>
+
+    <script>
+        const scriptURL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec"; // ضع الـ ID الصحيح هنا
+
+        document.getElementById("loginForm").addEventListener("submit", e => {
+            e.preventDefault();
+            const email = document.getElementById("login-email").value.trim();
+            const department = document.getElementById("login-department").value;
+
+            fetch(scriptURL + "?action=login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    email: email,
+                    department: department
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status.toLowerCase() === "authorized") {
+                    sessionStorage.setItem("email", data.email);
+                    sessionStorage.setItem("department", data.department);
+                    window.location = "waterqualitymonitoring.html";
+                } else {
+                    document.getElementById("login-message").textContent = "Unauthorized";
+                }
+            })
+            .catch(err => {
+                console.error("خطأ:", err);
+                document.getElementById("login-message").textContent = "Conection Error";
+            });
+        });
+    </script>
+</body>
