@@ -78,6 +78,11 @@
       },
     })
     .then(res => res.json())
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
       if (data.status.toLowerCase() === "authorized") {
         sessionStorage.setItem("email", data.email);
@@ -96,6 +101,7 @@
 
 </body>
 </html>
+
 
 
 
