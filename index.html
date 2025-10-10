@@ -206,24 +206,31 @@
 const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
 
 // تحميل البيانات عند فتح الصفحة
-window.onload = fetchData;
+window.onload = () => {
+  const email = sessionStorage.getItem("email");
+  const department = sessionStorage.getItem("department");
 
-function fetchData() {
-  fetch(scriptURL)
-    .then(response => {
-      return response.json(); // فقط مرة واحدة
-    })
+  if (!email || !department) {
+    alert("يرجى تسجيل الدخول أولاً");
+    window.location = "login.html";
+    return;
+  }
+
+  document.getElementById("username").value = email;
+  document.getElementById("section").value = department;
+
+  fetchData(email, department);
+};
+
+function fetchData(email, department) {
+  fetch(`${scriptURL}?action=getData&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`)
+    .then(response => response.json())
     .then(data => {
       if (data.status === "unauthorized") {
         alert("غير مصرح لك بالوصول");
         return;
       }
 
-      // تعبئة البريد والمنطقة
-      document.getElementById("username").value = data.email;
-      document.getElementById("section").value = data.department;
-
-      // عرض جدول جودة المياه
       const rows = data.water_data;
       const tbody = document.querySelector("table.table-data tbody");
       tbody.innerHTML = "";
@@ -236,7 +243,12 @@ function fetchData() {
           tr.appendChild(td);
         });
 
-        tr.addEventListener("click", () => fillFormWithRow(row));
+        tr.addEventListener("click", () => {
+          clearRowHighlight();
+          tr.classList.add("selected-row");
+          fillFormWithRow(row);
+        });
+
         tbody.appendChild(tr);
       });
     })
@@ -247,7 +259,7 @@ function fetchData() {
 }
 
 function fillFormWithRow(row) {
-  document.getElementById("entry-id").value = row[0]; // ID
+  document.getElementById("entry-id").value = row[0];
   document.getElementById("date").value = row[1];
   document.getElementById("markz").value = row[2];
   document.getElementById("sample").value = row[3];
@@ -270,29 +282,34 @@ function fillFormWithRow(row) {
   document.getElementById("ta").value = row[20];
 }
 
-// إرسال بيانات جديدة
+function clearRowHighlight() {
+  document.querySelectorAll("table.table-data tr").forEach(row => row.classList.remove("selected-row"));
+}
+
 document.querySelectorAll(".button-content")[0].addEventListener("click", function (e) {
   e.preventDefault();
   sendData("add");
 });
 
-// تحديث بيانات
 document.querySelectorAll(".button-content")[1].addEventListener("click", function (e) {
   e.preventDefault();
   sendData("update");
 });
 
-// حذف بيانات
 document.querySelectorAll(".button-content")[2].addEventListener("click", function (e) {
   e.preventDefault();
   sendData("delete");
 });
 
-// الدالة المشتركة للإرسال
 function sendData(action) {
+  const email = sessionStorage.getItem("email");
+  const department = sessionStorage.getItem("department");
+
   const formData = new URLSearchParams();
 
   formData.append("action", action);
+  formData.append("email", email);
+  formData.append("department", department);
   formData.append("id", document.getElementById("entry-id").value);
   formData.append("date", document.getElementById("date").value);
   formData.append("markz", document.getElementById("markz").value);
@@ -324,22 +341,22 @@ function sendData(action) {
   })
     .then(response => response.text())
     .then(result => {
-      alert(`Data ${action}ed successfully`);
+      alert(`تمت عملية ${action === 'add' ? 'الإضافة' : action === 'update' ? 'التحديث' : 'الحذف'} بنجاح.`);
       clearForm();
-      fetchData();
+      fetchData(email, department);
     })
     .catch(error => {
-      console.error("Error:", error);
-      alert("Something went wrong!");
+      console.error("خطأ:", error);
+      alert("حدث خطأ أثناء تنفيذ العملية.");
     });
 }
 
 function clearForm() {
   document.querySelector("form").reset();
   document.getElementById("entry-id").value = "";
+  clearRowHighlight();
 }
 </script>
-
 
 
 
