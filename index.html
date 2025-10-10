@@ -68,14 +68,11 @@
     const email = document.getElementById("login-email").value.trim();
     const department = document.getElementById("login-department").value;
 
-    // إعداد البيانات بصيغة URL-encoded
-    const formData = new URLSearchParams();
-    formData.append("email", email);
-    formData.append("department", department);
-    formData.append("action", "login");
+    const url = `${scriptURL}?action=login&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`;
+
 
     fetch(scriptURL, {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
       },
@@ -100,4 +97,5 @@
 
 </body>
 </html>
+
 
