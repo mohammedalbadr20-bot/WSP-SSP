@@ -86,20 +86,22 @@
       if (data.status.toLowerCase() === "authorized") {
         sessionStorage.setItem("email", data.email);
         sessionStorage.setItem("department", data.department);
+        document.getElementById("login-message").textContent = "Authorized";
         window.location = "waterqualitymonitoring.html";
       } else {
-        document.getElementById("login-message").textContent = "غير مصرح لك بالدخول.";
+        document.getElementById("login-message").textContent = "Unauthorized";
       }
     })
     .catch(err => {
       console.error("خطأ:", err);
-      document.getElementById("login-message").textContent = "حدث خطأ أثناء الاتصال بالخادم.";
+      document.getElementById("login-message").textContent = "Connection Error";
     });
   });
 </script>
 
 </body>
 </html>
+
 
 
 
