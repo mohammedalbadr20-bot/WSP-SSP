@@ -215,7 +215,7 @@ function fetchData() {
         throw new Error("HTTP Error: " + response.status + " " + response.statusText);
       }
       return response.json(); // قد يفشل هنا إذا لم يكن الرد JSON فعلاً
-    })
+    }
     .then(data => {
       if (data.status === "unauthorized") {
         alert("غير مصرح لك بالوصول");
@@ -342,6 +342,7 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
 }
 </script>
+
 
 
 
