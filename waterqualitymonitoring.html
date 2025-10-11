@@ -371,8 +371,7 @@ function clearForm() {
                 timeZone: 'Africa/Cairo', // المنطقة الزمنية لمصر
                 hour12: true       // تنسيق الوقت بصيغة 12 ساعة (AM/PM)
             };
-
-            return date.toLocaleString("ar-EG", options);
+           
         }
 
       // تحديث تاريخ الحقل عند تحميل الصفحة
@@ -382,6 +381,7 @@ function clearForm() {
             document.getElementById("date").value = formattedDate.split(' ')[0]; // فقط التاريخ بدون الوقت
         };
 </script>
+
 
 
 
