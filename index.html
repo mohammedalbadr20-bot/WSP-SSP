@@ -87,6 +87,8 @@
         sessionStorage.setItem("email", data.email);
         sessionStorage.setItem("department", data.department);
         document.getElementById("login-message").textContent = "Authorized";
+        document.getElementById("login-email").value = "";
+        document.getElementById("login-department").value = "";
         window.location = "waterqualitymonitoring.html";
       } else {
         document.getElementById("login-message").textContent = "Unauthorized";
@@ -101,6 +103,7 @@
 
 </body>
 </html>
+
 
 
 
