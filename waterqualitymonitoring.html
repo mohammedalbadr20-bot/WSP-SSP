@@ -375,13 +375,14 @@ function clearForm() {
             return date.toLocaleString("ar-EG", options);
         }
 
-        // دالة لتحديث التاريخ عند تحميل الصفحة
+      // تحديث تاريخ الحقل عند تحميل الصفحة
         window.onload = function () {
-            const originalDate = "2025-10-16T21:00:00.000Z";  // التاريخ بتوقيت UTC
+            const originalDate = "2025-10-16T21:00:00.000Z"; // تاريخ بتوقيت UTC
             const formattedDate = formatDateInMinyaTime(originalDate);
-            document.getElementById("date").textContent = formattedDate;
+            document.getElementById("date").value = formattedDate.split(' ')[0]; // فقط التاريخ بدون الوقت
         };
 </script>
+
 
 
 
