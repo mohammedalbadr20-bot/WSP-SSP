@@ -356,34 +356,27 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
-// تنسيق التاريخ إلى توقيت المنيا
-        function formatDateInMinyaTime(isoDate) {
-            const date = new Date(isoDate);
+// دالة لتنسيق التاريخ بتوقيت المنيا
+function formatDateInMinyaTime(isoDate) {
+    const date = new Date(isoDate);
 
-            const options = {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: 'numeric',
-                minute: 'numeric',
-                second: 'numeric',
-                timeZone: 'Africa/Cairo',
-                hour12: true
-            };
+    // تنسيق التاريخ بصيغة "DD/MM/YYYY"
+    const day = ("0" + date.getDate()).slice(-2); // إضافة صفر إذا كان اليوم أقل من 10
+    const month = ("0" + (date.getMonth() + 1)).slice(-2); // إضافة صفر إذا كان الشهر أقل من 10
+    const year = date.getFullYear();
 
-            return date.toLocaleString("ar-EG", options);
-        }
+    return `${day}/${month}/${year}`; // تنسيق التاريخ إلى "DD/MM/YYYY"
+}
 
-        // تحديث تاريخ الحقل عند تحميل الصفحة
-        window.onload = function () {
-            const originalDate = "2025-10-16T21:00:00.000Z"; // تاريخ بتوقيت UTC
-            const formattedDate = formatDateInMinyaTime(originalDate);
-            document.getElementById("date").value = formattedDate.split(' ')[0]; // فقط التاريخ بدون الوقت
-        };   
-    
+// دالة لتحديث تاريخ الحقل عند تحميل الصفحة
+window.onload = function () {
+    const originalDate = "2025-10-16T21:00:00.000Z";  // التاريخ بتوقيت UTC
+    const formattedDate = formatDateInMinyaTime(originalDate); // تنسيق التاريخ
+    document.getElementById("date").value = formattedDate;  // عرض التاريخ في الحقل
+};
    
 </script>
+
 
 
 
