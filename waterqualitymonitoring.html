@@ -356,10 +356,35 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
-   
+// تنسيق التاريخ إلى توقيت المنيا
+        function formatDateInMinyaTime(isoDate) {
+            const date = new Date(isoDate);
+
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+                timeZone: 'Africa/Cairo',
+                hour12: true
+            };
+
+            return date.toLocaleString("ar-EG", options);
+        }
+
+        // تحديث تاريخ الحقل عند تحميل الصفحة
+        window.onload = function () {
+            const originalDate = "2025-10-16T21:00:00.000Z"; // تاريخ بتوقيت UTC
+            const formattedDate = formatDateInMinyaTime(originalDate);
+            document.getElementById("date").value = formattedDate.split(' ')[0]; // فقط التاريخ بدون الوقت
+        };   
     
    
 </script>
+
 
 
 
