@@ -356,31 +356,11 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
-    function formatDateInMinyaTime(isoDate) {
-            const date = new Date(isoDate);
-
-            // تحويل التوقيت إلى توقيت مصر (المنيا)
-            const options = {
-                weekday: 'long',  // يظهر اليوم
-                year: 'numeric',  // يظهر السنة
-                month: 'long',    // يظهر الشهر بشكل نصي
-                day: 'numeric',   // يظهر اليوم
-                hour: 'numeric',  // يظهر الساعة
-                minute: 'numeric', // يظهر الدقائق
-                second: 'numeric', // يظهر الثواني
-                timeZone: 'Africa/Cairo', // المنطقة الزمنية لمصر
-                hour12: true       // تنسيق الوقت بصيغة 12 ساعة (AM/PM)
-            };
-           
-        }
-
-      // تحديث تاريخ الحقل عند تحميل الصفحة
-        window.onload = function () {
-            const originalDate = "2025-10-16T21:00:00.000Z"; // تاريخ بتوقيت UTC
-            const formattedDate = formatDateInMinyaTime(originalDate);
-            document.getElementById("date").value = formattedDate.split(' ')[0]; // فقط التاريخ بدون الوقت
-        };
+   
+    
+   
 </script>
+
 
 
 
