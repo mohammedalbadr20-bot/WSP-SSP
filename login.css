@@ -1,6 +1,6 @@
 
 body{
-    background-image: url("pexels-pixabay-40784.jpg");
+    background-image: url("https://images.pexels.com/photos/40784/drops-of-water-water-nature-liquid-40784.jpeg?auto=compress&cs=tinysrgb&h=627&fit=crop&w=1200");
     background-size:cover;
     text-align: center;
     width: 95vw;
@@ -98,3 +98,4 @@ select:focus{
     margin-bottom:-30px;
     margin-left: 95%;
 } 
+
