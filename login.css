@@ -1,0 +1,100 @@
+
+body{
+    background-image: url("pexels-pixabay-40784.jpg");
+    background-size:cover;
+    text-align: center;
+    width: 95vw;
+    height: 90vh;
+}
+h1{
+    font-size: 55px;
+    color:black;
+    font-weight: bolder;
+}
+h2{
+    font-size: 40px;
+    color:black;
+    font-weight: bolder;
+    margin-top: -20px;
+}
+h3{
+    font-size: 25px;
+    color:black;
+    font-weight: bolder; 
+}
+
+form{
+    border:black groove;
+    border-radius: 20px;
+    display: inline-block;
+    text-align: center;
+    width:fit-content;
+    box-shadow: 0 0 10px #ccc;
+    padding-top:10px;
+}
+
+ 
+input{
+    width: 80%;
+    height:30px;
+    margin-bottom: 30px;
+    font-size: 20px;
+    border-radius:5px;
+    
+}  
+
+label{
+    font-size: 22px;
+    padding-left:5px;
+    padding-right:10px ;
+}
+
+select{
+    width: 80.9%;
+    height:42.5px;
+    margin-bottom:30px;
+    font-size: 18px;
+    padding-left: 25px;
+    padding-right:5px;
+    margin-left:-5px;
+    text-align: center;  
+    border-radius:5px;
+}  
+
+button{
+    width:25%;
+    border-radius: 10px;
+    border-style: inset;
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 10px;
+    color:gray;
+}
+
+button:hover{
+    color: black;
+    font-weight: bolder;
+}
+
+select:hover,
+select:focus{
+    background-color:lightblue;
+}   
+#login-message {
+    font-size: 25px;
+    font-weight:bolder;
+    color:red;
+    background-color: azure;
+
+}
+.image1{
+    width:80px;
+    height:80px;
+    margin-bottom:-30px;
+}
+.image2{
+   width:80px;
+    height:80px;
+    margin-bottom:-30px;
+    margin-left: 95%;
+} 
