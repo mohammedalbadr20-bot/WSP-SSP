@@ -356,8 +356,12 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
-
+if (!email || !region) {
+  sessionStorage.setItem('returnTo', window.location.pathname);
+  window.location.replace = 'index.html';
+  }
 </script>
+
 
 
 
