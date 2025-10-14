@@ -219,7 +219,7 @@ input[type="number"]{
 
 
 .buttons{
-  position:fixed;
+  position: relative;
   bottom: 20%;
   left: 50%;
   transform:translateX(-50%);
@@ -254,6 +254,7 @@ input[type="number"]{
   transform: translateX(50px);
   margin-top:100px;
   padding:30px;
+  background-color: white;
 }
 thead th{
   background-color: #6c757d;
@@ -262,6 +263,7 @@ thead th{
   border-right-color: black;
 
 }
+
 
 
 
