@@ -41,8 +41,8 @@
     <input id="date" type="date" required>
 
     <label class="dat"for="markz">Branch</label>
-    <select id="markz" type="optgroup" required>
-        <optgroup>Branch 
+    <select id="markz" type="optgroup"> 
+        <optgroup label="Branch">
             <option value="العدوه">العدوه</option>
             <option value="مغاغة">مغاغة</option>
             <option value="بنى مزار">بنى مزار</option>
@@ -227,34 +227,34 @@ function fetchData(email, department) {
       }
 
       const rows = data.water_data;
-      const tbody = document.querySelector("table.table-data tbody");
-      tbody.innerHTML = "";
-    const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];  // ID, Date, Markz, pH, Temp,.....
+const tbody = document.querySelector("table.table-data tbody");
+tbody.innerHTML = "";
 
-      rows.slice(1).forEach((row) => {
-        const tr = document.createElement("tr");
-        row.forEach((cell, index) => {
-            if (desiredColumnIndexes.includes(index)) {
-          const td = document.createElement("td");
-          td.textContent = cell ?? "";
-          tr.appendChild(td);
-            }
-        });
+const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]; // الأعمدة المطلوبة
 
-        tr.addEventListener("click", () => {
-          clearRowHighlight();
-          tr.classList.add("selected-row");
-          fillFormWithRow(row);
-        });
+rows.slice(1).forEach((row) => {
+  const rowMarkz = row[2]; // العمود الثالث هو Markz
 
-        tbody.appendChild(tr);
-      });
-    })
-    .catch(error => {
-      console.error("خطأ:", error);
-      alert("حدث خطأ أثناء تحميل البيانات.");
-    });
-}
+  if (rowMarkz !== department) return; // تجاهل الصف إذا لم يكن من نفس المنطقة
+
+  const tr = document.createElement("tr");
+
+  row.forEach((cell, index) => {
+    if (desiredColumnIndexes.includes(index)) {
+      const td = document.createElement("td");
+      td.textContent = cell ?? "";
+      tr.appendChild(td);
+    }
+  });
+
+  tr.addEventListener("click", () => {
+    clearRowHighlight();
+    tr.classList.add("selected-row");
+    fillFormWithRow(row); // نمرر الصف كاملًا
+  });
+
+  tbody.appendChild(tr);
+});
 
 function fillFormWithRow(row) {
   const isoDate = new Date(row[1]);
@@ -358,6 +358,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
