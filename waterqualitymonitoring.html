@@ -387,8 +387,8 @@ window.onload = () => {
 
   document.getElementById("username").value = email;
   document.getElementById("section").value = department;
-
-  if(!department==WSP){  
+//عدم فاعلية branch فى حالة الدخول اى منطقة عدا WSP
+  if(department !== "WSP"){  
   // تحديد قيمة الـ select تلقائياً بناءً على القسم
   document.getElementById("markz").value = department;
   document.getElementById("markz").disabled = true;
