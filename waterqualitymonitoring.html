@@ -14,7 +14,7 @@
 
 
 <body>
-    <!-- المستخدم وعنوان الصفحة-->
+    <!-- المستخدم وعنوان الصفحة-->ئئئئ
 <div class="username">
     <label for="username" class="dislabel" type="label">Email</label>
     <input id="username" value="" disabled> 
@@ -375,8 +375,27 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
+window.onload = () => {
+  const email = sessionStorage.getItem("email");
+  const department = sessionStorage.getItem("department");
+
+  if (!email || !department) {
+    alert("يرجى تسجيل الدخول أولاً");
+    window.location = "login.html";
+    return;
+  }
+
+  document.getElementById("username").value = email;
+  document.getElementById("section").value = department;
+
+  // تحديد قيمة الـ select تلقائياً بناءً على القسم
+  document.getElementById("markz").value = department;
+
+  fetchData(email, department);
+};
 
 </script>
+
 
 
 
