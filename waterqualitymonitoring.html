@@ -234,7 +234,9 @@ function fetchData(email, department) {
 
       rows.slice(1).forEach((row) => {
         const rowMarkz = row[2]; // العمود الثالث هو "Markz"
-        if (rowMarkz !== department) return; // تجاهل الصف إذا لم يكن يخص المنطقة الحالية
+       // إذا كان المستخدم ليس من WSP، تجاهل الصف إذا لم يكن من نفس القسم
+        if (department !== "WSP" && rowMarkz !== department) return;
+
 
         const tr = document.createElement("tr");
 
@@ -375,6 +377,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
