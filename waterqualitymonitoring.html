@@ -226,19 +226,24 @@ function fetchData(email, department) {
         return;
       }
 
-       const rows = data.water_data;
+      const rows = data.water_data;
       const tbody = document.querySelector("table.table-data tbody");
       tbody.innerHTML = "";
-    const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];  // ID, Date, Markz, pH, Temp,.....
-      
-        rows.slice(1).forEach((row) => {
+
+      const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+
+      rows.slice(1).forEach((row) => {
+        const rowMarkz = row[2]; // العمود الثالث هو "Markz"
+        if (rowMarkz !== department) return; // تجاهل الصف إذا لم يكن يخص المنطقة الحالية
+
         const tr = document.createElement("tr");
+
         row.forEach((cell, index) => {
-            if (desiredColumnIndexes.includes(index)) {
-          const td = document.createElement("td");
-          td.textContent = cell ?? "";
-          tr.appendChild(td);
-            }
+          if (desiredColumnIndexes.includes(index)) {
+            const td = document.createElement("td");
+            td.textContent = cell ?? "";
+            tr.appendChild(td);
+          }
         });
 
         tr.addEventListener("click", () => {
@@ -249,8 +254,24 @@ function fetchData(email, department) {
 
         tbody.appendChild(tr);
       });
+
+      // إذا لم توجد بيانات
+      if (!tbody.hasChildNodes()) {
+        const tr = document.createElement("tr");
+        const td = document.createElement("td");
+        td.colSpan = desiredColumnIndexes.length;
+        td.textContent = "لا توجد بيانات لعرضها لهذه المنطقة.";
+        td.style.textAlign = "center";
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+      }
     })
-هل الكود صح؟
+    .catch(error => {
+      console.error("خطأ:", error);
+      alert("حدث خطأ أثناء تحميل البيانات.");
+    });
+}
+
 
 function fillFormWithRow(row) {
   const isoDate = new Date(row[1]);
@@ -354,6 +375,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
