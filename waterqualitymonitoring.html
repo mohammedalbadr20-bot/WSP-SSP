@@ -260,6 +260,8 @@ function fetchData(email, department) {
 }
 
 function fillFormWithRow(row) {
+  const isoDate = new Date(row[1]);
+  const formattedDate = isoDate.toISOString().split("T")[0];
   document.getElementById("entry-id").value = row[0];
   document.getElementById("date").value = row[1];
   document.getElementById("markz").value = row[2];
@@ -357,11 +359,14 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
+const email= sessionStorage.getItem("email");
+const region= sessionStorage.getItem("department");
 if (!email || !region) {
   sessionStorage.setItem('returnTo', window.location.pathname);
   window.location.replace = 'index.html';
   }
 </script>
+
 
 
 
