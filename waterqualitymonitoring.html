@@ -231,9 +231,7 @@ function fetchData(email, department) {
       tbody.innerHTML = "";
     const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];  // ID, Date, Markz, pH, Temp,.....
       
-        const tr = document.createElement("tr");
-
-      rows.slice(1).forEach((row) => {
+        rows.slice(1).forEach((row) => {
         const tr = document.createElement("tr");
         row.forEach((cell, index) => {
             if (desiredColumnIndexes.includes(index)) {
@@ -356,6 +354,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
