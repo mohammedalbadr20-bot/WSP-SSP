@@ -229,10 +229,12 @@ function fetchData(email, department) {
 
       rows.slice(1).forEach((row) => {
         const tr = document.createElement("tr");
-        row.forEach(cell => {
+        row.forEach((cell, index) => {
+            if (desiredColumnIndexes.includes(index)) {
           const td = document.createElement("td");
           td.textContent = cell ?? "";
           tr.appendChild(td);
+            }
         });
 
         tr.addEventListener("click", () => {
@@ -352,6 +354,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
