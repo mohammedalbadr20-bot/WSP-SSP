@@ -226,7 +226,7 @@ function fetchData(email, department) {
       const rows = data.water_data;
       const tbody = document.querySelector("table.table-data tbody");
       tbody.innerHTML = "";
-    const desiredColumnIndexes = [0, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];  // ID, Date, Markz, pH, Temp,.....
+    const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];  // ID, Date, Markz, pH, Temp,.....
 
       rows.slice(1).forEach((row) => {
         const tr = document.createElement("tr");
@@ -355,6 +355,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
