@@ -225,12 +225,13 @@ function fetchData(email, department) {
       const rows = data.water_data;
       const tbody = document.querySelector("table.table-data tbody");
       tbody.innerHTML = "";
+    const desiredColumnIndexes = [0, 1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22];  // ID, Date, Markz, pH, Temp,.....
 
       rows.slice(1).forEach((row) => {
         const tr = document.createElement("tr");
         row.forEach(cell => {
           const td = document.createElement("td");
-          td.textContent = cell;
+          td.textContent = row[index]?"";
           tr.appendChild(td);
         });
 
@@ -351,6 +352,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
