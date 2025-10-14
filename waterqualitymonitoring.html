@@ -1,4 +1,4 @@
-<!Doctype html>
+<!DOCTYPE html>
 <html>
 
 
@@ -263,7 +263,7 @@ function fillFormWithRow(row) {
   const isoDate = new Date(row[1]);
   const formattedDate = isoDate.toISOString().split("T")[0];
   document.getElementById("entry-id").value = row[0];
-  document.getElementById("date").value = row[1];
+  document.getElementById("date").value = formattedDate;
   document.getElementById("markz").value = row[2];
   document.getElementById("sample").value = row[3];
   document.getElementById("turbidity").value = row[4];
@@ -363,9 +363,10 @@ const email= sessionStorage.getItem("email");
 const region= sessionStorage.getItem("department");
 if (!email || !region) {
   sessionStorage.setItem('returnTo', window.location.pathname);
-  window.location.replace = 'index.html';
+  window.location.replace('index.html');
   }
 </script>
+
 
 
 
