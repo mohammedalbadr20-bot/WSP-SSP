@@ -243,9 +243,7 @@ input[type="number"]{
 }
 
 .table-data{
-  border: 3px;
-  border-color: black;
-  border-style: double;
+  border: 3px double black;
   border-collapse: collapse;
   width:90vw;
   height: fit-content;
