@@ -226,35 +226,33 @@ function fetchData(email, department) {
         return;
       }
 
-      const rows = data.water_data;
-const tbody = document.querySelector("table.table-data tbody");
-tbody.innerHTML = "";
+       const rows = data.water_data;
+      const tbody = document.querySelector("table.table-data tbody");
+      tbody.innerHTML = "";
+    const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];  // ID, Date, Markz, pH, Temp,.....
+      
+        const tr = document.createElement("tr");
 
-const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]; // الأعمدة المطلوبة
+      rows.slice(1).forEach((row) => {
+        const tr = document.createElement("tr");
+        row.forEach((cell, index) => {
+            if (desiredColumnIndexes.includes(index)) {
+          const td = document.createElement("td");
+          td.textContent = cell ?? "";
+          tr.appendChild(td);
+            }
+        });
 
-rows.slice(1).forEach((row) => {
-  const rowMarkz = row[2]; // العمود الثالث هو Markz
+        tr.addEventListener("click", () => {
+          clearRowHighlight();
+          tr.classList.add("selected-row");
+          fillFormWithRow(row);
+        });
 
-  if (rowMarkz !== department) return; // تجاهل الصف إذا لم يكن من نفس المنطقة
-
-  const tr = document.createElement("tr");
-
-  row.forEach((cell, index) => {
-    if (desiredColumnIndexes.includes(index)) {
-      const td = document.createElement("td");
-      td.textContent = cell ?? "";
-      tr.appendChild(td);
-    }
-  });
-
-  tr.addEventListener("click", () => {
-    clearRowHighlight();
-    tr.classList.add("selected-row");
-    fillFormWithRow(row); // نمرر الصف كاملًا
-  });
-
-  tbody.appendChild(tr);
-});
+        tbody.appendChild(tr);
+      });
+    })
+هل الكود صح؟
 
 function fillFormWithRow(row) {
   const isoDate = new Date(row[1]);
