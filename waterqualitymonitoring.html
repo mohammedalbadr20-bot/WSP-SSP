@@ -214,7 +214,13 @@ window.onload = () => {
 
   document.getElementById("username").value = email;
   document.getElementById("section").value = department;
-
+    
+//عدم فاعلية branch فى حالة الدخول اى منطقة عدا WSP
+  if (department !== "WSP"){  
+  // تحديد قيمة الـ select تلقائياً بناءً على القسم
+  document.getElementById("markz").value = department;
+  document.getElementById("markz").disabled = true;
+  
   fetchData(email, department);
 };
 
@@ -376,27 +382,11 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
-window.onload = () => {
-  const email = sessionStorage.getItem("email");
-  const department = sessionStorage.getItem("department");
 
-  if (!email || !department) {
-    alert("يرجى تسجيل الدخول أولاً");
-    window.location = "login.html";
-    return;
-  }
 
-  document.getElementById("username").value = email;
-  document.getElementById("section").value = department;
-//عدم فاعلية branch فى حالة الدخول اى منطقة عدا WSP
-  if(department !== "WSP"){  
-  // تحديد قيمة الـ select تلقائياً بناءً على القسم
-  document.getElementById("markz").value = department;
-  document.getElementById("markz").disabled = true;
-  fetchData(email, department);
-};
-
+  
 </script>
+
 
 
 
