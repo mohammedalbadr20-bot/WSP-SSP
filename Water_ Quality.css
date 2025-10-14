@@ -255,6 +255,9 @@ input[type="number"]{
   margin-top:100px;
   padding:30px;
   background-color: white;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: black;
 }
 thead th{
   background-color: #6c757d;
@@ -263,6 +266,7 @@ thead th{
   border-right-color: black;
 
 }
+
 
 
 
