@@ -31,16 +31,6 @@
     <h1>Water Quality Monitoring</h1>
 
 
-<!--ظهور اسم المستخدم الحالى-->
-
-
-
-
-
-
-
-
-
 
 
                     <!--Water qyality form-->
@@ -359,12 +349,7 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
-const email= sessionStorage.getItem("email");
-const region= sessionStorage.getItem("department");
-if (!email || !region) {
-  sessionStorage.setItem('returnTo', window.location.pathname);
-  window.location.replace('index.html');
-  }
+
 </script>
 
 
