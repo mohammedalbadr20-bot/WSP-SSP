@@ -231,7 +231,7 @@ function fetchData(email, department) {
         const tr = document.createElement("tr");
         row.forEach(cell => {
           const td = document.createElement("td");
-          td.textContent = row[index]?"";
+          td.textContent = cell;
           tr.appendChild(td);
         });
 
@@ -352,6 +352,7 @@ function clearForm() {
 }
 
 </script>
+
 
 
 
