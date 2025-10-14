@@ -390,11 +390,12 @@ window.onload = () => {
 
   // تحديد قيمة الـ select تلقائياً بناءً على القسم
   document.getElementById("markz").value = department;
-
+  document.getElementById("markz").disabled = true;
   fetchData(email, department);
 };
 
 </script>
+
 
 
 
