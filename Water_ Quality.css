@@ -152,7 +152,8 @@ h1{
 #markz:hover,
 #date:focus,
 #markz:focus,
-#station {
+#station:hover,
+#station:focus{
   border-color: red;
   border-width: 2px;
   background-color: lightblue;
@@ -266,6 +267,7 @@ thead th{
   border-right-color: black;
 
 }
+
 
 
 
