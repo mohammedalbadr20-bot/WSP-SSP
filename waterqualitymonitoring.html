@@ -381,34 +381,8 @@ function clearForm() {
   clearRowHighlight();
 }
 
-const StationSheetURL= "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec"
-let station ={};
-// الحصول على بيانات
-fetch(StationSheetURL)
-.then(response=> response.json())
-.then(data=> {
-  stationData = data;
-  document.getElementById("markz").addEventListener("change", function(){
-    const selectedMarkz =this.value
-    const staionselect=document.getElementById("station");
-
-    stationselect.innerHTML='<option value="">Station</option>'
-
-     if (stationData[selectedMarkz]) {
-        stationData[selectedMarkz].forEach(function (station) {
-          const option = document.createElement("option");
-          option.value = station;
-          option.textContent = station;
-          stationSelect.appendChild(option);
-        });
-      }
-    });
-  })
-  .catch(error => {
-    console.error("حدث خطأ أثناء تحميل بيانات المحطات:", error);
-  });
-  
 </script>
+
 
 
 
