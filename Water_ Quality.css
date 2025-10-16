@@ -129,6 +129,7 @@ h1{
 #date[type="date"],
 #markz[type="optgroup"],
 #sample[type="location"]
+#station[type="station"]
 {
     font-size: 20px;
     font-weight: bold;
@@ -150,7 +151,8 @@ h1{
 #date:hover,
 #markz:hover,
 #date:focus,
-#markz:focus {
+#markz:focus,
+#station {
   border-color: red;
   border-width: 2px;
   background-color: lightblue;
@@ -264,7 +266,6 @@ thead th{
   border-right-color: black;
 
 }
-
 
 
 
