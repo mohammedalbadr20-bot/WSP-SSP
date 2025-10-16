@@ -129,7 +129,7 @@ h1{
 #date[type="date"],
 #markz[type="optgroup"],
 #sample[type="location"]
-#station[type="station"]
+#station[type="select"]
 {
     font-size: 20px;
     font-weight: bold;
@@ -266,6 +266,7 @@ thead th{
   border-right-color: black;
 
 }
+
 
 
 
