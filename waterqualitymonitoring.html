@@ -207,6 +207,7 @@ const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRF
 window.onload = () => {
   const email = sessionStorage.getItem("email");
   const department = sessionStorage.getItem("department");
+    
 
   if (!email || !department) {
     alert("يرجى تسجيل الدخول أولاً");
@@ -216,6 +217,9 @@ window.onload = () => {
 
   document.getElementById("username").value = email;
   document.getElementById("section").value = department;
+  const branchSelect = document.getElementById("branch");
+  const stationSelect = document.getElementById("station");
+
     
 //عدم فاعلية branch فى حالة الدخول اى منطقة عدا WSP
   if (department !== "WSP"){  
@@ -223,6 +227,28 @@ window.onload = () => {
   document.getElementById("branch").value = department;
   document.getElementById("branch").disabled = true;
   } 
+  // تحميل المحطات التابعة لهذا الفرع
+    fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
+      .then(response => response.json())
+      .then(data => {
+        stationSelect.innerHTML = '<option value="" disabled selected>اختر المحطة</option>';
+        if (data.status === "success") {
+          data.stations.forEach(station => {
+            const option = document.createElement("option");
+            option.value = station;
+            option.textContent = station;
+            stationSelect.appendChild(option);
+          });
+        } else {
+          stationSelect.innerHTML = '<option value="" disabled selected>لم يتم العثور على محطات</option>';
+        }
+      })
+      .catch(error => {
+        console.error("خطأ في تحميل المحطات:", error);
+        stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
+      });
+  }
+
   fetchData(email, department);
 };
 
@@ -453,6 +479,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
