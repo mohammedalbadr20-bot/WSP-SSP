@@ -127,11 +127,11 @@ h1{
 }
 
 #date[type="date"],
-#markz[type="optgroup"],
+#branch[type="select"],
+#station[type="select"],
 #sample[type="location"]
-#station[type="select"]
 {
-    font-size: 20px;
+    font-size: 15px;
     font-weight: bold;
     text-align: center;
     color: black;
@@ -149,10 +149,10 @@ h1{
 }
 
 #date:hover,
-#markz:hover,
-#date:focus,
-#markz:focus,
+#branch:hover,
 #station:hover,
+#date:focus,
+#branch:focus,
 #station:focus{
   border-color: red;
   border-width: 2px;
@@ -265,6 +265,16 @@ thead th{
   border-right-style: solid;
   border-right-width: 2px;
   border-right-color: black;
+
+}
+tbody td{     
+  border-right-style: solid;
+  border-right-width: 1px;
+  border-right-color: black;
+  border-bottom-style: solid;
+  border-bottom-width: 1px;
+  border-bottom-color: black;
+
 
 }
 
