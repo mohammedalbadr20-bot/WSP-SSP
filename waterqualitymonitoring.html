@@ -247,8 +247,8 @@ window.onload = () => {
         console.error("خطأ في تحميل المحطات:", error);
         stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
       });
-  }
-
+  }else {
+  // مستخدم WSP يختار الفرع يدوياً
   fetchData(email, department);
 };
 
@@ -479,6 +479,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
