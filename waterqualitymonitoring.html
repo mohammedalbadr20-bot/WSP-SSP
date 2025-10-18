@@ -290,22 +290,37 @@ function fillFormWithRow(row) {
   document.getElementById("entry-id").value = row[0];
   document.getElementById("date").value = formattedDate;
   document.getElementById("branch").value = row[2];
-     // تحديث محطة المأخذ (station)
+    // تحديث المحطات قبل تعبئة station
+  const branch = row[2];
+  const station = row[3];
   const stationSelect = document.getElementById("station");
-  const selectedStation = row[3];
 
-  // تحقق أولًا أن المحطة موجودة ضمن الخيارات
-  const stationOptionExists = Array.from(stationSelect.options).some(opt => opt.value === selectedStation);
-  if (stationOptionExists) {
-    stationSelect.value = selectedStation;
-  } else {
-    // إذا لم تكن موجودة، أضفها بشكل مؤقت (مثلاً في حال تحميل الصف قبل تحميل المحطات)
-    const option = document.createElement("option");
-    option.value = selectedStation;
-    option.textContent = selectedStation;
-    option.selected = true;
-    stationSelect.appendChild(option);
-  }
+  // مسح المحطات القديمة
+  stationSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+
+  fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
+    .then(response => response.json())
+    .then(data => {
+      stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+
+      if (data.status === "success") {
+        data.stations.forEach(st => {
+          const option = document.createElement("option");
+          option.value = st;
+          option.textContent = st;
+          stationSelect.appendChild(option);
+        });
+
+        // تعبئة الـ station بعد تحميلها
+        stationSelect.value = station;
+      } else {
+        stationSelect.innerHTML = `<option value="" disabled selected>Not Found</option>`;
+      }
+    })
+    .catch(error => {
+      console.error("خطأ في جلب المحطات:", error);
+      stationSelect.innerHTML = '<option value="" disabled selected>خطأ</option>';
+    });
   document.getElementById("sample").value = row[4];
   document.getElementById("turbidity").value = row[5];
   document.getElementById("pH").value = row[6];
@@ -435,6 +450,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
