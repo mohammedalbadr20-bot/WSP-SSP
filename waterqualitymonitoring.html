@@ -380,8 +380,41 @@ function clearForm() {
   document.getElementById("entry-id").value = "";
   clearRowHighlight();
 }
+    // عند تغيير الفرع، جلب المحطات من Google Sheets
+document.getElementById("markz").addEventListener("change", function () {
+  const branch = this.value;
+  const stationSelect = document.getElementById("station");
+
+  // تفريغ المحطات القديمة
+  stationSelect.innerHTML = '<option value="" disabled selected>جارٍ التحميل...</option>';
+
+  // إرسال طلب إلى Google Apps Script للحصول على المحطات المرتبطة بالفرع
+  fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data.status !== "success") {
+        stationSelect.innerHTML = '<option value="" disabled selected>Not found stations</option>';
+        return;
+      }
+
+      // تعبئة المحطات في القائمة
+      stationSelect.innerHTML = '<option value="" disabled selected>اختر المحطة</option>';
+      data.stations.forEach(station => {
+        const option = document.createElement("option");
+        option.value = station;
+        option.textContent = station;
+        stationSelect.appendChild(option);
+      });
+    })
+    .catch(error => {
+      console.error("خطأ في جلب المحطات:", error);
+      stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
+    });
+});
+
 
 </script>
+
 
 
 
