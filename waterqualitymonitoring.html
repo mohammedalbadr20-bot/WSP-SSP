@@ -342,7 +342,7 @@ function sendData(action) {
   formData.append("id", document.getElementById("entry-id").value);
   formData.append("date", document.getElementById("date").value);
   formData.append("branch", document.getElementById("markz").value);
-  formData.append("branch", document.getElementById("station").value);
+  formData.append("station", document.getElementById("station").value);
   formData.append("location", document.getElementById("sample").value);
   formData.append("turbidity", document.getElementById("turbidity").value);
   formData.append("ph", document.getElementById("pH").value);
@@ -420,6 +420,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
