@@ -202,12 +202,9 @@
 </html>
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-
-// تحميل البيانات عند فتح الصفحة
 window.onload = () => {
   const email = sessionStorage.getItem("email");
   const department = sessionStorage.getItem("department");
-    
 
   if (!email || !department) {
     alert("يرجى تسجيل الدخول أولاً");
@@ -217,17 +214,16 @@ window.onload = () => {
 
   document.getElementById("username").value = email;
   document.getElementById("section").value = department;
+
   const branchSelect = document.getElementById("branch");
   const stationSelect = document.getElementById("station");
 
-    
-//عدم فاعلية branch فى حالة الدخول اى منطقة عدا WSP
-  if (department !== "WSP"){  
-  // تحديد قيمة الـ select تلقائياً بناءً على القسم
-  document.getElementById("branch").value = department;
-  document.getElementById("branch").disabled = true;
-  } 
-  // تحميل المحطات التابعة لهذا الفرع
+  if (department !== "WSP") {
+    // تحديد قيمة الـ select تلقائياً بناءً على القسم
+    document.getElementById("branch").value = department;
+    document.getElementById("branch").disabled = true;
+
+    // تحميل المحطات التابعة لهذا الفرع
     fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
       .then(response => response.json())
       .then(data => {
@@ -247,10 +243,17 @@ window.onload = () => {
         console.error("خطأ في تحميل المحطات:", error);
         stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
       });
-  }else {
-  // مستخدم WSP يختار الفرع يدوياً
-  fetchData(email, department);
+
+    // تحميل البيانات (حتى لغير WSP)
+    fetchData(email, department);
+
+  } else {
+    // مستخدم WSP يختار الفرع يدوياً
+    fetchData(email, department);
+  }
 };
+
+
 
 function fetchData(email, department) {
   fetch(`${scriptURL}?action=getData&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`)
@@ -479,6 +482,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
