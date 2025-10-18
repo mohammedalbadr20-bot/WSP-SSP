@@ -242,9 +242,9 @@ function fetchData(email, department) {
       const desiredColumnIndexes = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21];
 
       rows.slice(1).forEach((row) => {
-        const rowMarkz = row[2]; // العمود الثالث هو "Markz"
+        const rowBranch = row[2]; // العمود الثالث هو "Branch"
        // إذا كان المستخدم ليس من WSP، تجاهل الصف إذا لم يكن من نفس القسم
-        if (department !== "WSP" && rowMarkz !== department) return;
+        if (department !== "WSP" && rowBranch !== department) return;
 
 
         const tr = document.createElement("tr");
@@ -341,7 +341,7 @@ function sendData(action) {
   formData.append("department", department);
   formData.append("id", document.getElementById("entry-id").value);
   formData.append("date", document.getElementById("date").value);
-  formData.append("branch", document.getElementById("markz").value);
+  formData.append("branch", document.getElementById("branch").value);
   formData.append("station", document.getElementById("station").value);
   formData.append("location", document.getElementById("sample").value);
   formData.append("turbidity", document.getElementById("turbidity").value);
@@ -420,6 +420,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
