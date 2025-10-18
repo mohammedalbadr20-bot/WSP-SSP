@@ -289,21 +289,23 @@ function fillFormWithRow(row) {
   const formattedDate = isoDate.toISOString().split("T")[0];
   document.getElementById("entry-id").value = row[0];
   document.getElementById("date").value = formattedDate;
-  document.getElementById("branch").value = row[2];
-    // تحديث المحطات قبل تعبئة station
   const branch = row[2];
   const station = row[3];
+
   const stationSelect = document.getElementById("station");
 
-  // مسح المحطات القديمة
+  document.getElementById("branch").value = branch;
+
+  // تفريغ المحطات أولاً
   stationSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
 
+  // استدعاء المحطات أولاً، ثم تعبئة الحقول الأخرى
   fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
     .then(response => response.json())
     .then(data => {
-      stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-
       if (data.status === "success") {
+        stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+
         data.stations.forEach(st => {
           const option = document.createElement("option");
           option.value = st;
@@ -311,16 +313,17 @@ function fillFormWithRow(row) {
           stationSelect.appendChild(option);
         });
 
-        // تعبئة الـ station بعد تحميلها
+        // تعيين قيمة station بعد التأكد من تحميلها
         stationSelect.value = station;
       } else {
-        stationSelect.innerHTML = `<option value="" disabled selected>Not Found</option>`;
+        stationSelect.innerHTML = '<option value="" disabled selected>Not Found</option>';
       }
     })
     .catch(error => {
-      console.error("خطأ في جلب المحطات:", error);
+      console.error("خطأ في تحميل المحطات:", error);
       stationSelect.innerHTML = '<option value="" disabled selected>خطأ</option>';
     });
+
   document.getElementById("sample").value = row[4];
   document.getElementById("turbidity").value = row[5];
   document.getElementById("pH").value = row[6];
@@ -450,6 +453,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
