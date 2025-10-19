@@ -41,7 +41,7 @@
     <input id="date" type="date" required>
 
     <label class="dat"for="branch">Branch</label>
-    <select id="branch" type="select" required> 
+    <select id="branch" type="select"> 
             <option value="" disabled selected>Select Branch</option>
             <option value="العدوه">العدوه</option>
             <option value="مغاغة">مغاغة</option>
@@ -227,7 +227,7 @@ window.onload = () => {
     fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
       .then(response => response.json())
       .then(data => {
-        stationSelect.innerHTML = '<option value="" disabled selected>اختر المحطة</option>';
+        stationSelect.innerHTML = '<option value="" disabled selected>ٍSelect Station</option>';
         if (data.status === "success") {
           data.stations.forEach(station => {
             const option = document.createElement("option");
@@ -236,22 +236,17 @@ window.onload = () => {
             stationSelect.appendChild(option);
           });
         } else {
-          stationSelect.innerHTML = '<option value="" disabled selected>لم يتم العثور على محطات</option>';
+          stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
         }
       })
       .catch(error => {
         console.error("خطأ في تحميل المحطات:", error);
         stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
       });
-
+  }
     // تحميل البيانات (حتى لغير WSP)
     fetchData(email, department);
-
-  } else {
-    // مستخدم WSP يختار الفرع يدوياً
-    fetchData(email, department);
-  }
-};
+ };
 
 
 
@@ -482,6 +477,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
