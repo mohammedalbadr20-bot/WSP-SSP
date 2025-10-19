@@ -1,7 +1,7 @@
 <!DOCTYPE html>
   <html>
 <!--عنوان الصفحة-->
-    head>
+    <head>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <title >Raw Water Quality Monitoring</title>
       <link rel="stylesheet" href="Water_Quality.css">
@@ -422,16 +422,18 @@
             "Content-Type": "application/x-www-form-urlencoded"
           },
           body: formData.toString()
-          .then(response => response.text())
-          .then(result => {
-            alert(`تمت عملية ${action === 'add' ? 'لإضافة' : action === 'update' ? 'لتحديث' : 'الحذف'} نجاح.`);
-            clearForm();
-            fetchData(email, department);
-          })
-          .catch(error => {
-            console.error("خطأ:", error);
-            alert("حدث خطأ أثناء تنفيذ العملية");
-          });
+        })
+        .then(response => response.text())
+        .then(result => {
+          alert(`تمت عملية ${action === 'add' ? 'الإضافة' : action === 'update' ? 'التحديث' : 'الحذف'} بنجاح.`);
+          clearForm();
+          fetchData(email, department);
+        })
+        .catch(error => {
+          console.error("خطأ:", error);
+          alert("حدث خطأ أثناء تنفيذ العملية");
+        });
+
       }
     }
       
@@ -447,7 +449,7 @@
         clearRowHighlight();
       }
           // عند تغيير الفرع، جلب المحطات من Google Sheets
-      detElementById("branch").addEventListener("change", function () {
+        document.getElementById("branch").addEventListener("change", function () {
         const branch = this.value;
         const stationSelect = document.getElementById("station");
       
@@ -483,6 +485,7 @@
 
   </body> 
 </html>
+
 
 
 
