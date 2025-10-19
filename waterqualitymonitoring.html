@@ -275,15 +275,24 @@ function fetchData(email, department) {
 
 
         const tr = document.createElement("tr");
-
         row.forEach((cell, index) => {
           if (desiredColumnIndexes.includes(index)) {
             const td = document.createElement("td");
-            td.textContent = cell ?? "";
-            tr.appendChild(td);
-          }
-        });
 
+            if (index === 1) {
+              // تنسيق التاريخ في العمود الثاني
+              const d = new Date(cell);
+              td.textContent = isNaN(d) ? cell : d.toISOString().split("T")[0];
+            } else {
+              td.textContent = cell ?? "";
+            }
+
+            tr.appendChild(td);
+      }
+});
+
+
+        
         tr.addEventListener("click", () => {
           clearRowHighlight();
           tr.classList.add("selected-row");
@@ -473,6 +482,7 @@ function clearForm() {
 
 
 </script>
+
 
 
 
