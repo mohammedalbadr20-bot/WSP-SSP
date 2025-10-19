@@ -8,7 +8,7 @@ body::before{     /* لادراج الصورة خلفية تتأثر بالشف�
   top: 0;
   bottom: 0;
   width: 100vw; /*ضرورى*/
-  height: 100hw; /*ضرورى*/
+  height: 100vh; /*ضرورى*/
   position: fixed;
   background-image: url("Water-Quality-Monitoring-5R-scaled-1000x847_c.jpg");
   background-repeat: no-repeat;
@@ -277,6 +277,7 @@ tbody td{
 
 
 }
+
 
 
 
