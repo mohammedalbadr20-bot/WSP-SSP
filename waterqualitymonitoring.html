@@ -322,7 +322,15 @@ function fetchData(email, department) {
 
 function fillFormWithRow(row) {
   const isoDate = new Date(row[1]);
-  const formattedDate = isoDate.toISOString().split("T")[0];
+  const isoDate = new Date(row[1]);
+    if (isNaN(isoDate)) {
+      console.warn("Invalid date in row[1]:", row[1]);
+      document.getElementById("date").value = "";
+    } else {
+      const formattedDate = isoDate.toISOString().split("T")[0];
+      document.getElementById("date").value = formattedDate;
+    }
+
   document.getElementById("entry-id").value = row[0];
   document.getElementById("date").value = formattedDate;
   const branch = row[2];
@@ -482,6 +490,7 @@ function clearForm() {
 
 
 </script>
+
 
 
 
