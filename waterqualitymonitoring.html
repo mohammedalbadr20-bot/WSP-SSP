@@ -217,6 +217,7 @@ window.onload = () => {
 
   const branchSelect = document.getElementById("branch");
   const stationSelect = document.getElementById("station");
+    
 
   if (department !== "WSP") {
     // تحديد قيمة الـ select تلقائياً بناءً على القسم
@@ -318,7 +319,19 @@ function fillFormWithRow(row) {
 
   const stationSelect = document.getElementById("station");
 
-  document.getElementById("branch").value = branch;
+const branchSelect = document.getElementById("branch");
+
+// التأكد من أن الفرع موجود داخل القائمة، وإذا لم يكن موجودًا، أضفه
+let branchOption = [...branchSelect.options].find(opt => opt.value === branch);
+if (!branchOption) {
+  const newOption = document.createElement("option");
+  newOption.value = branch;
+  newOption.textContent = branch;
+  branchSelect.appendChild(newOption);
+}
+
+// تعيين القيمة
+branchSelect.value = branch;
 
   // تفريغ المحطات أولاً
   stationSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
@@ -477,6 +490,7 @@ document.getElementById("branch").addEventListener("change", function () {
 
 
 </script>
+
 
 
 
