@@ -457,7 +457,13 @@ function sendData(action) {‎
 
 function clearForm() {‎
 ‎  document.querySelector("form").reset();‎
-‎  document.getElementById("entry-id").value = "";‎
+‎  document.getElementById("entry-id").value = "";
+  if (department !== "WSP") {‎
+‎    // ‎تحديد قيمة الـ‎ select ‎تلقائياً بناءً على القسم
+‎    document.getElementById("branch").value = department;‎
+‎    document.getElementById("branch").disabled = true;
+    document.getElementById("station").innerHTML = '<option value="" disabled selected>Select Station</option>';
+                   ‎
 ‎  clearRowHighlight();‎
 ‎}‎
 ‎    // ‎عند تغيير الفرع، جلب المحطات من‎ Google Sheets
@@ -494,5 +500,6 @@ document.getElementById("branch").addEventListener("change", function () {‎
 
 
 ‎</script>‎
+
 
 
