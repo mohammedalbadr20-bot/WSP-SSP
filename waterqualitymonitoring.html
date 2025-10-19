@@ -204,11 +204,16 @@
 </html>
 <script>
 const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+    
+// تعريف متغيرات عامة
+let department = "";
 
 // تحميل البيانات عند فتح الصفحة
 window.onload = () => {
   const email = sessionStorage.getItem("email");
-  const department = sessionStorage.getItem("department");
+  department = sessionStorage.getItem("department");
+  const stationSelect = document.getElementById("station");
+
 
   if (!email || !department) {
     alert("يرجى تسجيل الدخول أولاً");
@@ -241,8 +246,8 @@ window.onload = () => {
               }
             })
             .catch(error => {
-              console.error(" في تحميل :", error);
-              stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
+              console.error("Error fetching stations:", error);
+              stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
             });
   } 
   fetchData(email, department);
@@ -468,6 +473,7 @@ function clearForm() {
 
 
 </script>
+
 
 
 
