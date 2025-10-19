@@ -184,50 +184,49 @@
     <script>
       const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
       window.onload = () => {
-        const email = sessionStorage.getItem("email");
-        const department = sessionStorage.getItem("department");
-        if (!email || !department) {
-          alert("يرجى تسجيل الدخول");
-          window.location = "login.html";
-          return;
-        }
-      
-        document.getElementById("username").value = email;
-        document.getElementById("section").value = department;
-      
-        const branchSelect = document.getElementById("branch");
-        const stationSelect = document.getElementById("station");
-          
-      
-        if (department !== "WSP") {
-          // تحديد قيمة الـ select تلقائياً بناءً على القسم
-          document.getElementById("branch").value = department;
-          document.getElementById("branch").disabled = true;
-      
-          //  المحطات التابعة لهذا الفرع
-          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
-            .then(response => response.json())
-            .then(data => {
-              stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-              if (data.status === "success") {
-                data.stations.forEach(station => {
-                  const option = document.createElement("option");
-                  option.value = station;
-                  option.textContent = station;
-                  stationSelect.appendChild(option);
-                });
-              } else {
-                stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
-              }
-            })
-            .catch(error => {
-              console.error(" في تحميل :", error);
-              stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
-            });
-        }
-                            }
-          // تحميل البيانات (تى لغير WSP)
-          fetchData(email, department);
+      const email = sessionStorage.getItem("email");
+      const department = sessionStorage.getItem("department");
+      if (!email || !department) {
+        alert("يرجى تسجيل الدخول");
+        window.location = "login.html";
+        return;
+      }
+    
+      document.getElementById("username").value = email;
+      document.getElementById("section").value = department;
+    
+      const branchSelect = document.getElementById("branch");
+      const stationSelect = document.getElementById("station");
+    
+      if (department !== "WSP") {
+        document.getElementById("branch").value = department;
+        document.getElementById("branch").disabled = true;
+    
+        fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
+          .then(response => response.json())
+          .then(data => {
+            stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+            if (data.status === "success") {
+              data.stations.forEach(station => {
+                const option = document.createElement("option");
+                option.value = station;
+                option.textContent = station;
+                stationSelect.appendChild(option);
+              });
+            } else {
+              stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
+            }
+          })
+          .catch(error => {
+            console.error(" في تحميل :", error);
+            stationSelect.innerHTML = '<option value="" disabled selected>خطأ في الاتصال</option>';
+          });
+      }
+    
+      // 👇 تأكد من وضع هذا داخل onload
+      fetchData(email, department);
+    };
+
        
       
       
@@ -433,7 +432,10 @@
           console.error("خطأ:", error);
           alert("حدث خطأ أثناء تنفيذ العملية");
         });
-
+        if (action === "delete" && !document.getElementById("entry-id").value) {
+          alert("يرجى تحديد سجل لحذفه أولاً.");
+        return;
+        }
       }
     }
       
@@ -485,6 +487,7 @@
 
   </body> 
 </html>
+
 
 
 
