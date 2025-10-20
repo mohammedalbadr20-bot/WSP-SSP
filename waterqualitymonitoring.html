@@ -322,6 +322,7 @@ function fetchData(email, department) {
 
 function fillFormWithRow(row) {
   const isoDate = new Date(row[1]);
+  let formattedDate = "";
     if (isNaN(isoDate)) {
       console.warn("Invalid date in row[1]:", row[1]);
       document.getElementById("date").value = "";
@@ -489,6 +490,7 @@ function clearForm() {
 
 
 </script>
+
 
 
 
