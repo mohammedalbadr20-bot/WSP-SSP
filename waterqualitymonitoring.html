@@ -496,9 +496,41 @@ function clearForm() {
   }
   
 }
+function printTable() {
+  const table = document.getElementById("dataTable").outerHTML;
+  const style = `
+    <style>
+      table { border-collapse: collapse; width: 100%; direction: rtl; }
+      th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+    </style>
+  `;
+  const win = window.open('', '', 'height=700,width=900');
+  win.document.write('<html><head><title>طباعة البيانات</title>');
+  win.document.write(style);
+  win.document.write('</head><body>');
+  win.document.write(table);
+  win.document.write('</body></html>');
+  win.document.close();
+  win.print();
+}
+function exportTableToExcel(tableID, filename = '') {
+  const table = document.getElementById(tableID);
+  const dataType = 'application/vnd.ms-excel';
+  const tableHTML = table.outerHTML.replace(/ /g, '%20');
+
+  const link = document.createElement("a");
+  document.body.appendChild(link);
+
+  filename = filename ? filename + '.xls' : 'excel_data.xls';
+  link.href = 'data:' + dataType + ', ' + tableHTML;
+  link.download = filename;
+  link.click();
+  document.body.removeChild(link);
+}
 
 
 </script>
+
 
 
 
