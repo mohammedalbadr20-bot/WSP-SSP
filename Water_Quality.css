@@ -275,15 +275,26 @@ tbody td{
   border-bottom-width: 1px;
   border-bottom-color: black;
 }
-.output{
-  width:50px;
-  height: 50px;
-  display: inline-flex;
-  position:relative;
-  padding: 1px;
-  left:89%;
-  gap:30px;
-}  
+.output {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  margin: 5px;
+}
+
+.output img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+
+.output:hover img {
+  transform: scale(1.1);
+}
+
+
 
 
 
