@@ -328,11 +328,11 @@ function fillFormWithRow(row) {
       document.getElementById("date").value = "";
     } else {
       const formattedDate = isoDate.toISOString().split("T")[0];
-      document.getElementById("date").value = formattedDate;
+      document.getElementById("date").value = "";
     }
 
   document.getElementById("entry-id").value = row[0];
-  document.getElementById("date").value = formattedDate;
+  
   const branch = row[2];
         const station = row[3];
       
@@ -427,6 +427,12 @@ document.querySelectorAll(".button-content")[2].addEventListener("click", functi
 function sendData(action) {
   const email = sessionStorage.getItem("email");
   const department = sessionStorage.getItem("department");
+     // ✅ تحقق أن entry-id موجود إذا كانت العملية update أو delete
+  if ((action === "update" || action === "delete") && !document.getElementById("entry-id").value) {
+    alert("يرجى اختيار صف من الجدول قبل التحديث أو الحذف.");
+    return; // وقف التنفيذ
+  }
+
 
   const formData = new URLSearchParams();
 
@@ -456,6 +462,10 @@ function sendData(action) {
   formData.append("tc", document.getElementById("tc").value);
   formData.append("ta", document.getElementById("ta").value);
 
+  // ✅ طباعة البيانات المرسلة للفحص في Console
+  for (let pair of formData.entries()) {
+  console.log(`${pair[0]}: ${pair[1]}`);
+  }
   fetch(scriptURL, {
     method: "POST",
     headers: {
@@ -490,6 +500,7 @@ function clearForm() {
 
 
 </script>
+
 
 
 
