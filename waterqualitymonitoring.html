@@ -161,12 +161,12 @@
         
     </div>
     <br><br><br><br><br><br><br>
-    <button onclick="printTable()">🖨️ طباعة الجدول</button>
-    <button onclick="exportTableToExcel('dataTable', 'water_quality_data')">📁 تصدير إلى Excel</button>
+    <button onclick="printTable()">🖨</button>
+    <button onclick="exportTableToExcel('dataTable', 'water_quality_data')">📁 تصدير إلى </button>
     <br><br><br>
 
 
-    <table class="table-data">
+    <table id = "waterqualitytable" class="table-data">
         <thead class="thead">
             <tr>
               <th>ID</th>
@@ -501,7 +501,7 @@ function clearForm() {
   
 }
 function printTable() {
-  const table = document.getElementById("dataTable").outerHTML;
+  const table = document.getElementById("waterqualitytable").outerHTML;
   const style = `
     <style>
       table { border-collapse: collapse; width: 100%; direction: rtl; }
@@ -518,7 +518,7 @@ function printTable() {
   win.print();
 }
 function exportTableToExcel(tableID, filename = '') {
-  const table = document.getElementById(tableID);
+  const table = document.getElementById(waterqualitytable);
   const dataType = 'application/vnd.ms-excel';
   const tableHTML = table.outerHTML.replace(/ /g, '%20');
 
@@ -534,6 +534,7 @@ function exportTableToExcel(tableID, filename = '') {
 
 
 </script>
+
 
 
 
