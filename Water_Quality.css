@@ -281,6 +281,8 @@ tbody td{
   cursor: pointer;
   padding: 5px;
   margin: 5px;
+  position:relative;
+  left:85%;
 }
 
 .output img {
@@ -293,6 +295,7 @@ tbody td{
 .output:hover img {
   transform: scale(1.1);
 }
+
 
 
 
