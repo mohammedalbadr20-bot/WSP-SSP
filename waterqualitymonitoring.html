@@ -161,8 +161,8 @@
         
     </div>
     <br><br><br><br><br><br><br>
-    <button onclick="printTable()">🖨</button>
-    <button onclick="exportTableToExcel('dataTable', 'water_quality_data')">📁 تصدير إلى </button>
+    <button onclick="printTable()"><img src="https://static.vecteezy.com/system/resources/previews/006/693/009/non_2x/printer-icon-template-black-color-editable-printer-icon-symbol-flat-illustration-for-graphic-and-web-design-free-vector.jpg"></image></button>
+    <button onclick="exportTableToExcel('waterqualitytable', 'water_quality_data')">📁 تصدير إلى </button>
     <br><br><br>
 
 
@@ -509,7 +509,7 @@ function printTable() {
     </style>
   `;
   const win = window.open('', '', 'height=700,width=900');
-  win.document.write('<html><head><title>طباعة البيانات</title>');
+  win.document.write('<html><head><title>Raw Water Quality Monitoring</title>');
   win.document.write(style);
   win.document.write('</head><body>');
   win.document.write(table);
@@ -517,7 +517,7 @@ function printTable() {
   win.document.close();
   win.print();
 }
-function exportTableToExcel(tableID, filename = '') {
+function exportTableToExcel(waterqualitytable, filename = '') {
   const table = document.getElementById(waterqualitytable);
   const dataType = 'application/vnd.ms-excel';
   const tableHTML = table.outerHTML.replace(/ /g, '%20');
@@ -534,76 +534,5 @@ function exportTableToExcel(tableID, filename = '') {
 
 
 </script>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
