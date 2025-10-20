@@ -319,18 +319,17 @@ function fetchData(email, department) {
     });
 }
 
+function formatDateForInput(dateValue) {
+  const d = new Date(dateValue);
+  if (isNaN(d.getTime())) return ""; // إذا لم يكن تاريخًا صالحًا
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`; // الصيغة التي يفهمها input[type=date]
+}
 
 function fillFormWithRow(row) {
-  const isoDate = new Date(row[1]);
-  let formattedDate = "";
-    if (isNaN(isoDate)) {
-      console.warn("Invalid date in row[1]:", row[1]);
-      document.getElementById("date").value = "";
-    } else {
-      const formattedDate = isoDate.toISOString().split("T")[0];
-      document.getElementById("date").value = "";
-    }
-
+  document.getElementById("date").value = formatDateForInput(row[1]);
   document.getElementById("entry-id").value = row[0];
   
   const branch = row[2];
@@ -500,6 +499,7 @@ function clearForm() {
 
 
 </script>
+
 
 
 
