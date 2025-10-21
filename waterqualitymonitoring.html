@@ -426,12 +426,23 @@ function fillFormWithRow(row) {
 
     
 function clearRowHighlight() {
-  document.querySelectorAll("table.table-data tr").forEach(row => row.classList.remove("selected-row"));
+  // إزالة تمييز الصفوف الأخرى
+  document.querySelectorAll("table.table-data tr").forEach(row => {
+    row.classList.remove("selected-row");
+  });
 }
-   // جمع بيانات الصف من جميع خلايا الـ TD
-  const rowData = Array.from(row.children).map(td => td.textContent);
-  fillFormWithRow(rowData); // تمرير البيانات إلى الوظيفة
 
+// إضافة حدث لاختيار الصف
+document.querySelectorAll("table.table-data tr").forEach(row => {
+  row.addEventListener("click", function() {
+    clearRowHighlight(); // إزالة التمييز عن الصفوف الأخرى
+    row.classList.add("selected-row"); // تمييز الصف الحالي
+    const rowData = Array.from(row.children).map(td => td.textContent); // جمع البيانات من جميع خلايا الصف
+    fillFormWithRow(rowData); // تعبئة النموذج باستخدام بيانات الصف
+  });
+});
+
+// إضافة الأحداث للأزرار
 document.querySelectorAll(".button-content")[0].addEventListener("click", function (e) {
   e.preventDefault();
   sendData("add");
@@ -448,7 +459,6 @@ document.querySelectorAll(".button-content")[2].addEventListener("click", functi
 });
 
     
-
 function sendData(action) {
   const email = sessionStorage.getItem("email");
   const department = sessionStorage.getItem("department");
@@ -556,6 +566,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
