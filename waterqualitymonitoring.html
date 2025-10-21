@@ -223,7 +223,6 @@ window.onload = () => {
   department = sessionStorage.getItem("department");
   const stationSelect = document.getElementById("station");
 
-
   if (!email || !department) {
     alert("يرجى تسجيل الدخول أولاً");
     window.location = "login.html";
@@ -232,34 +231,32 @@ window.onload = () => {
 
   document.getElementById("username").value = email;
   document.getElementById("section").value = department;
-    
-//عدم فاعلية branch فى حالة الدخول اى منطقة عدا WSP
-  if (department !== "WSP"){  
-  // تحديد قيمة الـ select تلقائياً بناءً على القسم
-  document.getElementById("branch").value = department;
-  document.getElementById("branch").disabled = true;
-   //  المحطات التابعة لهذا الفرع
-          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
-            .then(response => response.json())
-            .then(data => {
-              stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
-              if (data.status === "success") {
-                data.stations.forEach(station => {
-                  const option = document.createElement("option");
-                  option.value = station;
-                  option.textContent = station;
-                  stationSelect.appendChild(option);
-                });
-              } else {
-                stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
-              }
-            })
-            .catch(error => {
-              console.error("Error fetching stations:", error);
-              stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
-            });
-           
-      } 
+
+  if (department !== "WSP") {
+    document.getElementById("branch").value = department;
+    document.getElementById("branch").disabled = true;
+
+    //  المحطات التابعة لهذا الفرع
+    fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
+      .then(response => response.json())
+      .then(data => {
+        stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+        if (data.status === "success") {
+          data.stations.forEach(station => {
+            const option = document.createElement("option");
+            option.value = station;
+            option.textContent = station;
+            stationSelect.appendChild(option);
+          });
+        } else {
+          stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching stations:", error);
+        stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+      });
+  }
   fetchData(email, department);
 };
 
@@ -280,7 +277,6 @@ function fetchData(email, department) {
 
       rows.slice(1).forEach((row) => {
         const rowBranch = row[2]; // العمود الثالث هو "Branch"
-        // إذا كان المستخدم ليس من WSP، تجاهل الصف إذا لم يكن من نفس القسم
         if (department !== "WSP" && rowBranch !== department) return;
 
         const tr = document.createElement("tr");
@@ -290,20 +286,19 @@ function fetchData(email, department) {
             const td = document.createElement("td");
 
             if (index === 1) {
-                const d = new Date(cell);
-                // إذا كان التاريخ صالحًا، نعرضه بصيغة dd/mm/yyyy بتوقيت مصر المحلي
-                td.textContent = !isNaN(d.getTime()) 
-                    ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` // تنسيق dd/mm/yyyy
-                    : cell ?? "";  // إذا كان التاريخ غير صالح نعرض القيمة الأصلية أو نص فارغ
+              const d = new Date(cell);
+              td.textContent = !isNaN(d.getTime())
+                ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`
+                : cell ?? "";
             } else {
-                td.textContent = cell ?? "";
+              td.textContent = cell ?? "";
             }
 
-            tr.appendChild(td); // إضافة الـ td إلى الـ tr
+            tr.appendChild(td);
           }
         });
 
-        tbody.appendChild(tr); // إضافة الـ tr إلى tbody
+        tbody.appendChild(tr);
       });
 
       // إذا لم توجد بيانات
@@ -323,95 +318,32 @@ function fetchData(email, department) {
     });
 }
 
-
-
 function formatDateForInput(dateValue) {
   const d = new Date(dateValue);
-  if (isNaN(d.getTime())) return ""; // إذا لم يكن تاريخًا صالحًا
-  
-  // تحويل التاريخ إلى توقيت مصر (Africa/Cairo)
+  if (isNaN(d.getTime())) return "";
+
   const egyptTime = d.toLocaleString('en-GB', { timeZone: 'Africa/Cairo' });
   const dateInCairo = new Date(egyptTime);
-  
-  // الحصول على اليوم، الشهر، السنة
-  const year = dateInCairo.getFullYear();
-  const month = String(dateInCairo.getMonth() + 1).padStart(2, '0'); // إضافة صفر إذا كانت قيمة الشهر أقل من 10
-  const day = String(dateInCairo.getDate()).padStart(2, '0'); // إضافة صفر إذا كانت قيمة اليوم أقل من 10
-  
-  // إعادة التاريخ بالصورة المناسبة لـ input[type=date]
-  return `${year}-${month}-${day}`; // التنسيق yyyy-mm-dd
 
+  const year = dateInCairo.getFullYear();
+  const month = String(dateInCairo.getMonth() + 1).padStart(2, '0');
+  const day = String(dateInCairo.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${day}`; // التنسيق yyyy-mm-dd
 }
 
-
-
 function fillFormWithRow(row) {
+  console.log("Row data:", row); // تحقق من البيانات المستخلصة من الصف
 
-    // تحقق من البيانات
-  console.log("Date value from row:", row[1]);  // تحقق من تاريخ الصف
   const formattedDate = formatDateForInput(row[1]); // تنسيق التاريخ
-  console.log("Formatted Date:", formattedDate);  // تحقق من التاريخ بعد تنسيقه
-
   document.getElementById("date").value = formattedDate; // تعبئة الحقل بالتاريخ المنسق
 
-  
-  document.getElementById("entry-id").value = row[0];
-  document.getElementById("date").value = formatDateForInput(row[1]);
-  const branch = row[2];
-  const station = row[3];
-  
-  const stationSelect = document.getElementById("station");
-  const branchSelect = document.getElementById("branch");
-  
-  // التأكد من أن الفرع موجود داخل القائمة وإذا لم يكن موجودًا، أضفه
-  let branchOption = [...branchSelect.options].find(opt => opt.value === branch);
-  
-  if (!branchOption) {
-    const newOption = document.createElement("option");
-    newOption.value = branch;
-    newOption.textContent = branch;
-    branchSelect.appendChild(newOption);
-  }
-  
-  // تعيين قيمة الفرع
-  branchSelect.value = branch;
-  
-  // إعادة تعطيل القائمة إذا كان المستخدم ليس من WSP
-  if (department !== "WSP") {
-    branchSelect.disabled = true;
-  }
+  document.getElementById("entry-id").value = row[0]; // تعبئة ID
+  document.getElementById("branch").value = row[2]; // تعبئة الفرع
+  document.getElementById("station").value = row[3]; // تعبئة المحطة
+  document.getElementById("sample").value = row[4]; // تعبئة الموقع
 
-  // التأكد من تحميل المحطات بعد تحديد الفرع
-  stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations...</option>';
-
-  // استدعاء المحطات بناءً على الفرع المحدد
-  fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === "success") {
-        // تنظيف الخيارات الحالية للمحطات وتعبئتها بالقيم الجديدة
-        stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-
-        data.stations.forEach(st => {
-          const option = document.createElement("option");
-          option.value = st;
-          option.textContent = st;
-          stationSelect.appendChild(option);
-        });
-
-        // تعيين قيمة المحطة بعد تحميل المحطات
-        stationSelect.value = station;
-      } else {
-        stationSelect.innerHTML = '<option value="" disabled selected>Not Found</option>';
-      }
-    })
-    .catch(error => {
-      console.error("خطأ في تحميل المحطات:", error);
-      stationSelect.innerHTML = '<option value="" disabled selected>Error</option>';
-    });
-
-  // ملء باقي الحقول
-  document.getElementById("sample").value = row[4];
+  // تعبئة باقي الحقول
   document.getElementById("turbidity").value = row[5];
   document.getElementById("pH").value = row[6];
   document.getElementById("temp").value = row[7];
@@ -431,19 +363,16 @@ function fillFormWithRow(row) {
   document.getElementById("ta").value = row[21];
 }
 
-
-    
 function clearRowHighlight() {
-  // إزالة تمييز الصفوف الأخرى
   document.querySelectorAll("table.table-data tr").forEach(row => {
     row.classList.remove("selected-row");
   });
 }
 
-// إضافة حدث لاختيار الصف
+// إضافة حدث لتحديد الصف وتعبئة البيانات
 document.querySelectorAll("table.table-data tr").forEach(row => {
   row.addEventListener("click", function() {
-    console.log("Row selected:", row); // تحقق إذا كان يتم النقر على الصف
+    console.log("Row selected:", row);
     clearRowHighlight(); // إزالة التمييز عن الصفوف الأخرى
     row.classList.add("selected-row"); // تمييز الصف الحالي
     const rowData = Array.from(row.children).map(td => td.textContent); // جمع البيانات من جميع خلايا الصف
@@ -451,35 +380,16 @@ document.querySelectorAll("table.table-data tr").forEach(row => {
   });
 });
 
-// إضافة الأحداث للأزرار
-document.querySelectorAll(".button-content")[0].addEventListener("click", function (e) {
-  e.preventDefault();
-  sendData("add");
-});
-
-document.querySelectorAll(".button-content")[1].addEventListener("click", function (e) {
-  e.preventDefault();
-  sendData("update");
-});
-
-document.querySelectorAll(".button-content")[2].addEventListener("click", function (e) {
-  e.preventDefault();
-  sendData("delete");
-});
-
-    
 function sendData(action) {
   const email = sessionStorage.getItem("email");
   const department = sessionStorage.getItem("department");
-     // ✅ تحقق أن entry-id موجود إذا كانت العملية update أو delete
+
   if ((action === "update" || action === "delete") && !document.getElementById("entry-id").value) {
     alert("يرجى اختيار صف من الجدول قبل التحديث أو الحذف.");
-    return; // وقف التنفيذ
-}
-
+    return;
+  }
 
   const formData = new URLSearchParams();
-
   formData.append("action", action);
   formData.append("email", email);
   formData.append("department", department);
@@ -506,10 +416,6 @@ function sendData(action) {
   formData.append("tc", document.getElementById("tc").value);
   formData.append("ta", document.getElementById("ta").value);
 
-  // ✅ طباعة البيانات المرسلة للفحص في Console
-  for (let pair of formData.entries()) {
-  console.log(`${pair[0]}: ${pair[1]}`);
-  }
   fetch(scriptURL, {
     method: "POST",
     headers: {
@@ -527,19 +433,6 @@ function sendData(action) {
       console.error("خطأ:", error);
       alert("حدث خطأ أثناء تنفيذ العملية.");
     });
-}
-
-function clearForm() {
-  document.querySelector("form").reset();
-  document.getElementById("entry-id").value = "";
-  clearRowHighlight();
-  if (department !== "WSP") {
-          // تحديد قيمة الـ select تلقائياً بناءً على القسم
-          document.getElementById("branch").value = department;
-          document.getElementById("branch").disabled = true;
-          document.getElementById("station").innerHTML = '<option value="" disabled selected>Select Station</option>';
-  }
-  
 }
 function printTable() {
   const table = document.getElementById("waterqualitytable").outerHTML;
@@ -575,6 +468,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
