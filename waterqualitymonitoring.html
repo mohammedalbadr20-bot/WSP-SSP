@@ -290,16 +290,14 @@ function fetchData(email, department) {
             const td = document.createElement("td");
 
             if (index === 1) {
-              const d = new Date(cell);
-              // إذا كان التاريخ صالحًا، نعرضه بصيغة YYYY-MM-DD بتوقيت مصر المحلي
-              td.textContent = !isNaN(d.getTime()) 
-                ? d.toLocaleDateString('en-EG')  // تنسيق التاريخ المحلي بتوقيت مصر
-                : cell ?? "";  // إذا كان التاريخ غير صالح نعرض القيمة الأصلية أو نص فارغ
+                const d = new Date(cell);
+                // إذا كان التاريخ صالحًا، نعرضه بصيغة dd/mm/yyyy بتوقيت مصر المحلي
+                td.textContent = !isNaN(d.getTime()) 
+                    ? `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}` // تنسيق dd/mm/yyyy
+                    : cell ?? "";  // إذا كان التاريخ غير صالح نعرض القيمة الأصلية أو نص فارغ
             } else {
-              td.textContent = cell ?? "";
-            }
-            
-            tr.appendChild(td);
+                td.textContent = cell ?? "";
+
 
       }
 });
@@ -346,7 +344,7 @@ function formatDateForInput(dateValue) {
   const day = String(dateInCairo.getDate()).padStart(2, '0'); // إضافة صفر إذا كانت قيمة اليوم أقل من 10
   
   // إعادة التاريخ بالصورة المناسبة لـ input[type=date]
-  return `${day}/${month}/${year}`; // التنسيق YYYY/MM/DD
+  return `${day}/${month}/${year}`; // التنسيق dd/mm/yyyy
 }
 
 
@@ -553,6 +551,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
