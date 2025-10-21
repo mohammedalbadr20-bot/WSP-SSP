@@ -346,9 +346,9 @@ function formatDateForInput(dateValue) {
 
 
 function fillFormWithRow(row) {
-  document.getElementById("date").value = formatDateForInput(row[1]);
-  document.getElementById("entry-id").value = row[0];
   
+  document.getElementById("entry-id").value = row[0];
+  document.getElementById("date").value = formatDateForInput(row[1]);
   const branch = row[2];
   const station = row[3];
   
@@ -428,6 +428,9 @@ function fillFormWithRow(row) {
 function clearRowHighlight() {
   document.querySelectorAll("table.table-data tr").forEach(row => row.classList.remove("selected-row"));
 }
+   // جمع بيانات الصف من جميع خلايا الـ TD
+  const rowData = Array.from(row.children).map(td => td.textContent);
+  fillFormWithRow(rowData); // تمرير البيانات إلى الوظيفة
 
 document.querySelectorAll(".button-content")[0].addEventListener("click", function (e) {
   e.preventDefault();
@@ -553,6 +556,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
