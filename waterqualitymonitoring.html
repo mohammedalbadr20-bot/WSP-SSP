@@ -330,17 +330,21 @@ function fetchData(email, department) {
 }
 
 function formatDateForInput(dateValue) {
-  const d = new Date(dateValue);
+  // نضيف 00:00:00 على التاريخ المدخل لضمان أنه لا يحتوي على وقت
+  const dateString = dateValue + "T00:00:00Z"; // إضافة توقيت UTC: "Z"
+  
+  const d = new Date(dateString);
   if (isNaN(d.getTime())) return ""; // إذا لم يكن تاريخًا صالحًا
   
-  // الحصول على اليوم، الشهر، والسنة
-  const year = d.getUTCFullYear();
-  const month = String(d.getUTCMonth() + 1).padStart(2, '0'); // إضافة صفر إذا كانت قيمة الشهر أقل من 10
-  const day = String(d.getUTCDate() + 1).padStart(2, '0'); // إضافة صفر إذا كانت قيمة اليوم أقل من 10
+  // الحصول على اليوم، الشهر، والسنة باستخدام التوقيت المحلي
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0'); // الشهر من 0-11
+  const day = String(d.getDate()).padStart(2, '0'); // اليوم
   
-  // إعادة التاريخ بالصورة المناسبة لـ input[type=date] بنظام MM/DD/YYYY
-  return `${month}/${day}/${year}`; // التنسيق MM/DD/YYYY
+  // إعادة التاريخ بالصورة المناسبة لـ input[type=date] بنظام YYYY-MM-DD
+  return `${year}-${month}-${day}`;
 }
+
 
 function fillFormWithRow(row) {
   document.getElementById("date").value = formatDateForInput(row[1]);
@@ -544,6 +548,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
