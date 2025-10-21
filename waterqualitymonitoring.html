@@ -290,14 +290,17 @@ function fetchData(email, department) {
             const td = document.createElement("td");
 
             if (index === 1) {
-              // تنسيق التاريخ في العمود الثاني
               const d = new Date(cell);
-              td.textContent = isNaN(d) ? cell : d.toISOString().split("T")[0];
+              // إذا كان التاريخ صالحًا، نعرضه بصيغة YYYY-MM-DD بتوقيت مصر المحلي
+              td.textContent = !isNaN(d.getTime()) 
+                ? d.toLocaleDateString('ar-EG')  // تنسيق التاريخ المحلي بتوقيت مصر
+                : cell ?? "";  // إذا كان التاريخ غير صالح نعرض القيمة الأصلية أو نص فارغ
             } else {
               td.textContent = cell ?? "";
             }
-
+            
             tr.appendChild(td);
+
       }
 });
 
@@ -330,20 +333,22 @@ function fetchData(email, department) {
 }
 
 function formatDateForInput(dateValue) {
-  // نضيف 00:00:00 على التاريخ المدخل لضمان أنه لا يحتوي على وقت
-  const dateString = dateValue + "T00:00:00Z"; // إضافة توقيت UTC: "Z"
-  
-  const d = new Date(dateString);
+  const d = new Date(dateValue);
   if (isNaN(d.getTime())) return ""; // إذا لم يكن تاريخًا صالحًا
   
-  // الحصول على اليوم، الشهر، والسنة باستخدام التوقيت المحلي
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0'); // الشهر من 0-11
-  const day = String(d.getDate()).padStart(2, '0'); // اليوم
+  // تحويل التاريخ إلى توقيت مصر (Africa/Cairo)
+  const egyptTime = d.toLocaleString('en-GB', { timeZone: 'Africa/Cairo' });
+  const dateInCairo = new Date(egyptTime);
   
-  // إعادة التاريخ بالصورة المناسبة لـ input[type=date] بنظام YYYY-MM-DD
-  return `${year}-${month}-${day}`;
+  // الحصول على اليوم، الشهر، السنة
+  const year = dateInCairo.getFullYear();
+  const month = String(dateInCairo.getMonth() + 1).padStart(2, '0'); // إضافة صفر إذا كانت قيمة الشهر أقل من 10
+  const day = String(dateInCairo.getDate()).padStart(2, '0'); // إضافة صفر إذا كانت قيمة اليوم أقل من 10
+  
+  // إعادة التاريخ بالصورة المناسبة لـ input[type=date]
+  return `${day}/${month}/${year}`; // التنسيق YYYY/MM/DD
 }
+
 
 
 function fillFormWithRow(row) {
@@ -548,6 +553,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
