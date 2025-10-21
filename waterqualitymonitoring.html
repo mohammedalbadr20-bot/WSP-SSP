@@ -332,12 +332,20 @@ function fetchData(email, department) {
 function formatDateForInput(dateValue) {
   const d = new Date(dateValue);
   if (isNaN(d.getTime())) return ""; // إذا لم يكن تاريخًا صالحًا
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`; // الصيغة التي يفهمها input[type=date]
+  // تحويل التاريخ إلى توقيت مصر
+  const egyptTime = d.toLocaleString('en-GB', { timeZone: 'Africa/Cairo' });
+  
+  // تحويل النص المعروض إلى كائن Date جديد
+  const dateInCairo = new Date(egyptTime);
+  
+  // الحصول على اليوم، الشهر، السنة
+  const year = dateInCairo.getFullYear();
+  const month = String(dateInCairo.getMonth() + 1).padStart(2, '0');
+  const day = String(dateInCairo.getDate()).padStart(2, '0');
+  
+  // إعادة التاريخ بالصورة المناسبة لـ input[type=date]
+  return `${year}-${month}-${day}`;
 }
-
 function fillFormWithRow(row) {
   document.getElementById("date").value = formatDateForInput(row[1]);
   document.getElementById("entry-id").value = row[0];
@@ -540,6 +548,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
