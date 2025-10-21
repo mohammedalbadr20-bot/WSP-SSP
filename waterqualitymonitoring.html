@@ -242,7 +242,7 @@ window.onload = () => {
           fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
             .then(response => response.json())
             .then(data => {
-              stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+              stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
               if (data.status === "success") {
                 data.stations.forEach(station => {
                   const option = document.createElement("option");
@@ -339,7 +339,8 @@ function formatDateForInput(dateValue) {
   const day = String(dateInCairo.getDate()).padStart(2, '0'); // إضافة صفر إذا كانت قيمة اليوم أقل من 10
   
   // إعادة التاريخ بالصورة المناسبة لـ input[type=date]
-  return `${day}/${month}/${year}`; // التنسيق dd/mm/yyyy
+  return `${year}-${month}-${day}`; // التنسيق yyyy-mm-dd
+
 }
 
 
@@ -372,7 +373,7 @@ function fillFormWithRow(row) {
         }
       
         //  المحطات أولاً
-        stationSelect.innerHTML = '<option value="" disabled selected>Loading...</option>';
+        stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations...</option>';
       
         // استدعاء المحطات أولاً، ثم تعبئة الحقول الأخرى
         fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
@@ -447,7 +448,7 @@ function sendData(action) {
   if ((action === "update" || action === "delete") && !document.getElementById("entry-id").value) {
     alert("يرجى اختيار صف من الجدول قبل التحديث أو الحذف.");
     return; // وقف التنفيذ
-  }
+}
 
 
   const formData = new URLSearchParams();
@@ -547,6 +548,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
