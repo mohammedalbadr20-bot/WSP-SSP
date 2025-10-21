@@ -346,6 +346,14 @@ function formatDateForInput(dateValue) {
 
 
 function fillFormWithRow(row) {
+
+    // تحقق من البيانات
+  console.log("Date value from row:", row[1]);  // تحقق من تاريخ الصف
+  const formattedDate = formatDateForInput(row[1]); // تنسيق التاريخ
+  console.log("Formatted Date:", formattedDate);  // تحقق من التاريخ بعد تنسيقه
+
+  document.getElementById("date").value = formattedDate; // تعبئة الحقل بالتاريخ المنسق
+}
   
   document.getElementById("entry-id").value = row[0];
   document.getElementById("date").value = formatDateForInput(row[1]);
@@ -566,6 +574,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
