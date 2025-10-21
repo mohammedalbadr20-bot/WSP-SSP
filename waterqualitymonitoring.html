@@ -293,7 +293,7 @@ function fetchData(email, department) {
               const d = new Date(cell);
               // إذا كان التاريخ صالحًا، نعرضه بصيغة YYYY-MM-DD بتوقيت مصر المحلي
               td.textContent = !isNaN(d.getTime()) 
-                ? d.toLocaleDateString('ar-EG')  // تنسيق التاريخ المحلي بتوقيت مصر
+                ? d.toLocaleDateString('en-EG')  // تنسيق التاريخ المحلي بتوقيت مصر
                 : cell ?? "";  // إذا كان التاريخ غير صالح نعرض القيمة الأصلية أو نص فارغ
             } else {
               td.textContent = cell ?? "";
@@ -553,6 +553,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
