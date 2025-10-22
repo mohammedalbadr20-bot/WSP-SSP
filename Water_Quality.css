@@ -297,6 +297,10 @@ tbody td{
   
 }
 
+.selected-row{
+  background-color:lightskyblue;
+  font-weight: bold;
+}
 
 
 
