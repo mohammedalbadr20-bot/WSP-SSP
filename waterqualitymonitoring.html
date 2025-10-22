@@ -297,7 +297,11 @@ function fetchData(email, department) {
             tr.appendChild(td);
           }
         });
-
+        tr.addEventListener("click", () => {
+          clearRowHighlight();
+          tr.classList.add("selected-row");
+          fillFormWithRow(row);
+        });
         tbody.appendChild(tr);
       });
 
@@ -379,7 +383,22 @@ document.querySelectorAll("table.table-data tr").forEach(row => {
     fillFormWithRow(rowData); // تعبئة النموذج باستخدام بيانات الصف
   });
 });
+document.querySelectorAll(".button-content")[0].addEventListener("click", function (e) {
+  e.preventDefault();
+  sendData("add");
+});
 
+document.querySelectorAll(".button-content")[1].addEventListener("click", function (e) {
+  e.preventDefault();
+  sendData("update");
+});
+
+document.querySelectorAll(".button-content")[2].addEventListener("click", function (e) {
+  e.preventDefault();
+  sendData("delete");
+});
+
+    
 function sendData(action) {
   const email = sessionStorage.getItem("email");
   const department = sessionStorage.getItem("department");
@@ -434,6 +453,26 @@ function sendData(action) {
       alert("حدث خطأ أثناء تنفيذ العملية.");
     });
 }
+
+function clearForm() {
+  document.querySelector("form").reset();
+  document.getElementById("entry-id").value = "";
+  clearRowHighlight();
+  if (department !== "WSP") {
+          // تحديد قيمة الـ select تلقائياً بناءً على القسم
+          document.getElementById("branch").value = department;
+          document.getElementById("branch").disabled = true;
+          document.getElementById("station").innerHTML = '<option value="" disabled selected>Select Station</option>';
+  }
+  
+}
+
+
+
+
+
+
+    
 function printTable() {
   const table = document.getElementById("waterqualitytable").outerHTML;
   const style = `
@@ -468,6 +507,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
