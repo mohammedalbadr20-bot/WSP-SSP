@@ -256,6 +256,37 @@ window.onload = () => {
         console.error("Error fetching stations:", error);
         stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
       });
+  } else {
+    // المستخدم من قسم WSP: يمكنه اختيار الفرع يدوياً
+    branchSelect.disabled = false;
+
+    // عند تغيير الفرع، يتم تحميل المحطات الخاصة به
+    branchSelect.addEventListener("change", () => {
+      const selectedBranch = branchSelect.value;
+      if (!selectedBranch) return;
+
+      stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+
+      fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(selectedBranch)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "success") {
+            stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+            data.stations.forEach(station => {
+              const option = document.createElement("option");
+              option.value = station;
+              option.textContent = station;
+              stationSelect.appendChild(option);
+            });
+          } else {
+            stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
+          }
+        })
+        .catch(error => {
+          console.error("Error fetching stations:", error);
+          stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+        });
+    });
   }
   fetchData(email, department);
 };
@@ -507,6 +538,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
