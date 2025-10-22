@@ -381,17 +381,20 @@ function fetchData(email, department) {
 }
 
 function formatDateForInput(dateValue) {
-  const d = new Date(dateValue);
-  if (isNaN(d.getTime())) return "";
+  try {
+    const d = new Date(dateValue);
+    if (isNaN(d.getTime())) return "";
 
-  const egyptTime = d.toLocaleString('en-GB', { timeZone: 'Africa/Cairo' });
-  const dateInCairo = new Date(egyptTime);
+    // استخدام toLocaleDateString لضمان تحويل التاريخ إلى توقيت مصر
+    const [day, month, year] = d
+      .toLocaleDateString("en-GB", { timeZone: "Africa/Cairo" })
+      .split("/");
 
-  const year = dateInCairo.getFullYear();
-  const month = String(dateInCairo.getMonth() + 1).padStart(2, '0');
-  const day = String(dateInCairo.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`; // التنسيق yyyy-mm-dd
+    return `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+  } catch (error) {
+    console.error("Invalid date for input formatting:", error);
+    return "";
+  }
 }
 
 function fillFormWithRow(row) {
@@ -600,6 +603,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
