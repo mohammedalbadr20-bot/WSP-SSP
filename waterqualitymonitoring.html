@@ -217,31 +217,46 @@ const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRF
 // تعريف متغيرات عامة
 let department = "";
 
-// تحميل البيانات عند فتح الصفحة
+// يتم تنفيذ هذا الكود عند تحميل الصفحة بالكامل
 window.onload = () => {
+  // جلب البريد الإلكتروني والقسم من الجلسة (sessionStorage)
   const email = sessionStorage.getItem("email");
   department = sessionStorage.getItem("department");
-  const stationSelect = document.getElementById("station");
 
+  // الحصول على عناصر الـ select الخاصة بالمحطة والفرع
+  const stationSelect = document.getElementById("station");
+  const branchSelect = document.getElementById("branch");
+
+  // التحقق من وجود بيانات الدخول، إذا لم تكن موجودة يتم توجيه المستخدم إلى صفحة تسجيل الدخول
   if (!email || !department) {
     alert("يرجى تسجيل الدخول أولاً");
     window.location = "login.html";
     return;
   }
 
+  // تعبئة البريد الإلكتروني والقسم في الحقول الخاصة بهما
   document.getElementById("username").value = email;
   document.getElementById("section").value = department;
 
+  // إذا لم يكن المستخدم من قسم WSP
   if (department !== "WSP") {
-    document.getElementById("branch").value = department;
-    document.getElementById("branch").disabled = true;
+    // يتم تعيين الفرع تلقائيًا من القسم وتعطيل إمكانية تغييره
+    branchSelect.value = department;
+    branchSelect.disabled = true;
 
-    //  المحطات التابعة لهذا الفرع
+    // جلب قائمة المحطات الخاصة بالفرع من Google App Script
     fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
-      .then(response => response.json())
+      .then(response => response.json()) // تحويل الاستجابة إلى JSON
       .then(data => {
+        // عرض رسالة مؤقتة أثناء تحميل المحطات
         stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+        
+        // إذا تم جلب المحطات بنجاح
         if (data.status === "success") {
+          // إعادة تعيين القائمة
+          stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+          
+          // إضافة كل محطة كخيار في القائمة
           data.stations.forEach(station => {
             const option = document.createElement("option");
             option.value = station;
@@ -249,28 +264,36 @@ window.onload = () => {
             stationSelect.appendChild(option);
           });
         } else {
+          // في حال عدم وجود محطات
           stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
         }
       })
       .catch(error => {
+        // في حال حدوث خطأ أثناء الاتصال
         console.error("Error fetching stations:", error);
         stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
       });
+
   } else {
-    // المستخدم من قسم WSP: يمكنه اختيار الفرع يدوياً
+    // إذا كان المستخدم من قسم WSP (أي يمكنه اختيار أي فرع)
+    
+    // إتاحة اختيار الفرع من القائمة
     branchSelect.disabled = false;
 
-    // عند تغيير الفرع، يتم تحميل المحطات الخاصة به
+    // عند تغيير الفرع المختار من قبل المستخدم
     branchSelect.addEventListener("change", () => {
-      const selectedBranch = branchSelect.value;
-      if (!selectedBranch) return;
+      const selectedBranch = branchSelect.value; // الحصول على الفرع المختار
+      if (!selectedBranch) return; // التأكد من أن قيمة الفرع صالحة
 
+      // عرض رسالة تحميل مؤقتة
       stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
 
+      // إرسال طلب لجلب المحطات الخاصة بالفرع المختار
       fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(selectedBranch)}`)
-        .then(response => response.json())
+        .then(response => response.json()) // تحويل الاستجابة إلى JSON
         .then(data => {
           if (data.status === "success") {
+            // تفريغ وإعادة بناء القائمة بالمحطات الجديدة
             stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
             data.stations.forEach(station => {
               const option = document.createElement("option");
@@ -279,15 +302,19 @@ window.onload = () => {
               stationSelect.appendChild(option);
             });
           } else {
+            // في حال لم يتم العثور على محطات
             stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
           }
         })
         .catch(error => {
+          // في حال حدوث خطأ أثناء الاتصال
           console.error("Error fetching stations:", error);
           stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
         });
     });
   }
+
+  // تحميل البيانات الخاصة بجودة المياه للمستخدم أو القسم
   fetchData(email, department);
 };
 
@@ -538,6 +565,7 @@ function exportTableToExcel(waterqualitytable, filename = '') {
 
 
 </script>
+
 
 
 
