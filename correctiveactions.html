@@ -124,27 +124,54 @@
       
     </form>
     <script>
-    window.onload=()=>{
+    <script>
+    window.onload = () => {
       const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-      const email= sessionStorage.getItem("email");
-      const section= sessionStorage.getItem("section");
-        document.getElementById("email").value=email;
-        document.getElementById("section").value=section;
-        const selectBranch = document.getElementById("branch");
-        const selectStation = document.getElementById("station");
-        if (department !== WSP){
-          selectBranch.disabled=true;
-          selectBranch.value=section;
-          fetch(`${scriptUrl}?action=getStations&branch=${encodeURIComponent(department)}`)
-          .then response => response.json())
-          .then (data=>{
-            .certifieddate.value
     
-     
+      const email = sessionStorage.getItem("email");
+      const section = sessionStorage.getItem("section");
+    
+      // تأكد أن IDs في HTML تطابق هذه الأسماء
+      document.getElementById("email").value = email || "";
+      document.getElementById("section").value = section || "";
+    
+      const selectBranch = document.getElementById("branch");
+      const selectStation = document.getElementById("station");
+      const certifiedDate = document.getElementById("certifieddate");
+    
+      if (section !== "WSP") {
+        selectBranch.disabled = true;
+        selectBranch.value = section;
+    
+        fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
+          .then(response => response.json())
+          .then(data => {
+            // تنظيف القائمة القديمة
+            selectStation.innerHTML = "";
+    
+            // تعبئة المحطات القادمة من Google Script
+            data.forEach(station => {
+              const option = document.createElement("option");
+              option.value = station.id;
+              option.textContent = station.name;
+              selectStation.appendChild(option);
+            });
+    
+            // مثال: تعبئة التاريخ من أول عنصر
+            if (data.length > 0 && data[0].certifiedDate) {
+              certifiedDate.value = data[0].certifiedDate;
+            }
+          })
+          .catch(error => console.error("Error fetching stations:", error));
+      }
+    };
     </script>
+
+  
   </body>
 
 </html>
+
 
 
 
