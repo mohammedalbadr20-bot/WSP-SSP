@@ -125,8 +125,9 @@
     </form>
     <script>
     window.onload=()=>{
-      const email= sessionStorage.getItem("email")
-      const department= sessionStorage.getItem("department")
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+      const email= sessionStorage.getItem("email");
+      const department= sessionStorage.getItem("department");
         document.getElementById("username").value=email;
         document.getElementById("department").value=department;
         const selectBranch = document.getElementById("branch");
@@ -144,4 +145,5 @@
   </body>
 
 </html>
+
 
