@@ -6,8 +6,8 @@
   </head>
   <body>
     <div class="username">
-      <label for="username" class="dislabel">Email</label>
-      <input id="username" value="" disabled> 
+      <label for="email" class="dislabel">Email</label>
+      <input id="email" value="" disabled> 
    
     </div>
     <div class="region">
@@ -127,14 +127,14 @@
     window.onload=()=>{
       const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
       const email= sessionStorage.getItem("email");
-      const department= sessionStorage.getItem("department");
-        document.getElementById("username").value=email;
-        document.getElementById("department").value=department;
+      const section= sessionStorage.getItem("section");
+        document.getElementById("email").value=email;
+        document.getElementById("section").value=section;
         const selectBranch = document.getElementById("branch");
         const selectStation = document.getElementById("station");
         if (department !== WSP){
           selectBranch.disabled=true;
-          selectBranch.value=department;
+          selectBranch.value=section;
           fetch(`${scriptUrl}?action=getStations&branch=${encodeURIComponent(department)}`)
           .then response => response.json())
           .then (data=>{
@@ -145,5 +145,6 @@
   </body>
 
 </html>
+
 
 
