@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Corrective Actions</title>
+    <link rel="stylesheet" href="corr_action.css"/>
+  </head>
+  <body>
+    <div class="username">
+      <label for="username" class="dislabel">Email</label>
+      <input id="username" value="" disabled> 
+   
+    </div>
+    <div class="region">
+      <label for="section" class="dislabel">Section</label>
+      <input id="section" value="" disabled> 
+      
+    </div>
+    <form>
+      <h1>Corrective Actions</h1>
+      <br><br>
+      
+      <div class="generalinfo">
+        <div>
+        <label class="infolabel">Branch</label>
+        <select>
+          <option value ="" selected disabled>Select Branch</option>
+          <option value="العدوه">العدوه</option>
+          <option value="مغاغة">مغاغة</option>
+          <option value="بنى مزار">بنى مزار</option>
+          <option value="مطاى">مطاى</option>
+          <option value="سمالوط">سمالوط</option>
+          <option value="المنيا">المنيا</option>
+          <option value="ابوقرقاص">ابوقرقاص</option>
+          <option value="ملوى">ملوى</option>
+          <option value="ديرمواس">ديرمواس</option>
+        </select>
+        </div>
+      
+      
+        <div>
+        <label class="infolabel">Station</label>
+        <select>
+          <option value ="" selected disabled>Select Station</option>
+        </select>
+        </div>
+        
+        
+        <div>
+        <label class="infolabel">Certified Date</label>
+        <input type="Date" selected disabled>
+        </div>
+      </div>
+      <hr>
+      
+      <div class="risk">
+        <label>Risk</label>
+        <select>
+           <option value ="" selected disabled>Select Risk</option>
+        </select>
+      </div>
+
+      
+
+      <div class="action"> 
+        <label>Corrective Action</label>
+        <input value ="" disabled id="action">       
+      </div>   
+
+      <div class="branchresponse">
+        <div class="duration">
+          <label>Duration (month)</label>
+          <input type="number"  value="24" disabled>
+        </div>
+        
+        <div>
+          <label>Situation</label>
+          <select>
+            <option value="" selected disabled>Select Situation</option>
+            <option value="تم">تم</option>
+            <option value="جارى">جارى</option>
+            <option value="لم يتم">لم يتم</option></option>
+          </select>
+        </div>
+        
+        <div>
+           <label>Attachment</label>
+            <input type="file" accept="image">
+        </div>
+       
+      </div> 
+      
+        <div class="branchremark">
+          <label>Remarks</label>
+          <textarea name="Remarks" type="text" maxlength="150"></textarea>
+        </div>
+        
+        <div class="wspcomment">
+          <label>WSP Comments</label>
+          <textarea name="WSP Comments" maxlength="150"></textarea>
+        </div> 
+        
+      </div> 
+        
+      
+      <hr>
+      <div class="buttons">
+        <button>WSP Submit</button>
+        <button>WSP Update</button>
+        <button>Branch Submit</button>
+        <button>Branch Update</button>
+       
+      </div>
+      
+      
+      
+    
+      
+      
+      
+      
+      
+      
+      
+      
+    </form>
+    
+     
+      
+  </body>
+</html>
