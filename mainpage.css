@@ -1,0 +1,61 @@
+body {
+    font-family: 'Times New Roman', Times, serif;
+    background-color: #f5f7fa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .options {
+    display: flex;
+    flex-wrap: wrap; /* لو الشاشة صغيرة ينتقل الزر للسطر التالي */
+    gap: 100px;
+    justify-content: center;
+  }
+
+  .buttonlabel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    border: 2px solid #007bff;
+    border-radius: 12px;
+    padding: 10px;
+    width: 250px;
+    height: 250px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    
+  }
+
+  .buttonlabel:hover {
+    background-color: #007bff;
+    color: black;
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+    transform: scale(1.5);
+  }
+
+  .buttonlabel img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    transition: 0.3s;
+   
+  }
+
+  .buttonlabel:hover img{
+    transform: scale(1.5);
+  }
+
+  .buttonlabel span {
+    font-size: 15px;
+    font-weight: bold;
+    z-index: 1;
+  }
+
+  
