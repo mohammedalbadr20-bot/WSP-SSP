@@ -2,176 +2,145 @@
 <html>
   <head>
     <title>Corrective Actions</title>
-    <link rel="stylesheet" href="corr_action.css"/>
+    <link rel="stylesheet" href="corr_action.css" />
   </head>
   <body>
     <div class="username">
       <label for="email" class="dislabel">Email</label>
-      <input id="email" value="" disabled> 
-   
+      <input id="email" value="" disabled>
     </div>
+
     <div class="region">
       <label for="section" class="dislabel">Section</label>
-      <input id="section" value="" disabled> 
-      
+      <input id="section" value="" disabled>
     </div>
-    <form>
+
+    <form onsubmit="return false;">
       <h1>Corrective Actions</h1>
       <br><br>
-      
+
       <div class="generalinfo">
         <div>
-        <label class="infolabel">Branch</label>
-        <select>
-          <option value ="" selected disabled>Select Branch</option>
-          <option value="العدوه">العدوه</option>
-          <option value="مغاغة">مغاغة</option>
-          <option value="بنى مزار">بنى مزار</option>
-          <option value="مطاى">مطاى</option>
-          <option value="سمالوط">سمالوط</option>
-          <option value="المنيا">المنيا</option>
-          <option value="ابوقرقاص">ابوقرقاص</option>
-          <option value="ملوى">ملوى</option>
-          <option value="ديرمواس">ديرمواس</option>
-        </select>
+          <label class="infolabel">Branch</label>
+          <select id="branch">
+            <option value="" selected disabled>Select Branch</option>
+            <option value="العدوه">العدوه</option>
+            <option value="مغاغة">مغاغة</option>
+            <option value="بنى مزار">بنى مزار</option>
+            <option value="مطاى">مطاى</option>
+            <option value="سمالوط">سمالوط</option>
+            <option value="المنيا">المنيا</option>
+            <option value="ابوقرقاص">ابوقرقاص</option>
+            <option value="ملوى">ملوى</option>
+            <option value="ديرمواس">ديرمواس</option>
+          </select>
         </div>
-      
-      
+
         <div>
-        <label class="infolabel">Station</label>
-        <select>
-          <option value ="" selected disabled>Select Station</option>
-        </select>
+          <label class="infolabel">Station</label>
+          <select id="station">
+            <option value="" selected disabled>Select Station</option>
+          </select>
         </div>
-        
-        
+
         <div>
-        <label class="infolabel">Certified Date</label>
-        <input type="Date" selected disabled>
+          <label class="infolabel">Certified Date</label>
+          <input type="date" id="certifieddate" disabled>
         </div>
       </div>
+
       <hr>
-      
+
       <div class="risk">
         <label>Risk</label>
         <select>
-           <option value ="" selected disabled>Select Risk</option>
+          <option value="" selected disabled>Select Risk</option>
         </select>
       </div>
 
-      
-
-      <div class="action"> 
+      <div class="action">
         <label>Corrective Action</label>
-        <input value ="" disabled id="action">       
-      </div>   
+        <input value="" disabled id="action">
+      </div>
 
       <div class="branchresponse">
         <div class="duration">
           <label>Duration (month)</label>
-          <input type="number"  value="24" disabled>
+          <input type="number" value="24" disabled>
         </div>
-        
+
         <div>
           <label>Situation</label>
           <select>
             <option value="" selected disabled>Select Situation</option>
             <option value="تم">تم</option>
             <option value="جارى">جارى</option>
-            <option value="لم يتم">لم يتم</option></option>
+            <option value="لم يتم">لم يتم</option>
           </select>
         </div>
-        
+
         <div>
-           <label>Attachment</label>
-            <input type="file" accept="image">
+          <label>Attachment</label>
+          <input type="file" accept="image/*">
         </div>
-       
-      </div> 
-      
-        <div class="branchremark">
-          <label>Remarks</label>
-          <textarea name="Remarks" type="text" maxlength="150"></textarea>
-        </div>
-        
-        <div class="wspcomment">
-          <label>WSP Comments</label>
-          <textarea name="WSP Comments" maxlength="150"></textarea>
-        </div> 
-        
-      </div> 
-        
-      
+      </div>
+
+      <div class="branchremark">
+        <label>Remarks</label>
+        <textarea name="Remarks" maxlength="150"></textarea>
+      </div>
+
+      <div class="wspcomment">
+        <label>WSP Comments</label>
+        <textarea name="WSP Comments" maxlength="150"></textarea>
+      </div>
+
       <hr>
+
       <div class="buttons">
         <button>WSP Submit</button>
         <button>WSP Update</button>
         <button>Branch Submit</button>
         <button>Branch Update</button>
-       
       </div>
-      
-      
-      
-    
-      
-      
-      
-      
-      
-      
-      
-      
     </form>
+
     <script>
-    <script>
-    window.onload = () => {
-      const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-    
-      const email = sessionStorage.getItem("email");
-      const section = sessionStorage.getItem("section");
-    
-      // تأكد أن IDs في HTML تطابق هذه الأسماء
-      document.getElementById("email").value = email || "";
-      document.getElementById("section").value = section || "";
-    
-      const selectBranch = document.getElementById("branch");
-      const selectStation = document.getElementById("station");
-      const certifiedDate = document.getElementById("certifieddate");
-    
-      if (section !== "WSP") {
-        selectBranch.disabled = true;
-        selectBranch.value = section;
-    
-        fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
-          .then(response => response.json())
-          .then(data => {
-            // تنظيف القائمة القديمة
-            selectStation.innerHTML = "";
-    
-            // تعبئة المحطات القادمة من Google Script
-            data.forEach(station => {
-              const option = document.createElement("option");
-              option.value = station.id;
-              option.textContent = station.name;
-              selectStation.appendChild(option);
-            });
-    
-            // مثال: تعبئة التاريخ من أول عنصر
-            if (data.length > 0 && data[0].certifiedDate) {
-              certifiedDate.value = data[0].certifiedDate;
-            }
-          })
-          .catch(error => console.error("Error fetching stations:", error));
-      }
-    };
+      window.onload = () => {
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+
+        const email = sessionStorage.getItem("email");
+        const section = sessionStorage.getItem("section");
+
+        document.getElementById("email").value = email || "";
+        document.getElementById("section").value = section || "";
+
+        const selectBranch = document.getElementById("branch");
+        const selectStation = document.getElementById("station");
+        const certifiedDate = document.getElementById("certifieddate");
+
+        if (section !== "WSP") {
+          selectBranch.disabled = true;
+          selectBranch.value = section;
+
+          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
+            .then(response => response.json())
+            .then(data => {
+              selectStation.innerHTML = "";
+              data.forEach(station => {
+                const option = document.createElement("option");
+                option.value = station.id;
+                option.textContent = station.name;
+                selectStation.appendChild(option);
+              });
+
+              if (data.length > 0 && data[0].certifiedDate) {
+                certifiedDate.value = data[0].certifiedDate;
+              }
+            })
+            .catch(error => console.error("Error fetching stations:", error));
+        }
+      };
     </script>
-
-  
   </body>
-
 </html>
-
-
-
-
