@@ -123,8 +123,22 @@
       
       
     </form>
+    <script>
+    window.onload=()=>{
+        document.getElementById("username").value=email;
+        document.getElementById("department").value=department;
+        const selectBranch = document.getElementById("branch");
+        const selectStation = document.getElementById("station");
+        if (department !==== WSP){
+          selectBranch.disabled=true;
+          selectBranch.value=department;
+          fetch('${scriptUrl}?action=getStations&branch=${encodeURIComponent(department)}')
+          .then response=>response.json())
+          .then (data=>{
+            .certifieddate.value
     
      
-      
+    </script>
   </body>
+
 </html>
