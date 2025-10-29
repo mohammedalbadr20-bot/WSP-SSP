@@ -180,15 +180,13 @@
       };
 
       // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
-      function fetchStationDetails() {
-          var station = document.getElementById('station').value;
-          if (!station) {
-            alert("Please select a station first");
-            return;
-          }
+     function fetchStationDetails() {
+      var station = document.getElementById('station').value;
+      if (!station) return;
+    
+      google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station);
+    }
 
-          google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station);
-      }
 
       // تحديث واجهة المستخدم بناءً على التفاصيل المسترجعة
       function updateStationDetails(data) {
@@ -209,3 +207,4 @@
     </script>
   </body>
 </html>
+
