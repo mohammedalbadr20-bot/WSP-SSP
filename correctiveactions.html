@@ -167,9 +167,33 @@
 
         selectedBranch.addEventListener("change", () => fetchStations(selectedBranch.value));
       }
+      function fetchStationDetails() {
+        const station = selectedStation.value;
+        if (!station) return;
+      
+        fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(station)}`)
+          .then(resp => resp.json())
+          .then(data => {
+            if (data.status === "success") {
+              const detail = data.details[0];
+              if (!detail) return;
+      
+              document.getElementById('risk').value = detail.risk || "";
+              document.getElementById('action').value = detail.correctiveAction || "";
+              document.getElementById('duration').value = detail.duration || "";
+              document.getElementById('situation').value = detail.executionStatus || "";
+              document.getElementById('branchcomment').value = detail.branchRemarks || "";
+              document.getElementById('wspcomment').value = detail.wspRemarks || "";
+              document.getElementById('stationDetails').style.display = 'block';
+            }
+          })
+          .catch(err => console.error("Error fetching station details:", err));
+      }
+
     </script>
      
 
      
+
 
 
