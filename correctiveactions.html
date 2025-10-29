@@ -124,6 +124,26 @@
         const branchComment = document.getElementById("branchcomment");
         const certifiedDateInput = document.getElementById("certifieddate");
 
+        // دالة مساعدة لتعبئة المحطات في قائمة الاختيار
+        function populateStations(data) {
+          selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
+          const stations = Array.isArray(data.stations) ? data.stations : (Array.isArray(data) ? data : []);
+          stations.forEach(station => {
+            const option = document.createElement("option");
+            option.value = station.name || station;
+            option.textContent = station.name || station;
+            selectedStation.appendChild(option);
+          });
+
+          // حذف أي معالجات حدث سابقة على select
+          selectedStation.onchange = null;
+
+          selectedStation.addEventListener("change", () => {
+            const selected = stations.find(st => (st.name || st) === selectedStation.value);
+            certifiedDateInput.value = selected?.certifiedDate || "";
+          });
+        }
+
         if (section !== "WSP") {
           selectedBranch.disabled = true;
           wspComment.disabled = true;
@@ -133,18 +153,7 @@
           fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
             .then(response => response.json())
             .then(data => {
-              selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
-              data.forEach(station => {
-                const option = document.createElement("option");
-                option.value = station.name || station;
-                option.textContent = station.name || station;
-                selectedStation.appendChild(option);
-              });
-
-              selectedStation.addEventListener("change", () => {
-                const selected = data.find(st => (st.name || st) === selectedStation.value);
-                certifiedDateInput.value = selected?.certifiedDate || "";
-              });
+              populateStations(data);
             })
             .catch(error => console.error("Error fetching stations:", error));
 
@@ -160,19 +169,7 @@
             fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
               .then(response => response.json())
               .then(data => {
-                selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
-                const stations = data.stations || data;
-                stations.forEach(station => {
-                  const option = document.createElement("option");
-                  option.value = station.name || station;
-                  option.textContent = station.name || station;
-                  selectedStation.appendChild(option);
-                });
-
-                selectedStation.addEventListener("change", () => {
-                  const selected = stations.find(st => (st.name || st) === selectedStation.value);
-                  certifiedDateInput.value = selected?.certifiedDate || "";
-                });
+                populateStations(data);
               })
               .catch(error => {
                 console.error("Error fetching stations:", error);
@@ -185,12 +182,11 @@
       // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
       function fetchStationDetails() {
           var station = document.getElementById('station').value;
-        if (!station) {
-        alert("Please select a station first");
-        return;
-    }
+          if (!station) {
+            alert("Please select a station first");
+            return;
+          }
 
-        
           google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station);
       }
 
@@ -213,4 +209,3 @@
     </script>
   </body>
 </html>
-
