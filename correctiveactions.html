@@ -45,7 +45,7 @@
 
         <div>
           <label class="infolabel">Certified Date</label>
-          <input type="date" id="certifieddate" value="" disabled>
+          <input type="date" id="certifieddate" disabled>
         </div>
       </div>
 
@@ -53,8 +53,8 @@
 
       <div class="risk">
         <label>Risk</label>
-        <select id="risk">
-          <option value="" >Select Risk</option>
+        <select>
+          <option value="" selected disabled>Select Risk</option>
         </select>
       </div>
 
@@ -66,7 +66,7 @@
       <div class="branchresponse">
         <div class="duration">
           <label>Duration (month)</label>
-          <input type="number" value="" disabled>
+          <input type="number" value="24" disabled>
         </div>
 
         <div>
@@ -87,12 +87,12 @@
 
       <div class="branchremark">
         <label>Remarks</label>
-        <textarea name="Remarks" maxlength="150"></textarea>
+        <textarea id="branchcomment" name="Remarks" maxlength="150"></textarea>
       </div>
 
       <div class="wspcomment">
         <label>WSP Comments</label>
-        <textarea name="WSP Comments" maxlength="150"></textarea>
+        <textarea id= "wspcomment" name="WSP Comments" maxlength="150"></textarea>
       </div>
 
       <hr>
@@ -104,7 +104,7 @@
         <button>Branch Update</button>
       </div>
     </form>
-
+    
     <script>
       window.onload = () => {
         const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
@@ -115,37 +115,133 @@
         document.getElementById("email").value = email || "";
         document.getElementById("section").value = section || "";
 
-        const selectBranch = document.getElementById("branch");
-        const selectStation = document.getElementById("station");
-        const certifiedDate = document.getElementById("certifieddate");
+        const selectedBranch = document.getElementById("branch");
+        const selectedStation = document.getElementById("station");
+        const wspComment = document.getElementById("wspcomment");
+        const branchComment = document.getElementById("branchcomment");
+        const certifiedDateInput = document.getElementById("certifieddate"); // ✅ حقل تاريخ الاعتماد
 
+        // 🔹 المستخدم من أحد الفروع
         if (section !== "WSP") {
-          selectBranch.disabled = true;
-          selectBranch.value = section;
+          selectedBranch.disabled = true;
+          wspComment.disabled = true;
+          branchComment.disabled = false;
+          selectedBranch.value = section;
 
           fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
             .then(response => response.json())
             .then(data => {
-              selectStation.innerHTML = "";
+              selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
               data.forEach(station => {
                 const option = document.createElement("option");
-                option.value = station.id;
-                option.textContent = station.name;
-                selectStation.appendChild(option);
+                // 👇 إذا كانت البيانات ككائنات فيها name وcertifiedDate
+                if (typeof station === "object") {
+                  option.value = station.name;
+                  option.textContent = station.name;
+                } else {
+                  option.value = station;
+                  option.textContent = station;
+                }
+                selectedStation.appendChild(option);
               });
 
-              if (data.length > 0 && data[0].certifiedDate) {
-                certifiedDate.value = data[0].certifiedDate;
-              }
+              // ✅ عند اختيار محطة، عرض تاريخ اعتمادها إن وجد
+              selectedStation.addEventListener("change", () => {
+                const selected = data.find(st =>
+                  (st.name || st) === selectedStation.value
+                );
+                if (selected && selected.certifiedDate) {
+                  certifiedDateInput.value = selected.certifiedDate;
+                } else {
+                  certifiedDateInput.value = "";
+                }
+              });
             })
             .catch(error => console.error("Error fetching stations:", error));
+
+        } else {
+          // 🔹 المستخدم من قسم WSP
+          selectedBranch.disabled = false;
+          wspComment.disabled = false;
+          branchComment.disabled = true;
+
+          selectedBranch.addEventListener("change", () => {
+            const branch = selectedBranch.value;
+            if (!branch) return;
+
+            selectedStation.innerHTML = '<option value="" disabled selected>Loading Stations...</option>';
+
+            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
+              .then(response => response.json())
+              .then(data => {
+                selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
+                const stations = data.stations || data;
+                if (Array.isArray(stations)) {
+                  stations.forEach(station => {
+                    const option = document.createElement("option");
+                    if (typeof station === "object") {
+                      option.value = station.name;
+                      option.textContent = station.name;
+                    } else {
+                      option.value = station;
+                      option.textContent = station;
+                    }
+                    selectedStation.appendChild(option);
+                  });
+
+                  // ✅ عند اختيار محطة، عرض تاريخ اعتمادها إن وجد
+                  selectedStation.addEventListener("change", () => {
+                    const selected = stations.find(st =>
+                      (st.name || st) === selectedStation.value
+                    );
+                    if (selected && selected.certifiedDate) {
+                      certifiedDateInput.value = selected.certifiedDate;
+                    } else {
+                      certifiedDateInput.value = "";
+                    }
+                  });
+                } else {
+                  selectedStation.innerHTML = '<option value="" disabled selected>Not found</option>';
+                }
+              })
+              .catch(error => {
+                console.error("Error fetching stations:", error);
+                selectedStation.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+              });
+          });
         }
       };
+      // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
+      function fetchStationDetails() {
+          var station = document.getElementById('station').value; // الحصول على المحطة المختارة
+          google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station); // استدعاء دالة للحصول على تفاصيل المحطة
+      }
+
+      // تحديث واجهة المستخدم بناءً على التفاصيل المسترجعة
+      function updateStationDetails(data) {
+          if (data.status === "success") {
+              // تعبئة الحقول في النموذج
+              var detail = data.details[0]; // نأخذ أول نتيجة إذا كان هناك أكثر من تفاصيل
+              document.getElementById('risk').value = detail.risk;
+              document.getElementById('action').value = detail.correctiveAction;
+              document.getElementById('duration').value = detail.duration;
+              document.getElementById('situation').value = detail.executionStatus;
+              document.getElementById('remarks').value = detail.branchRemarks;
+              document.getElementById('wspComments').value = detail.wspRemarks;
+
+              // إظهار الحقول بعد تعبئتها
+              document.getElementById('stationDetails').style.display = 'block';
+          } else {
+              alert('Error retrieving station details: ' + data.message);
+          }
+      }
+
     </script>
+
+  
+
+
+    
   </body>
 </html>
-
-
-
-
 
