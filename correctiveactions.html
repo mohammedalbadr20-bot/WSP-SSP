@@ -185,6 +185,12 @@
       // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
       function fetchStationDetails() {
           var station = document.getElementById('station').value;
+        if (!station) {
+        alert("Please select a station first");
+        return;
+    }
+
+        
           google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station);
       }
 
@@ -207,3 +213,4 @@
     </script>
   </body>
 </html>
+
