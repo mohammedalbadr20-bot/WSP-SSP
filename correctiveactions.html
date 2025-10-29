@@ -116,126 +116,87 @@
         document.getElementById("email").value = email || "";
         document.getElementById("section").value = section || "";
 
-        const selectedBranch = document.getElementById("branch");
-        const selectedStation = document.getElementById("station");
+        const stationSelect = document.getElementById("station");
+        const branchSelect = document.getElementById("branch");
         const wspComment = document.getElementById("wspcomment");
         const branchComment = document.getElementById("branchcomment");
         const certifiedDateInput = document.getElementById("certifieddate"); // ✅ حقل تاريخ الاعتماد
 
-        // 🔹 المستخدم من أحد الفروع
-        if (section !== "WSP") {
-          selectedBranch.disabled = true;
-          wspComment.disabled = true;
-          branchComment.disabled = false;
-          selectedBranch.value = section;
-
-          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
-            .then(response => response.json())
+       // إذا لم يكن المستخدم من قسم WSP
+        if (department !== "WSP") {
+          // يتم تعيين الفرع تلقائيًا من القسم وتعطيل إمكانية تغييره
+          branchSelect.value = department;
+          branchSelect.disabled = true;
+      
+          // جلب قائمة المحطات الخاصة بالفرع من Google App Script
+          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
+            .then(response => response.json()) // تحويل الاستجابة إلى JSON
             .then(data => {
-              selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
-              data.forEach(station => {
-                const option = document.createElement("option");
-                // 👇 إذا كانت البيانات ككائنات فيها name وcertifiedDate
-                if (typeof station === "object") {
-                  option.value = station.name;
-                  option.textContent = station.name;
-                } else {
+              // عرض رسالة مؤقتة أثناء تحميل المحطات
+              stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+              
+              // إذا تم جلب المحطات بنجاح
+              if (data.status === "success") {
+                // إعادة تعيين القائمة
+                stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+                
+                // إضافة كل محطة كخيار في القائمة
+                data.stations.forEach(station => {
+                  const option = document.createElement("option");
                   option.value = station;
                   option.textContent = station;
-                }
-                selectedStation.appendChild(option);
-              });
-
-              // ✅ عند اختيار محطة، عرض تاريخ اعتمادها إن وجد
-              selectedStation.addEventListener("change", () => {
-                const selected = data.find(st =>
-                  (st.name || st) === selectedStation.value
-                );
-                if (selected && selected.certifiedDate) {
-                  certifiedDateInput.value = selected.certifiedDate;
-                } else {
-                  certifiedDateInput.value = "";
-                }
-              });
+                  stationSelect.appendChild(option);
+                });
+              } else {
+                // في حال عدم وجود محطات
+                stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
+              }
             })
-            .catch(error => console.error("Error fetching stations:", error));
-
+            .catch(error => {
+              // في حال حدوث خطأ أثناء الاتصال
+              console.error("Error fetching stations:", error);
+              stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+            });
+      
         } else {
-          // 🔹 المستخدم من قسم WSP
-          selectedBranch.disabled = false;
-          wspComment.disabled = false;
-          branchComment.disabled = true;
-
-          selectedBranch.addEventListener("change", () => {
-            const branch = selectedBranch.value;
-            if (!branch) return;
-
-            selectedStation.innerHTML = '<option value="" disabled selected>Loading Stations...</option>';
-
-            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
-              .then(response => response.json())
+          // إذا كان المستخدم من قسم WSP (أي يمكنه اختيار أي فرع)
+          
+          // إتاحة اختيار الفرع من القائمة
+          branchSelect.disabled = false;
+      
+          // عند تغيير الفرع المختار من قبل المستخدم
+          branchSelect.addEventListener("change", () => {
+            const selectedBranch = branchSelect.value; // الحصول على الفرع المختار
+            if (!selectedBranch) return; // التأكد من أن قيمة الفرع صالحة
+      
+            // عرض رسالة تحميل مؤقتة
+            stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+      
+            // إرسال طلب لجلب المحطات الخاصة بالفرع المختار
+            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(selectedBranch)}`)
+              .then(response => response.json()) // تحويل الاستجابة إلى JSON
               .then(data => {
-                selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
-                const stations = data.stations || data;
-                if (Array.isArray(stations)) {
-                  stations.forEach(station => {
+                if (data.status === "success") {
+                  // تفريغ وإعادة بناء القائمة بالمحطات الجديدة
+                  stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+                  data.stations.forEach(station => {
                     const option = document.createElement("option");
-                    if (typeof station === "object") {
-                      option.value = station.name;
-                      option.textContent = station.name;
-                    } else {
-                      option.value = station;
-                      option.textContent = station;
-                    }
-                    selectedStation.appendChild(option);
-                  });
-
-                  // ✅ عند اختيار محطة، عرض تاريخ اعتمادها إن وجد
-                  selectedStation.addEventListener("change", () => {
-                    const selected = stations.find(st =>
-                      (st.name || st) === selectedStation.value
-                    );
-                    if (selected && selected.certifiedDate) {
-                      certifiedDateInput.value = selected.certifiedDate;
-                    } else {
-                      certifiedDateInput.value = "";
-                    }
+                    option.value = station;
+                    option.textContent = station;
+                    stationSelect.appendChild(option);
                   });
                 } else {
-                  selectedStation.innerHTML = '<option value="" disabled selected>Not found</option>';
+                  // في حال لم يتم العثور على محطات
+                  stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
                 }
               })
               .catch(error => {
+                // في حال حدوث خطأ أثناء الاتصال
                 console.error("Error fetching stations:", error);
-                selectedStation.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+                stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
               });
           });
         }
-      };
-      // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
-      function fetchStationDetails() {
-          var station = document.getElementById('station').value; // الحصول على المحطة المختارة
-          google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station); // استدعاء دالة للحصول على تفاصيل المحطة
-      }
-
-      // تحديث واجهة المستخدم بناءً على التفاصيل المسترجعة
-      function updateStationDetails(data) {
-          if (data.status === "success") {
-              // تعبئة الحقول في النموذج
-              var detail = data.details[0]; // نأخذ أول نتيجة إذا كان هناك أكثر من تفاصيل
-              document.getElementById('risk').value = detail.risk;
-              document.getElementById('action').value = detail.correctiveAction;
-              document.getElementById('duration').value = detail.duration;
-              document.getElementById('situation').value = detail.executionStatus;
-              document.getElementById('remarks').value = detail.branchRemarks;
-              document.getElementById('wspComments').value = detail.wspRemarks;
-
-              // إظهار الحقول بعد تعبئتها
-              document.getElementById('stationDetails').style.display = 'block';
-          } else {
-              alert('Error retrieving station details: ' + data.message);
-          }
-      }
 
     </script>
 
@@ -245,4 +206,5 @@
     
   </body>
 </html>
+
 
