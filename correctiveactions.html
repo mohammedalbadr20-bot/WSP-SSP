@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -38,7 +39,7 @@
 
         <div>
           <label class="infolabel">Station</label>
-          <select id="station" onchange="fetchStationDetails()">
+          <select id="station">
             <option value="" selected disabled>Select Station</option>
           </select>
         </div>
@@ -51,51 +52,48 @@
 
       <hr>
 
-      <!-- حاوية تفاصيل المحطة -->
-      <div id="stationDetails" style="display:none;">
-        <div class="risk">
-          <label>Risk</label>
-          <select id="risk">
-            <option value="" selected disabled>Select Risk</option>
+      <div class="risk">
+        <label>Risk</label>
+        <select>
+          <option value="" selected disabled>Select Risk</option>
+        </select>
+      </div>
+
+      <div class="action">
+        <label>Corrective Action</label>
+        <input value="" disabled id="action">
+      </div>
+
+      <div class="branchresponse">
+        <div class="duration">
+          <label>Duration (month)</label>
+          <input type="number" value="24" disabled>
+        </div>
+
+        <div>
+          <label>Situation</label>
+          <select>
+            <option value="" selected disabled>Select Situation</option>
+            <option value="تم">تم</option>
+            <option value="جارى">جارى</option>
+            <option value="لم يتم">لم يتم</option>
           </select>
         </div>
 
-        <div class="action">
-          <label>Corrective Action</label>
-          <input value="" disabled id="action">
+        <div>
+          <label>Attachment</label>
+          <input type="file" accept="image/*">
         </div>
+      </div>
 
-        <div class="branchresponse">
-          <div class="duration">
-            <label>Duration (month)</label>
-            <input type="number" value="24" disabled id="duration">
-          </div>
+      <div class="branchremark">
+        <label>Remarks</label>
+        <textarea id="branchcomment" name="Remarks" maxlength="150"></textarea>
+      </div>
 
-          <div>
-            <label>Situation</label>
-            <select id="situation">
-              <option value="" selected disabled>Select Situation</option>
-              <option value="تم">تم</option>
-              <option value="جارى">جارى</option>
-              <option value="لم يتم">لم يتم</option>
-            </select>
-          </div>
-
-          <div>
-            <label>Attachment</label>
-            <input type="file" accept="image/*">
-          </div>
-        </div>
-
-        <div class="branchremark">
-          <label>Remarks</label>
-          <textarea id="branchcomment" name="Remarks" maxlength="150"></textarea>
-        </div>
-
-        <div class="wspcomment">
-          <label>WSP Comments</label>
-          <textarea id="wspcomment" name="WSP Comments" maxlength="150"></textarea>
-        </div>
+      <div class="wspcomment">
+        <label>WSP Comments</label>
+        <textarea id= "wspcomment" name="WSP Comments" maxlength="150"></textarea>
       </div>
 
       <hr>
@@ -109,91 +107,142 @@
     </form>
     
     <script>
-      const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-      const email = sessionStorage.getItem("email");
-      const section = sessionStorage.getItem("department");
+      window.onload = () => {
+        const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
 
-      document.getElementById("email").value = email || "";
-      document.getElementById("section").value = section || "";
+        const email = sessionStorage.getItem("email");
+        const section = sessionStorage.getItem("department");
 
-      const selectedBranch = document.getElementById("branch");
-      const selectedStation = document.getElementById("station");
-      const wspComment = document.getElementById("wspcomment");
-      const branchComment = document.getElementById("branchcomment");
-      const certifiedDateInput = document.getElementById("certifieddate");
+        document.getElementById("email").value = email || "";
+        document.getElementById("section").value = section || "";
 
-      // دالة لملء المحطات
-      function populateStations(data) {
-        selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
-        if (!data.stations) return;
+        const selectedBranch = document.getElementById("branch");
+        const selectedStation = document.getElementById("station");
+        const wspComment = document.getElementById("wspcomment");
+        const branchComment = document.getElementById("branchcomment");
+        const certifiedDateInput = document.getElementById("certifieddate"); // ✅ حقل تاريخ الاعتماد
 
-        data.stations.forEach((station, idx) => {
-          const option = document.createElement("option");
-          option.value = station;
-          option.textContent = station;
-          option.dataset.certifiedDate = data.certifiedDates ? data.certifiedDates[idx] : "";
-          selectedStation.appendChild(option);
-        });
+        // 🔹 المستخدم من أحد الفروع
+        if (section !== "WSP") {
+          selectedBranch.disabled = true;
+          wspComment.disabled = true;
+          branchComment.disabled = false;
+          selectedBranch.value = section;
 
-        selectedStation.addEventListener("change", () => {
-          const selectedOption = selectedStation.selectedOptions[0];
-          certifiedDateInput.value = selectedOption.dataset.certifiedDate || "";
-          fetchStationDetails();
-        });
-      }
+          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
+            .then(response => response.json())
+            .then(data => {
+              selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
+              data.forEach(station => {
+                const option = document.createElement("option");
+                // 👇 إذا كانت البيانات ككائنات فيها name وcertifiedDate
+                if (typeof station === "object") {
+                  option.value = station.name;
+                  option.textContent = station.name;
+                } else {
+                  option.value = station;
+                  option.textContent = station;
+                }
+                selectedStation.appendChild(option);
+              });
 
-      // جلب المحطات عند تحميل الصفحة أو اختيار الفرع
-      function fetchStations(branch) {
-        if (!branch) return;
+              // ✅ عند اختيار محطة، عرض تاريخ اعتمادها إن وجد
+              selectedStation.addEventListener("change", () => {
+                const selected = data.find(st =>
+                  (st.name || st) === selectedStation.value
+                );
+                if (selected && selected.certifiedDate) {
+                  certifiedDateInput.value = selected.certifiedDate;
+                } else {
+                  certifiedDateInput.value = "";
+                }
+              });
+            })
+            .catch(error => console.error("Error fetching stations:", error));
 
-        fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
-          .then(resp => resp.json())
-          .then(data => populateStations(data))
-          .catch(err => console.error("Error fetching stations:", err));
-      }
+        } else {
+          // 🔹 المستخدم من قسم WSP
+          selectedBranch.disabled = false;
+          wspComment.disabled = false;
+          branchComment.disabled = true;
 
-      // تحميل المحطات تلقائيًا إذا كان المستخدم ليس WSP
-      if (section !== "WSP") {
-        selectedBranch.disabled = true;
-        selectedBranch.value = section;
-        branchComment.disabled = false;
-        wspComment.disabled = true;
+          selectedBranch.addEventListener("change", () => {
+            const branch = selectedBranch.value;
+            if (!branch) return;
 
-        fetchStations(section);
-      } else {
-        selectedBranch.disabled = false;
-        branchComment.disabled = true;
-        wspComment.disabled = false;
+            selectedStation.innerHTML = '<option value="" disabled selected>Loading Stations...</option>';
 
-        selectedBranch.addEventListener("change", () => fetchStations(selectedBranch.value));
-      }
+            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
+              .then(response => response.json())
+              .then(data => {
+                selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
+                const stations = data.stations || data;
+                if (Array.isArray(stations)) {
+                  stations.forEach(station => {
+                    const option = document.createElement("option");
+                    if (typeof station === "object") {
+                      option.value = station.name;
+                      option.textContent = station.name;
+                    } else {
+                      option.value = station;
+                      option.textContent = station;
+                    }
+                    selectedStation.appendChild(option);
+                  });
+
+                  // ✅ عند اختيار محطة، عرض تاريخ اعتمادها إن وجد
+                  selectedStation.addEventListener("change", () => {
+                    const selected = stations.find(st =>
+                      (st.name || st) === selectedStation.value
+                    );
+                    if (selected && selected.certifiedDate) {
+                      certifiedDateInput.value = selected.certifiedDate;
+                    } else {
+                      certifiedDateInput.value = "";
+                    }
+                  });
+                } else {
+                  selectedStation.innerHTML = '<option value="" disabled selected>Not found</option>';
+                }
+              })
+              .catch(error => {
+                console.error("Error fetching stations:", error);
+                selectedStation.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+              });
+          });
+        }
+      };
+      // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
       function fetchStationDetails() {
-        const station = selectedStation.value;
-        if (!station) return;
-      
-        fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(station)}`)
-          .then(resp => resp.json())
-          .then(data => {
-            if (data.status === "success") {
-              const detail = data.details[0];
-              if (!detail) return;
-      
-              document.getElementById('risk').value = detail.risk || "";
-              document.getElementById('action').value = detail.correctiveAction || "";
-              document.getElementById('duration').value = detail.duration || "";
-              document.getElementById('situation').value = detail.executionStatus || "";
-              document.getElementById('branchcomment').value = detail.branchRemarks || "";
-              document.getElementById('wspcomment').value = detail.wspRemarks || "";
+          var station = document.getElementById('station').value; // الحصول على المحطة المختارة
+          google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station); // استدعاء دالة للحصول على تفاصيل المحطة
+      }
+
+      // تحديث واجهة المستخدم بناءً على التفاصيل المسترجعة
+      function updateStationDetails(data) {
+          if (data.status === "success") {
+              // تعبئة الحقول في النموذج
+              var detail = data.details[0]; // نأخذ أول نتيجة إذا كان هناك أكثر من تفاصيل
+              document.getElementById('risk').value = detail.risk;
+              document.getElementById('action').value = detail.correctiveAction;
+              document.getElementById('duration').value = detail.duration;
+              document.getElementById('situation').value = detail.executionStatus;
+              document.getElementById('remarks').value = detail.branchRemarks;
+              document.getElementById('wspComments').value = detail.wspRemarks;
+
+              // إظهار الحقول بعد تعبئتها
               document.getElementById('stationDetails').style.display = 'block';
-            }
-          })
-          .catch(err => console.error("Error fetching station details:", err));
+          } else {
+              alert('Error retrieving station details: ' + data.message);
+          }
       }
 
     </script>
-     
 
-     
+  
 
 
+    
+  </body>
+</html>
 
