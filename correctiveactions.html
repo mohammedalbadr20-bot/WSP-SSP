@@ -109,102 +109,92 @@
     </form>
     
     <script>
-      window.onload = () => {
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+      const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+      const email = sessionStorage.getItem("email");
+      const section = sessionStorage.getItem("department");
 
-        const email = sessionStorage.getItem("email");
-        const section = sessionStorage.getItem("department");
+      document.getElementById("email").value = email || "";
+      document.getElementById("section").value = section || "";
 
-        document.getElementById("email").value = email || "";
-        document.getElementById("section").value = section || "";
+      const selectedBranch = document.getElementById("branch");
+      const selectedStation = document.getElementById("station");
+      const wspComment = document.getElementById("wspcomment");
+      const branchComment = document.getElementById("branchcomment");
+      const certifiedDateInput = document.getElementById("certifieddate");
 
-        const selectedBranch = document.getElementById("branch");
-        const selectedStation = document.getElementById("station");
-        const wspComment = document.getElementById("wspcomment");
-        const branchComment = document.getElementById("branchcomment");
-        const certifiedDateInput = document.getElementById("certifieddate");
+      // دالة لملء المحطات
+      function populateStations(data) {
+        selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
+        if (!data.stations) return;
 
-        // دالة مساعدة لتعبئة المحطات في قائمة الاختيار
-        function populateStations(data) {
-          selectedStation.innerHTML = '<option value="" disabled selected>Select Station</option>';
-          const stations = Array.isArray(data.stations) ? data.stations : (Array.isArray(data) ? data : []);
-          stations.forEach(station => {
-            const option = document.createElement("option");
-            option.value = station.name || station;
-            option.textContent = station.name || station;
-            selectedStation.appendChild(option);
-          });
+        data.stations.forEach((station, idx) => {
+          const option = document.createElement("option");
+          option.value = station;
+          option.textContent = station;
+          option.dataset.certifiedDate = data.certifiedDates ? data.certifiedDates[idx] : "";
+          selectedStation.appendChild(option);
+        });
 
-          // حذف أي معالجات حدث سابقة على select
-          selectedStation.onchange = null;
+        selectedStation.addEventListener("change", () => {
+          const selectedOption = selectedStation.selectedOptions[0];
+          certifiedDateInput.value = selectedOption.dataset.certifiedDate || "";
+          fetchStationDetails();
+        });
+      }
 
-          selectedStation.addEventListener("change", () => {
-            const selected = stations.find(st => (st.name || st) === selectedStation.value);
-            certifiedDateInput.value = selected?.certifiedDate || "";
-          });
-        }
+      // جلب المحطات عند تحميل الصفحة أو اختيار الفرع
+      function fetchStations(branch) {
+        if (!branch) return;
 
-        if (section !== "WSP") {
-          selectedBranch.disabled = true;
-          wspComment.disabled = true;
-          branchComment.disabled = false;
-          selectedBranch.value = section;
+        fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
+          .then(resp => resp.json())
+          .then(data => populateStations(data))
+          .catch(err => console.error("Error fetching stations:", err));
+      }
 
-          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(section)}`)
-            .then(response => response.json())
-            .then(data => {
-              populateStations(data);
-            })
-            .catch(error => console.error("Error fetching stations:", error));
+      // تحميل المحطات تلقائيًا إذا كان المستخدم ليس WSP
+      if (section !== "WSP") {
+        selectedBranch.disabled = true;
+        selectedBranch.value = section;
+        branchComment.disabled = false;
+        wspComment.disabled = true;
 
-        } else {
-          selectedBranch.disabled = false;
-          wspComment.disabled = false;
-          branchComment.disabled = true;
+        fetchStations(section);
+      } else {
+        selectedBranch.disabled = false;
+        branchComment.disabled = true;
+        wspComment.disabled = false;
 
-          selectedBranch.addEventListener("change", () => {
-            const branch = selectedBranch.value;
-            if (!branch) return;
+        selectedBranch.addEventListener("change", () => fetchStations(selectedBranch.value));
+      }
 
-            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
-              .then(response => response.json())
-              .then(data => {
-                populateStations(data);
-              })
-              .catch(error => {
-                console.error("Error fetching stations:", error);
-                selectedStation.innerHTML = '<option value="" disabled selected>Connection Error</option>';
-              });
-          });
-        }
-      };
+      // جلب تفاصيل المحطة
+      function fetchStationDetails() {
+        const station = selectedStation.value;
+        if (!station) return;
 
-      // دالة لعرض تفاصيل المحطة بعد اختيار المحطة
-     function fetchStationDetails() {
-      var station = document.getElementById('station').value;
-      if (!station) return;
-    
-      google.script.run.withSuccessHandler(updateStationDetails).getStationDetails(station);
-    }
+        fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(station)}`)
+          .then(resp => resp.json())
+          .then(updateStationDetails)
+          .catch(err => console.error("Error fetching station details:", err));
+      }
 
-
-      // تحديث واجهة المستخدم بناءً على التفاصيل المسترجعة
       function updateStationDetails(data) {
-          if (data.status === "success") {
-              const detail = data.details[0]; // أول نتيجة
-              document.getElementById('risk').value = detail.risk;
-              document.getElementById('action').value = detail.correctiveAction;
-              document.getElementById('duration').value = detail.duration;
-              document.getElementById('situation').value = detail.executionStatus;
-              document.getElementById('branchcomment').value = detail.branchRemarks;
-              document.getElementById('wspcomment').value = detail.wspRemarks;
+        if (data.status === "success") {
+          const detail = data.details[0];
+          if (!detail) return;
 
-              document.getElementById('stationDetails').style.display = 'block';
-          } else {
-              alert('Error retrieving station details: ' + data.message);
-          }
+          document.getElementById('risk').value = detail.risk || "";
+          document.getElementById('action').value = detail.correctiveAction || "";
+          document.getElementById('duration').value = detail.duration || "";
+          document.getElementById('situation').value = detail.executionStatus || "";
+          document.getElementById('branchcomment').value = detail.branchRemarks || "";
+          document.getElementById('wspcomment').value = detail.wspRemarks || "";
+          document.getElementById('stationDetails').style.display = 'block';
+        } else {
+          alert("Error retrieving station details: " + (data.message || ""));
+        }
       }
     </script>
   </body>
 </html>
-
