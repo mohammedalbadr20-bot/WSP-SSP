@@ -213,6 +213,8 @@
                 console.log("📦 Station Data:", data); // ← اطبع النتيجة في الـConsole
                 
                 if (data.status === "success" && data.details.length > 0) {
+                  const details = data.details; // كلها تفاصيل
+                  fillStationDetails(details);  // نملأ خيارات location, risk, situation
                   const detail = data.details[0];
                   document.getElementById("location").value = detail.location || "";
                   document.getElementById("risk").value = detail.risk || "";
@@ -266,6 +268,7 @@
     </script>
   </body>
 </html>
+
 
 
 
