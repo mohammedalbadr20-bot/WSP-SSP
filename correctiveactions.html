@@ -234,32 +234,39 @@
         const riskSelect = document.getElementById("risk");
         const situationSelect = document.getElementById("situation");
       
-        locationSelect.innerHTML = ""; // تفريغ الخيارات القديمة
-        riskSelect.innerHTML = "";
-        situationSelect.innerHTML = "";
+        locationSelect.innerHTML = '<option value="">اختر الموقع</option>';
+        riskSelect.innerHTML = '<option value="" disabled selected>اختر المخاطر</option>';
+        situationSelect.innerHTML = '<option value="" disabled selected>اختر الحالة</option>';
+      
+        const locations = new Set();
+        const risks = new Set();
+        const situations = new Set();
       
         details.forEach(item => {
-          // إضافة خيار الموقع
-          if (item.location) {
-            const optionLoc = document.createElement("option");
-            optionLoc.text = item.location;
-            optionLoc.value = item.location;
-            locationSelect.add(optionLoc);
-          }
-          // إضافة خيار المخاطر
-          if (item.risk) {
-            const optionRisk = document.createElement("option");
-            optionRisk.text = item.risk;
-            optionRisk.value = item.risk;
-            riskSelect.add(optionRisk);
-          }
-          // إضافة خيار الوضع
-          if (item.executionStatus) {
-            const optionSit = document.createElement("option");
-            optionSit.text = item.executionStatus;
-            optionSit.value = item.executionStatus;
-            situationSelect.add(optionSit);
-          }
+          if (item.location) locations.add(item.location);
+          if (item.risk) risks.add(item.risk);
+          if (item.executionStatus) situations.add(item.executionStatus);
+        });
+      
+        locations.forEach(loc => {
+          const option = document.createElement("option");
+          option.text = loc;
+          option.value = loc;
+          locationSelect.add(option);
+        });
+      
+        risks.forEach(risk => {
+          const option = document.createElement("option");
+          option.text = risk;
+          option.value = risk;
+          riskSelect.add(option);
+        });
+      
+        situations.forEach(sit => {
+          const option = document.createElement("option");
+          option.text = sit;
+          option.value = sit;
+          situationSelect.add(option);
         });
       }
 
@@ -268,6 +275,7 @@
     </script>
   </body>
 </html>
+
 
 
 
