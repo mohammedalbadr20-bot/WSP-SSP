@@ -89,6 +89,7 @@
         <div>
           <label>Attachment</label>
           <input id="attachment" type="file" accept="image/*">
+          <span id="filename" style="margin-left:10px; color:#555;"></span>
         </div>
       </div>
 
@@ -218,7 +219,7 @@
                   document.getElementById("action").value = detail.correctiveAction || "";
                   document.getElementById("duration").value = detail.duration || "";
                   document.getElementById("situation").value = detail.executionStatus || "";
-                  document.getElementById("attachment").value = detail.attachment || "";
+                  document.getElementById("filename").textContent = detail.attachment ? detail.attachment : "";
                   document.getElementById("branchcomment").value = detail.branchRemarks || "";
                   document.getElementById("wspcomment").value = detail.wspRemarks || "";
                 }
@@ -231,6 +232,7 @@
     </script>
   </body>
 </html>
+
 
 
 
