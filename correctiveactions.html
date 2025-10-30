@@ -194,7 +194,6 @@
             } else {
               certifiedDateInput.value = "";
             }
-          });
            // جلب تفاصيل المحطة
             fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
               .then(res => res.json())
@@ -215,10 +214,10 @@
         };
 
 
-
     </script>
   </body>
 </html>
+
 
 
 
