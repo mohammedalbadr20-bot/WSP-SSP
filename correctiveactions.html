@@ -213,11 +213,11 @@
                 
                 if (data.status === "success" && data.details.length > 0) {
                   const detail = data.details[0];
-                  document.getElementById("locationSelect").value = detail.location || "";
-                  document.getElementById("riskSelect").value = detail.risk || "";
-                  document.getElementById("correctiveActionInput").value = detail.correctiveAction || "";
-                  document.getElementById("durationInput").value = detail.duration || "";
-                  document.getElementById("situationSelect").value = detail.executionStatus || "";
+                  document.getElementById("location").value = detail.location || "";
+                  document.getElementById("risk").value = detail.risk || "";
+                  document.getElementById("action").value = detail.correctiveAction || "";
+                  document.getElementById("duration").value = detail.duration || "";
+                  document.getElementById("situation").value = detail.executionStatus || "";
                   document.getElementById("attachment").value = detail.attachment || "";
                   document.getElementById("branchcomment").value = detail.branchRemarks || "";
                   document.getElementById("wspcomment").value = detail.wspRemarks || "";
@@ -231,6 +231,7 @@
     </script>
   </body>
 </html>
+
 
 
 
