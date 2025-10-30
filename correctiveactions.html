@@ -141,6 +141,89 @@
       
           let branchStations = [];      // قائمة المحطات
           let branchDates = [];         // قائمة تواريخ الاعتماد الموافقة
+          
+          let locationDataMap = {}; // لتخزين بيانات كل موقع
+
+          function fillStationDetails(details) {
+            const locationSelect = document.getElementById("location");
+          
+            locationSelect.innerHTML = '<option value="">اختر الموقع</option>';
+            locationDataMap = {}; // إعادة تعيين
+          
+            details.forEach(item => {
+              if (item.location) {
+                // إذا لم يكن الموقع موجودًا في الخريطة، أضفه
+                if (!locationDataMap[item.location]) {
+                  locationDataMap[item.location] = {
+                    risks: new Set(),
+                    correctiveActions: new Set(),
+                    situations: new Set(),
+                    branchComments: new Set(),
+                    wspComments: new Set()
+                  };
+          
+                  const optionLoc = document.createElement("option");
+                  optionLoc.value = item.location;
+                  optionLoc.text = item.location;
+                  locationSelect.add(optionLoc);
+                }
+          
+                if (item.risk) locationDataMap[item.location].risks.add(item.risk);
+                if (item.correctiveAction) locationDataMap[item.location].correctiveActions.add(item.correctiveAction);
+                if (item.executionStatus) locationDataMap[item.location].situations.add(item.executionStatus);
+                if (item.branchRemarks) locationDataMap[item.location].branchComments.add(item.branchRemarks);
+                if (item.wspRemarks) locationDataMap[item.location].wspComments.add(item.wspRemarks);
+              }
+            });
+          }
+          document.getElementById("location").addEventListener("change", (e) => {
+          const selectedLocation = e.target.value;
+      
+          const riskSelect = document.getElementById("risk");
+          const correctiveActionInput = document.getElementById("action");
+          const situationSelect = document.getElementById("situation");
+          const branchcomment = document.getElementById("branchcomment");
+          const wspcomment = document.getElementById("wspcomment");
+      
+          // تفريغ القيم القديمة
+          riskSelect.innerHTML = '<option value="" disabled selected>اختر المخاطر</option>';
+          situationSelect.innerHTML = '<option value="" disabled selected>اختر الوضع</option>';
+          correctiveActionInput.value = "";
+          branchcomment.value = "";
+          wspcomment.value = "";
+      
+          if (locationDataMap[selectedLocation]) {
+            const data = locationDataMap[selectedLocation];
+      
+            // تعبئة المخاطر
+            data.risks.forEach(risk => {
+              const option = document.createElement("option");
+              option.value = risk;
+              option.text = risk;
+              riskSelect.add(option);
+            });
+      
+            // تعبئة الوضع
+            data.situations.forEach(status => {
+              const option = document.createElement("option");
+              option.value = status;
+              option.text = status;
+              situationSelect.add(option);
+            });
+      
+            // تعبئة أول إجراء تصحيحي
+            const correctiveActionsArray = Array.from(data.correctiveActions);
+            if (correctiveActionsArray.length > 0) correctiveActionInput.value = correctiveActionsArray[0];
+      
+            // تعبئة التعليقات
+            const branchCommentsArray = Array.from(data.branchComments);
+            if (branchCommentsArray.length > 0) branchcomment.value = branchCommentsArray[0];
+      
+            const wspCommentsArray = Array.from(data.wspComments);
+            if (wspCommentsArray.length > 0) wspcomment.value = wspCommentsArray[0];
+          }
+        });
+      };
       
           // دالة لجلب المحطات وتواريخها
           function fetchStations(branch) {
@@ -229,93 +312,13 @@
               .catch(err => console.error("Error fetching station details:", err));
           });
         };
-      let locationDataMap = {}; // لتخزين بيانات كل موقع
-
-      function fillStationDetails(details) {
-        const locationSelect = document.getElementById("location");
-      
-        locationSelect.innerHTML = '<option value="">اختر الموقع</option>';
-        locationDataMap = {}; // إعادة تعيين
-      
-        details.forEach(item => {
-          if (item.location) {
-            // إذا لم يكن الموقع موجودًا في الخريطة، أضفه
-            if (!locationDataMap[item.location]) {
-              locationDataMap[item.location] = {
-                risks: new Set(),
-                correctiveActions: new Set(),
-                situations: new Set(),
-                branchComments: new Set(),
-                wspComments: new Set()
-              };
-      
-              const optionLoc = document.createElement("option");
-              optionLoc.value = item.location;
-              optionLoc.text = item.location;
-              locationSelect.add(optionLoc);
-            }
-      
-            if (item.risk) locationDataMap[item.location].risks.add(item.risk);
-            if (item.correctiveAction) locationDataMap[item.location].correctiveActions.add(item.correctiveAction);
-            if (item.executionStatus) locationDataMap[item.location].situations.add(item.executionStatus);
-            if (item.branchRemarks) locationDataMap[item.location].branchComments.add(item.branchRemarks);
-            if (item.wspRemarks) locationDataMap[item.location].wspComments.add(item.wspRemarks);
-          }
-        });
-      }
-      document.getElementById("location").addEventListener("change", (e) => {
-      const selectedLocation = e.target.value;
-  
-      const riskSelect = document.getElementById("risk");
-      const correctiveActionInput = document.getElementById("action");
-      const situationSelect = document.getElementById("situation");
-      const branchcomment = document.getElementById("branchcomment");
-      const wspcomment = document.getElementById("wspcomment");
-  
-      // تفريغ القيم القديمة
-      riskSelect.innerHTML = '<option value="" disabled selected>اختر المخاطر</option>';
-      situationSelect.innerHTML = '<option value="" disabled selected>اختر الوضع</option>';
-      correctiveActionInput.value = "";
-      branchcomment.value = "";
-      wspcomment.value = "";
-  
-      if (locationDataMap[selectedLocation]) {
-        const data = locationDataMap[selectedLocation];
-  
-        // تعبئة المخاطر
-        data.risks.forEach(risk => {
-          const option = document.createElement("option");
-          option.value = risk;
-          option.text = risk;
-          riskSelect.add(option);
-        });
-  
-        // تعبئة الوضع
-        data.situations.forEach(status => {
-          const option = document.createElement("option");
-          option.value = status;
-          option.text = status;
-          situationSelect.add(option);
-        });
-  
-        // تعبئة أول إجراء تصحيحي
-        const correctiveActionsArray = Array.from(data.correctiveActions);
-        if (correctiveActionsArray.length > 0) correctiveActionInput.value = correctiveActionsArray[0];
-  
-        // تعبئة التعليقات
-        const branchCommentsArray = Array.from(data.branchComments);
-        if (branchCommentsArray.length > 0) branchcomment.value = branchCommentsArray[0];
-  
-        const wspCommentsArray = Array.from(data.wspComments);
-        if (wspCommentsArray.length > 0) wspcomment.value = wspCommentsArray[0];
-      }
-    });
-  };
+     
 
 
     </script>
   </body>
 </html>
+
 
 
 
