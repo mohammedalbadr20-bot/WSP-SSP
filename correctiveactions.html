@@ -105,10 +105,10 @@
       <hr>
 
       <div class="buttons">
-        <button class="wspbuttons">WSP Submit</button>
-        <button class="wspbuttons">WSP Update</button>
-        <button class="branchbuttons">Branch Submit</button>
-        <button class="branchbuttons">Branch Update</button>
+        <button class="wspbutton">WSP Submit</button>
+        <button class="wspbutton">WSP Update</button>
+        <button class="branchbutton">Branch Submit</button>
+        <button class="branchbutton">Branch Update</button>
       </div>
     </form>
     
@@ -133,6 +133,9 @@
           const situationSelect = document.getElementById("situation");
           const branchcomment = document.getElementById("branchcomment");
           const wspcomment = document.getElementById("wspcomment");
+          const branchbuttons = document.querySelectorAll('branchbutton');
+          const wspbuttons = document.querySelectorAll('wspbutton');
+           
 
       
           let branchStations = [];      // قائمة المحطات
@@ -174,6 +177,7 @@
             branchSelect.disabled = true;
             branchcomment.disabled=false;
             wspcomment.disabled=true;
+            wspbuttons.forEach(button => button.disabled = true);
             
             fetchStations(department);
           } else {
@@ -181,6 +185,7 @@
             branchSelect.disabled = false;
             branchcomment.disabled=true;
             wspcomment.disabled=false;
+            branchbuttons.forEach(button => button.disabled = true);
             
             branchSelect.addEventListener("change", () => {
               fetchStations(branchSelect.value);
@@ -226,6 +231,7 @@
     </script>
   </body>
 </html>
+
 
 
 
