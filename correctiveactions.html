@@ -51,9 +51,16 @@
 
       <hr>
 
+      <div class="location">
+        <label>Location</label>
+        <select id="location">
+          <option value="">Select Location</option>
+        </select>
+      </div>
+
       <div class="risk">
         <label>Risk</label>
-        <select>
+        <select id="risk">
           <option value="" selected disabled>Select Risk</option>
         </select>
       </div>
@@ -66,12 +73,12 @@
       <div class="branchresponse">
         <div class="duration">
           <label>Duration (month)</label>
-          <input type="number" value="24" disabled>
+          <input type="number" value="" disabled id="duration">
         </div>
 
         <div>
           <label>Situation</label>
-          <select>
+          <select id="situation">
             <option value="" selected disabled>Select Situation</option>
             <option value="تم">تم</option>
             <option value="جارى">جارى</option>
@@ -118,6 +125,15 @@
           const stationSelect = document.getElementById("station");
           const branchSelect = document.getElementById("branch");
           const certifiedDateInput = document.getElementById("certifieddate");
+          
+          const locationSelect = document.getElementById("location");
+          const riskSelect = document.getElementById("risk");
+          const corectiveactionInput = document.getElementById("action");
+          const durationInput = document.getElementById("duration");
+          const situationSelect = document.getElementById("situation");
+          const branchcomment = document.getElementById("branchcomment");
+          const wspcomment = document.getElementById("wspcomment");
+
       
           let branchStations = [];      // قائمة المحطات
           let branchDates = [];         // قائمة تواريخ الاعتماد الموافقة
@@ -179,12 +195,31 @@
               certifiedDateInput.value = "";
             }
           });
+           // جلب تفاصيل المحطة
+            fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
+              .then(res => res.json())
+              .then(data => {
+                if (data.status === "success" && data.details.length > 0) {
+                  const detail = data.details[0];
+                  locationSelect.value = detail.location || "";
+                  riskSelect.value = detail.risk || "";
+                  correctiveActionInput.value = detail.correctiveAction || "";
+                  durationInput.value = detail.duration || "";
+                  situationSelect.value = detail.executionStatus || "";
+                  branchcomment.value = detail.branchRemarks || "";
+                  wspcomment.value = detail.wspRemarks || "";
+                }
+              })
+              .catch(err => console.error("Error fetching station details:", err));
+          });
         };
-</script>
+
+
 
     </script>
   </body>
 </html>
+
 
 
 
