@@ -172,10 +172,16 @@
           if (department !== "WSP") {
             branchSelect.value = department;
             branchSelect.disabled = true;
+            branchcomment.disabled=false;
+            wspcomment.disabled=true;
+            
             fetchStations(department);
           } else {
             // إذا كان من WSP يمكنه اختيار الفرع
             branchSelect.disabled = false;
+            branchcomment.disabled=true;
+            wspcomment.disabled=false;
+            
             branchSelect.addEventListener("change", () => {
               fetchStations(branchSelect.value);
             });
@@ -217,6 +223,7 @@
     </script>
   </body>
 </html>
+
 
 
 
