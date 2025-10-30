@@ -106,67 +106,38 @@
     </form>
     
     <script>
-      window.onload = () => {
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-
-        const email = sessionStorage.getItem("email");
-        const department = sessionStorage.getItem("department");
-
-        document.getElementById("email").value = email || "";
-        document.getElementById("section").value = department || "";
-
-        const stationSelect = document.getElementById("station");
-        const branchSelect = document.getElementById("branch");
-        const wspComment = document.getElementById("wspcomment");
-        const branchComment = document.getElementById("branchcomment");
-        const certifiedDateInput = document.getElementById("certifieddate");
-
-        // إذا لم يكن المستخدم من قسم WSP
-        if (department !== "WSP") {
-          branchSelect.value = department;
-          branchSelect.disabled = true;
-          branchcomment.disalbled= false;
-          wspcomment.disabled = true;
-
-          fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
-            .then(response => response.json())
-            .then(data => {
-              stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
-              if (data.status === "success") {
-                stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-                data.stations.forEach(station => {
-                  const option = document.createElement("option");
-                  option.value = station;
-                  option.textContent = station;
-                  stationSelect.appendChild(option);
-                });
-              } else {
-                stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
-              }
-            })
-            .catch(error => {
-              console.error("Error fetching stations:", error);
-              stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
-            });
-
-        } else {
-          // إذا كان المستخدم من قسم WSP
-          branchSelect.disabled = false;
-          branchcomment.disalbled= true;
-          wspcomment.disabled = false;
-
-          branchSelect.addEventListener("change", () => {
-            const selectedBranch = branchSelect.value;
-            if (!selectedBranch) return;
-
+      <script>
+        window.onload = () => {
+          const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+      
+          const email = sessionStorage.getItem("email");
+          const department = sessionStorage.getItem("department");
+      
+          document.getElementById("email").value = email || "";
+          document.getElementById("section").value = department || "";
+      
+          const stationSelect = document.getElementById("station");
+          const branchSelect = document.getElementById("branch");
+          const certifiedDateInput = document.getElementById("certifieddate");
+      
+          let branchStations = [];      // قائمة المحطات
+          let branchDates = [];         // قائمة تواريخ الاعتماد الموافقة
+      
+          // دالة لجلب المحطات وتواريخها
+          function fetchStations(branch) {
+            if (!branch) return;
+      
             stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
-
-            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(selectedBranch)}`)
+      
+            fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
               .then(response => response.json())
               .then(data => {
                 if (data.status === "success") {
                   stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-                  data.stations.forEach(station => {
+                  branchStations = data.stations;
+                  branchDates = data.certifiedDates;
+      
+                  data.stations.forEach((station, index) => {
                     const option = document.createElement("option");
                     option.value = station;
                     option.textContent = station;
@@ -180,10 +151,40 @@
                 console.error("Error fetching stations:", error);
                 stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
               });
+          }
+      
+          // إذا لم يكن المستخدم من WSP
+          if (department !== "WSP") {
+            branchSelect.value = department;
+            branchSelect.disabled = true;
+            fetchStations(department);
+          } else {
+            // إذا كان من WSP يمكنه اختيار الفرع
+            branchSelect.disabled = false;
+            branchSelect.addEventListener("change", () => {
+              fetchStations(branchSelect.value);
+            });
+          }
+      
+          // عند اختيار محطة، يتم عرض تاريخ الاعتماد الموافق
+          stationSelect.addEventListener("change", () => {
+            const selectedStation = stationSelect.value;
+            const index = branchStations.indexOf(selectedStation);
+      
+            if (index !== -1 && branchDates[index]) {
+              // تحويل التاريخ من Google Sheet إلى صيغة YYYY-MM-DD
+              const date = new Date(branchDates[index]);
+              const formattedDate = date.toISOString().split("T")[0];
+              certifiedDateInput.value = formattedDate;
+            } else {
+              certifiedDateInput.value = "";
+            }
           });
-        }
-      };
+        };
+</script>
+
     </script>
   </body>
 </html>
+
 
