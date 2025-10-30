@@ -204,6 +204,8 @@
             fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
               .then(res => res.json())
               .then(data => {
+                console.log("📦 Station Data:", data); // ← اطبع النتيجة في الـConsole
+                
                 if (data.status === "success" && data.details.length > 0) {
                   const detail = data.details[0];
                   locationSelect.value = detail.location || "";
@@ -223,6 +225,7 @@
     </script>
   </body>
 </html>
+
 
 
 
