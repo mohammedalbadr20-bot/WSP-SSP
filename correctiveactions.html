@@ -125,6 +125,8 @@
         if (department !== "WSP") {
           branchSelect.value = department;
           branchSelect.disabled = true;
+          branchcomment.disalbled= false;
+          wspcomment.disabled = true;
 
           fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(department)}`)
             .then(response => response.json())
@@ -150,6 +152,8 @@
         } else {
           // إذا كان المستخدم من قسم WSP
           branchSelect.disabled = false;
+          branchcomment.disalbled= true;
+          wspcomment.disabled = false;
 
           branchSelect.addEventListener("change", () => {
             const selectedBranch = branchSelect.value;
@@ -182,3 +186,4 @@
     </script>
   </body>
 </html>
+
