@@ -227,11 +227,46 @@
               .catch(err => console.error("Error fetching station details:", err));
           });
         };
+      function fillStationDetails(details) {
+        const locationSelect = document.getElementById("location");
+        const riskSelect = document.getElementById("risk");
+        const situationSelect = document.getElementById("situation");
+      
+        locationSelect.innerHTML = ""; // تفريغ الخيارات القديمة
+        riskSelect.innerHTML = "";
+        situationSelect.innerHTML = "";
+      
+        details.forEach(item => {
+          // إضافة خيار الموقع
+          if (item.location) {
+            const optionLoc = document.createElement("option");
+            optionLoc.text = item.location;
+            optionLoc.value = item.location;
+            locationSelect.add(optionLoc);
+          }
+          // إضافة خيار المخاطر
+          if (item.risk) {
+            const optionRisk = document.createElement("option");
+            optionRisk.text = item.risk;
+            optionRisk.value = item.risk;
+            riskSelect.add(optionRisk);
+          }
+          // إضافة خيار الوضع
+          if (item.executionStatus) {
+            const optionSit = document.createElement("option");
+            optionSit.text = item.executionStatus;
+            optionSit.value = item.executionStatus;
+            situationSelect.add(optionSit);
+          }
+        });
+      }
+
 
 
     </script>
   </body>
 </html>
+
 
 
 
