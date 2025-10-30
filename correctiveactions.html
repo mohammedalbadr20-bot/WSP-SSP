@@ -208,13 +208,14 @@
                 
                 if (data.status === "success" && data.details.length > 0) {
                   const detail = data.details[0];
-                  locationSelect.value = detail.location || "";
-                  riskSelect.value = detail.risk || "";
-                  correctiveActionInput.value = detail.correctiveAction || "";
-                  durationInput.value = detail.duration || "";
-                  situationSelect.value = detail.executionStatus || "";
-                  branchcomment.value = detail.branchRemarks || "";
-                  wspcomment.value = detail.wspRemarks || "";
+                  document.getElementById("locationSelect").value = detail.location || "";
+                  document.getElementById("riskSelect").value = detail.risk || "";
+                  document.getElementById("correctiveActionInput").value = detail.correctiveAction || "";
+                  document.getElementById("durationInput").value = detail.duration || "";
+                  document.getElementById("situationSelect").value = detail.executionStatus || "";
+                  document.getElementById("attachment").value = detail.attachment || "";
+                  document.getElementById("branchcomment").value = detail.branchRemarks || "";
+                  document.getElementById("wspcomment").value = detail.wspRemarks || "";
                 }
               })
               .catch(err => console.error("Error fetching station details:", err));
@@ -225,6 +226,7 @@
     </script>
   </body>
 </html>
+
 
 
 
