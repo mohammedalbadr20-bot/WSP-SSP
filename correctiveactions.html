@@ -182,11 +182,22 @@
                 correctiveActionInput.value = detail.correctiveAction || "";
                 durationInput.value = detail.duration || "";
                  // مطابقة حالة التنفيذ للموجود بالجوجل شيت
-                let status = (detail.executionStatus || "").trim();
-                if (status.includes("تم")) status = "تم";
-                else if (status.includes("جار")) status = "جارى";
-                else if (status.includes("لم")) status = "لم يتم";
+               let status = (detail.executionStatus || "").trim();
+                switch (true) {
+                  case /تم/.test(status): 
+                    status = "تم"; 
+                    break;
+                  case /جار/.test(status): 
+                    status = "جارى"; 
+                    break;
+                  case /لم/.test(status): 
+                    status = "لم يتم"; 
+                    break;
+                  default: 
+                    status = "";
+                }
                 situationSelect.value = status;
+
                 branchComment.value = detail.branchRemarks || "";
                 wspComment.value = detail.wspRemarks || "";
                if (detail.attachment) {
@@ -281,6 +292,7 @@
     </script>
   </body>
 </html>
+
 
 
 
