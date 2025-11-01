@@ -162,14 +162,7 @@
               option.value = index; // نستخدم رقم الصف كمفتاح فريد
               option.textContent = detail.location || "Unnamed Location";
               locationSelect.appendChild(option);
-              locationSelect.detailsMap[index] = detail; //يخزن تفاصيل الموقع المختار
-
-            // تعبئة خيارات المخاطر إن لم تكن مكررة
-            if (detail.risk && !riskInput.querySelector(`option[value="${detail.risk}"]`)) {
-              riskInput.value = detail.risk || "";
-            }
-          });
-          
+              locationSelect.detailsMap[index] = detail; //يخزن تفاصيل الموقع المختار    
              
           
             // عند اختيار موقع، يتم تعبئة باقي الحقول تلقائيًا
@@ -292,6 +285,7 @@
     </script>
   </body>
 </html>
+
 
 
 
