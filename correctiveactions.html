@@ -159,24 +159,37 @@
             // إضافة كل Location إلى القائمة
             details.forEach((detail) => {
               const option = document.createElement("option");
-              option.value = detail.location || "";
+              option.value = index; // نستخدم رقم الصف كمفتاح فريد
               option.textContent = detail.location || "Unnamed Location";
               locationSelect.appendChild(option);
+              locationSelect.detailsMap[index] = detail; //يخزن تفاصيل الموقع المختار
+
+            // تعبئة خيارات المخاطر إن لم تكن مكررة
+            if (detail.risk && !riskInput.querySelector(`option[value="${detail.risk}"]`)) {
+              const opt = document.createElement("option");
+              opt.value = detail.risk;
+              opt.textContent = detail.risk;
+              riskInput.appendChild(opt);
+            }
+          });
           
-              // خزن التفاصيل المرتبطة بهذا الموقع
-              locationSelect.detailsMap[detail.location] = detail;
-            });
+             
           
             // عند اختيار موقع، يتم تعبئة باقي الحقول تلقائيًا
             locationSelect.addEventListener("change", () => {
-              const selected = locationSelect.value;
-              const detail = locationSelect.detailsMap[selected];
+              const selectedindex = locationSelect.value;
+              const detail = locationSelect.detailsMap[selectedindex];
           
               if (detail) {
                 riskInput.value = detail.risk || "";
                 correctiveActionInput.value = detail.correctiveAction || "";
                 durationInput.value = detail.duration || "";
-                situationSelect.value = detail.executionStatus || "";
+                 // مطابقة حالة التنفيذ للموجود بالجوجل شيت
+                let status = (detail.executionStatus || "").trim();
+                if (status.includes("تم")) status = "تم";
+                else if (status.includes("جار")) status = "جارى";
+                else if (status.includes("لم")) status = "لم يتم";
+                situationSelect.value = status;
                 branchComment.value = detail.branchRemarks || "";
                 wspComment.value = detail.wspRemarks || "";
                 document.getElementById("filename").textContent = detail.attachment || "";
@@ -266,6 +279,7 @@
     </script>
   </body>
 </html>
+
 
 
 
