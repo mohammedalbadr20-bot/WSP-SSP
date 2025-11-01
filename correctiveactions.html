@@ -114,19 +114,20 @@
     <script>
          window.onload = () => {
           const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-      
+        
+          // تعريف عناصر الصفحة
           const email = sessionStorage.getItem("email");
           const department = sessionStorage.getItem("department");
-      
+        
           document.getElementById("email").value = email || "";
           document.getElementById("section").value = department || "";
-      
+        
           const stationSelect = document.getElementById("station");
           const branchSelect = document.getElementById("branch");
           const certifiedDateInput = document.getElementById("certifieddate");
-          
+        
           const locationSelect = document.getElementById("location");
-          const riskSelect = document.getElementById("risk");
+          const riskInput = document.getElementById("risk");
           const correctiveActionInput = document.getElementById("action");
           const durationInput = document.getElementById("duration");
           const situationSelect = document.getElementById("situation");
@@ -134,81 +135,68 @@
           const wspcomment = document.getElementById("wspcomment");
           const branchbuttons = document.querySelectorAll('.branchbutton');
           const wspbuttons = document.querySelectorAll('.wspbutton');
-           
-
-      
+        
           let branchStations = [];      // قائمة المحطات
           let branchDates = [];         // قائمة تواريخ الاعتماد الموافقة
-          
-           // دالة لملء قائمة المواقع location وربطها بتعبئة التفاصيل
+        
+          // دالة لملء قائمة المواقع location فقط
           function fillStationDetails(details) {
-            const locationSelect = document.getElementById("location");
-            const riskInput = document.getElementById("risk");
-            const correctiveActionInput = document.getElementById("action");
-            const durationInput = document.getElementById("duration");
-            const situationSelect = document.getElementById("situation");
-            const branchComment = document.getElementById("branchcomment");
-            const wspComment = document.getElementById("wspcomment");
-          
-            // تنظيف القائمة القديمة
             locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
-          
-            // حفظ التفاصيل في ذاكرة مؤقتة داخل العنصر نفسه (لكل Location)
             locationSelect.detailsMap = {};
-          
-            // إضافة كل Location إلى القائمة
+        
             details.forEach((detail, index) => {
               const option = document.createElement("option");
-              option.value = index; // نستخدم رقم الصف كمفتاح فريد
+              option.value = index; 
               option.textContent = detail.location || "Unnamed Location";
               locationSelect.appendChild(option);
-              locationSelect.detailsMap[index] = detail; //يخزن تفاصيل الموقع المختار    
-             
-          
-            // عند اختيار موقع، يتم تعبئة باقي الحقول تلقائيًا
-            locationSelect.addEventListener("change", () => {
-              const selectedindex = locationSelect.value;
-              const detail = locationSelect.detailsMap[selectedindex];
-          
-              if (detail) {
-                riskInput.value = detail.risk || "";
-                correctiveActionInput.value = detail.correctiveAction || "";
-                durationInput.value = detail.duration || "";
-                 // مطابقة حالة التنفيذ للموجود بالجوجل شيت
-               let status = (detail.executionStatus || "").trim();
-                switch (true) {
-                  case /تم/.test(status): 
-                    status = "تم"; 
-                    break;
-                  case /جار/.test(status): 
-                    status = "جارى"; 
-                    break;
-                  case /لم/.test(status): 
-                    status = "لم يتم"; 
-                    break;
-                  default: 
-                    status = "";
-                }
-                situationSelect.value = status;
-
-                branchComment.value = detail.branchRemarks || "";
-                wspComment.value = detail.wspRemarks || "";
-               if (detail.attachment) {
+              locationSelect.detailsMap[index] = detail;
+            });
+          }
+        
+          // مستمع حدث اختيار Location يتم تعريفه مرة واحدة هنا
+          locationSelect.addEventListener("change", () => {
+            const selectedIndex = locationSelect.value;
+            const detail = locationSelect.detailsMap[selectedIndex];
+        
+            if (detail) {
+              riskInput.value = detail.risk || "";
+              correctiveActionInput.value = detail.correctiveAction || "";
+              durationInput.value = detail.duration || "";
+        
+              let status = (detail.executionStatus || "").trim();
+              switch (true) {
+                case /تم/.test(status):
+                  status = "تم";
+                  break;
+                case /جار/.test(status):
+                  status = "جارى";
+                  break;
+                case /لم/.test(status):
+                  status = "لم يتم";
+                  break;
+                default:
+                  status = "";
+              }
+              situationSelect.value = status;
+        
+              branchcomment.value = detail.branchRemarks || "";
+              wspcomment.value = detail.wspRemarks || "";
+        
+              if (detail.attachment) {
                 document.getElementById("filename").innerHTML =
                   `<a href="${detail.attachment}" target="_blank">showfile</a>`;
               } else {
                 document.getElementById("filename").textContent = "لا يوجد ملف";
               }
-              }
-            });
-          }
-
+            }
+          });
+        
           // دالة لجلب المحطات وتواريخها
           function fetchStations(branch) {
             if (!branch) return;
-      
+        
             stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
-      
+        
             fetch(`${scriptURL}?action=getStations&branch=${encodeURIComponent(branch)}`)
               .then(response => response.json())
               .then(data => {
@@ -216,8 +204,8 @@
                   stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
                   branchStations = data.stations;
                   branchDates = data.certifiedDates;
-      
-                  data.stations.forEach((station, index) => {
+        
+                  data.stations.forEach((station) => {
                     const option = document.createElement("option");
                     option.value = station;
                     option.textContent = station;
@@ -232,59 +220,68 @@
                 stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
               });
           }
-      
-          // إذا لم يكن المستخدم من WSP
+        
+          // تحكم في تفعيل وتعطيل الحقول حسب الفرع (WSP أو غيره)
           if (department !== "WSP") {
             branchSelect.value = department;
             branchSelect.disabled = true;
-            branchcomment.disabled=false;
-            wspcomment.disabled=true;
+            branchcomment.disabled = false;
+            wspcomment.disabled = true;
             wspbuttons.forEach(button => button.disabled = true);
-            
+        
             fetchStations(department);
           } else {
-            // إذا كان من WSP يمكنه اختيار الفرع
             branchSelect.disabled = false;
-            branchcomment.disabled=true;
-            wspcomment.disabled=false;
+            branchcomment.disabled = true;
+            wspcomment.disabled = false;
             branchbuttons.forEach(button => button.disabled = true);
-            
+        
             branchSelect.addEventListener("change", () => {
               fetchStations(branchSelect.value);
             });
           }
-      
-          // عند اختيار محطة، يتم عرض تاريخ الاعتماد الموافق
+        
+          // عند اختيار محطة يتم تحديث التاريخ وتفاصيل المواقع
           stationSelect.addEventListener("change", () => {
             const selectedStation = stationSelect.value;
             const index = branchStations.indexOf(selectedStation);
-      
+        
             if (index !== -1 && branchDates[index]) {
-              // تحويل التاريخ من Google Sheet إلى صيغة YYYY-MM-DD
               const date = new Date(branchDates[index]);
               const formattedDate = date.toISOString().split("T")[0];
               certifiedDateInput.value = formattedDate;
             } else {
               certifiedDateInput.value = "";
             }
-             // جلب تفاصيل المحطة من السيرفر
+        
             fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
               .then(res => res.json())
               .then(data => {
                 if (data.status === "success" && data.details.length > 0) {
                   fillStationDetails(data.details);
+                } else {
+                  // تفريغ المواقع والتفاصيل إذا لم توجد بيانات
+                  locationSelect.innerHTML = '<option value="" disabled selected>No locations</option>';
+                  riskInput.value = "";
+                  correctiveActionInput.value = "";
+                  durationInput.value = "";
+                  situationSelect.value = "";
+                  branchcomment.value = "";
+                  wspcomment.value = "";
+                  document.getElementById("filename").textContent = "";
                 }
               })
               .catch(err => console.error("Error fetching station details:", err));
           });
-         
-        };
+};
+
      
 
 
     </script>
   </body>
 </html>
+
 
 
 
