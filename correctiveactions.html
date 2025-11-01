@@ -142,7 +142,50 @@
           let branchStations = [];      // قائمة المحطات
           let branchDates = [];         // قائمة تواريخ الاعتماد الموافقة
           
+           // دالة لملء قائمة المواقع location وربطها بتعبئة التفاصيل
+          function fillStationDetails(details) {
+            const locationSelect = document.getElementById("location");
+            const riskInput = document.getElementById("risk");
+            const correctiveActionInput = document.getElementById("action");
+            const durationInput = document.getElementById("duration");
+            const situationSelect = document.getElementById("situation");
+            const branchComment = document.getElementById("branchcomment");
+            const wspComment = document.getElementById("wspcomment");
           
+            // تنظيف القائمة القديمة
+            locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
+          
+            // حفظ التفاصيل في ذاكرة مؤقتة داخل العنصر نفسه (لكل Location)
+            locationSelect.detailsMap = {};
+          
+            // إضافة كل Location إلى القائمة
+            details.forEach((detail) => {
+              const option = document.createElement("option");
+              option.value = detail.location || "";
+              option.textContent = detail.location || "Unnamed Location";
+              locationSelect.appendChild(option);
+          
+              // خزن التفاصيل المرتبطة بهذا الموقع
+              locationSelect.detailsMap[detail.location] = detail;
+            });
+          
+            // عند اختيار موقع، يتم تعبئة باقي الحقول تلقائيًا
+            locationSelect.addEventListener("change", () => {
+              const selected = locationSelect.value;
+              const detail = locationSelect.detailsMap[selected];
+          
+              if (detail) {
+                riskInput.value = detail.risk || "";
+                correctiveActionInput.value = detail.correctiveAction || "";
+                durationInput.value = detail.duration || "";
+                situationSelect.value = detail.executionStatus || "";
+                branchComment.value = detail.branchRemarks || "";
+                wspComment.value = detail.wspRemarks || "";
+                document.getElementById("filename").textContent = detail.attachment || "";
+              }
+            });
+          }
+
           // دالة لجلب المحطات وتواريخها
           function fetchStations(branch) {
             if (!branch) return;
@@ -207,50 +250,17 @@
             } else {
               certifiedDateInput.value = "";
             }
-          // دالة لملء قائمة المواقع location وربطها بتعبئة التفاصيل
-          function fillStationDetails(details) {
-            const locationSelect = document.getElementById("location");
-            const riskInput = document.getElementById("risk");
-            const correctiveActionInput = document.getElementById("action");
-            const durationInput = document.getElementById("duration");
-            const situationSelect = document.getElementById("situation");
-            const branchComment = document.getElementById("branchcomment");
-            const wspComment = document.getElementById("wspcomment");
-          
-            // تنظيف القائمة القديمة
-            locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
-          
-            // حفظ التفاصيل في ذاكرة مؤقتة داخل العنصر نفسه (لكل Location)
-            locationSelect.detailsMap = {};
-          
-            // إضافة كل Location إلى القائمة
-            details.forEach((detail) => {
-              const option = document.createElement("option");
-              option.value = detail.location || "";
-              option.textContent = detail.location || "Unnamed Location";
-              locationSelect.appendChild(option);
-          
-              // خزن التفاصيل المرتبطة بهذا الموقع
-              locationSelect.detailsMap[detail.location] = detail;
-            });
-          
-            // عند اختيار موقع، يتم تعبئة باقي الحقول تلقائيًا
-            locationSelect.addEventListener("change", () => {
-              const selected = locationSelect.value;
-              const detail = locationSelect.detailsMap[selected];
-          
-              if (detail) {
-                riskInput.value = detail.risk || "";
-                correctiveActionInput.value = detail.correctiveAction || "";
-                durationInput.value = detail.duration || "";
-                situationSelect.value = detail.executionStatus || "";
-                branchComment.value = detail.branchRemarks || "";
-                wspComment.value = detail.wspRemarks || "";
-                document.getElementById("filename").textContent = detail.attachment || "";
-              }
-            });
-          }
-
+             // جلب تفاصيل المحطة من السيرفر
+            fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
+              .then(res => res.json())
+              .then(data => {
+                if (data.status === "success" && data.details.length > 0) {
+                  fillStationDetails(data.details);
+                }
+              })
+              .catch(err => console.error("Error fetching station details:", err));
+          });
+         
         };
      
 
