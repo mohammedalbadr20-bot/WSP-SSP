@@ -207,28 +207,50 @@
             } else {
               certifiedDateInput.value = "";
             }
-           // جلب تفاصيل المحطة
-            fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
-              .then(res => res.json())
-              .then(data => {
-                console.log("📦 Station Data:", data); // ← اطبع النتيجة في الـConsole
-                
-                if (data.status === "success" && data.details.length > 0) {
-                  const details = data.details; // كلها تفاصيل
-                  fillStationDetails(details);  // نملأ خيارات location, risk, situation
-                  const detail = data.details[0];
-                  document.getElementById("location").value = detail.location || "";
-                  document.getElementById("risk").value = detail.risk || "";
-                  document.getElementById("action").value = detail.correctiveAction || "";
-                  document.getElementById("duration").value = detail.duration || "";
-                  document.getElementById("situation").value = detail.executionStatus || "";
-                  document.getElementById("filename").textContent = detail.attachment ? detail.attachment : "";
-                  document.getElementById("branchcomment").value = detail.branchRemarks || "";
-                  document.getElementById("wspcomment").value = detail.wspRemarks || "";
-                }
-              })
-              .catch(err => console.error("Error fetching station details:", err));
-          });
+          // دالة لملء قائمة المواقع location وربطها بتعبئة التفاصيل
+          function fillStationDetails(details) {
+            const locationSelect = document.getElementById("location");
+            const riskInput = document.getElementById("risk");
+            const correctiveActionInput = document.getElementById("action");
+            const durationInput = document.getElementById("duration");
+            const situationSelect = document.getElementById("situation");
+            const branchComment = document.getElementById("branchcomment");
+            const wspComment = document.getElementById("wspcomment");
+          
+            // تنظيف القائمة القديمة
+            locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
+          
+            // حفظ التفاصيل في ذاكرة مؤقتة داخل العنصر نفسه (لكل Location)
+            locationSelect.detailsMap = {};
+          
+            // إضافة كل Location إلى القائمة
+            details.forEach((detail) => {
+              const option = document.createElement("option");
+              option.value = detail.location || "";
+              option.textContent = detail.location || "Unnamed Location";
+              locationSelect.appendChild(option);
+          
+              // خزن التفاصيل المرتبطة بهذا الموقع
+              locationSelect.detailsMap[detail.location] = detail;
+            });
+          
+            // عند اختيار موقع، يتم تعبئة باقي الحقول تلقائيًا
+            locationSelect.addEventListener("change", () => {
+              const selected = locationSelect.value;
+              const detail = locationSelect.detailsMap[selected];
+          
+              if (detail) {
+                riskInput.value = detail.risk || "";
+                correctiveActionInput.value = detail.correctiveAction || "";
+                durationInput.value = detail.duration || "";
+                situationSelect.value = detail.executionStatus || "";
+                branchComment.value = detail.branchRemarks || "";
+                wspComment.value = detail.wspRemarks || "";
+                document.getElementById("filename").textContent = detail.attachment || "";
+              }
+            });
+          }
+
         };
      
 
@@ -236,6 +258,7 @@
     </script>
   </body>
 </html>
+
 
 
 
