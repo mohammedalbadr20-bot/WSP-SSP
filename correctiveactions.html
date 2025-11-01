@@ -45,7 +45,7 @@
 
         <div>
           <label class="infolabel">Certified Date</label>
-          <input type="date" id="certifieddate" disabled>
+          <input type="date" id="certifieddate" readonly>
         </div>
       </div>
 
@@ -60,18 +60,18 @@
 
       <div class="risk">
         <label>Risk</label>
-        <input value="" disabled id="risk"> 
+        <input value="" readonly id="risk"> 
       </div>
 
       <div class="action">
         <label>Corrective Action</label>
-        <input value="" disabled id="action">
+        <input value="" readonly id="action">
       </div>
 
       <div class="branchresponse">
         <div class="duration">
           <label>Duration (month)</label>
-          <input type="number" value="" disabled id="duration">
+          <input type="number" value="" readonly id="duration">
         </div>
 
         <div>
@@ -157,7 +157,7 @@
             locationSelect.detailsMap = {};
           
             // إضافة كل Location إلى القائمة
-            details.forEach((detail) => {
+            details.forEach((detail, index) => {
               const option = document.createElement("option");
               option.value = index; // نستخدم رقم الصف كمفتاح فريد
               option.textContent = detail.location || "Unnamed Location";
@@ -166,10 +166,7 @@
 
             // تعبئة خيارات المخاطر إن لم تكن مكررة
             if (detail.risk && !riskInput.querySelector(`option[value="${detail.risk}"]`)) {
-              const opt = document.createElement("option");
-              opt.value = detail.risk;
-              opt.textContent = detail.risk;
-              riskInput.appendChild(opt);
+              riskInput.value = detail.risk || "";
             }
           });
           
@@ -192,7 +189,12 @@
                 situationSelect.value = status;
                 branchComment.value = detail.branchRemarks || "";
                 wspComment.value = detail.wspRemarks || "";
-                document.getElementById("filename").textContent = detail.attachment || "";
+               if (detail.attachment) {
+                document.getElementById("filename").innerHTML =
+                  `<a href="${detail.attachment}" target="_blank">عرض الملف</a>`;
+              } else {
+                document.getElementById("filename").textContent = "لا يوجد ملف";
+              }
               }
             });
           }
@@ -279,6 +281,7 @@
     </script>
   </body>
 </html>
+
 
 
 
