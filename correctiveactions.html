@@ -308,7 +308,7 @@
     
         const response = await fetch(scriptURL, { method: "POST", body: formData });
         const result = await response.json();
-        consale.log("status: ",messageBox);
+       
     
         document.getElementById("messageBox").innerText = result.status === "success"
           ? "✅ تم حفظ تعديلات الفرع"
@@ -344,7 +344,7 @@
         const result = await response.json();
     
         if (result.status === "success") {
-          console.log("status :",status);
+         
           // بعد التحديث، نطلب اعتماد الإجراء
           const approve = confirm("هل تريد اعتماد انتهاء الإجراء؟");
           if (approve) {
@@ -383,6 +383,7 @@
     </script>
   </body>
 </html>
+
 
 
 
