@@ -50,6 +50,7 @@
       </div>
 
       <hr>
+      <input type="hidden" id="rowIndex">
 
       <div class="location">
         <label>Location</label>
@@ -104,17 +105,17 @@
       <hr>
 
       <div class="buttons">
-        <button class="wspbutton">WSP Submit</button>
-        <button class="wspbutton">WSP Update</button>
-        <button class="branchbutton">Branch Submit</button>
-        <button class="branchbutton">Branch Update</button>
+        <button class="wspbutton" onclick="updateWSP()">WSP Submit</button>
+        <button class="branchbutton" onclick="updateBranch()">Branch Submit</button>
+       
       </div>
     </form>
     
     <script>
-         window.onload = () => {
-          const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-        
+       const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";  
+      
+       window.onload = () => {
+                  
           // تعريف عناصر الصفحة
           const email = sessionStorage.getItem("email");
           const department = sessionStorage.getItem("department");
@@ -276,6 +277,93 @@
               .catch(err => console.error("Error fetching station details:", err));
           });
 };
+      async function updateBranch() {
+        const station = document.getElementById("station").value;
+        const email = document.getElementById("email").value;
+        const rowIndex = document.getElementById("rowIndex").value;
+        const executionStatus = document.getElementById("situation").value;
+        const branchRemarks = document.getElementById("branchcomment").value;
+        const attachment = document.getElementById("attachment").value;
+        const branch = document.getElementById("branch").value;
+    
+        const formData = new FormData();
+        formData.append("action", "update");
+        formData.append("station", station);
+        formData.append("department", "branch");
+        formData.append("email", email);
+        formData.append("rowIndex", rowIndex);
+        formData.append("situation", executionStatus);
+        formData.append("branchcomment", branchRemarks);
+        const file = document.getElementById("attachment").files[0];
+        if(file) formData.append("attachment", file);
+        formData.append("branch", branch);
+    
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
+        const result = await response.json();
+    
+        document.getElementById("messageBox").innerText = result.status === "success"
+          ? "✅ تم حفظ تعديلات الفرع"
+          : "⚠️ خطأ: " + result.message;
+      }
+    
+      async function updateWSP() {
+        const station = document.getElementById("station").value;
+        const email = document.getElementById("email").value;
+        const rowIndex = document.getElementById("rowIndex").value;
+        const executionStatus = document.getElementById("situation").value;
+        const wspRemarks = document.getElementById("wspcomment").value;
+        const attachment = document.getElementById("attachment").value;
+        const branch = document.getElementById("branch").value;
+    
+        // تحديث بيانات WSP
+        const formData = new FormData();
+        formData.append("action", "update");
+        formData.append("station", station);
+        formData.append("department", "wsp");
+        formData.append("email", email);
+        formData.append("rowIndex", rowIndex);
+        formData.append("situation", executionStatus);
+        formData.append("wspcomment", wspRemarks);
+        
+        const file = document.getElementById("attachment").files[0];
+        if(file) formData.append("attachment", file);
+
+        
+        formData.append("branch", branch);
+    
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
+        const result = await response.json();
+    
+        if (result.status === "success") {
+          // بعد التحديث، نطلب اعتماد الإجراء
+          const approve = confirm("هل تريد اعتماد انتهاء الإجراء؟");
+          if (approve) {
+            await approveAction(station, email, rowIndex, branch, executionStatus);
+          }
+          document.getElementById("messageBox").innerText = "✅ تم تحديث بيانات WSP";
+        } else {
+          document.getElementById("messageBox").innerText = "⚠️ خطأ: " + result.message;
+        }
+      }
+    
+      async function approveAction(station, email, rowIndex, branch, location) {
+        const formData = new FormData();
+        formData.append("email", email);
+        formData.append("department", "wsp");
+        formData.append("station", station);
+        formData.append("rowIndex", rowIndex);
+        formData.append("branch", branch);
+        formData.append("location", location);
+    
+        const response = await fetch(scriptURL, { method: "POST", body: formData });
+        const result = await response.json();
+    
+        if (result.status === "success") {
+          alert("✅ تم اعتماد انتهاء الإجراء بنجاح.");
+        } else {
+          alert("⚠️ حدث خطأ أثناء الاعتماد: " + result.message);
+        }
+      }
 
      
 
@@ -283,39 +371,4 @@
     </script>
   </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
