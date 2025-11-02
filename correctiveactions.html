@@ -161,7 +161,7 @@
             const selectedIndex = locationSelect.value;
             const detail = locationSelect.detailsMap[selectedIndex];
             // تعيين rowIndex
-            document.getElementById("").value = detail?.rowIndex || selectedIndex;
+            document.getElementById("rowIndex").value = detail?.rowIndex || selectedIndex;
         
             if (detail) {
               riskInput.value = detail.risk || "";
@@ -377,6 +377,7 @@
     </script>
   </body>
 </html>
+
 
 
 
