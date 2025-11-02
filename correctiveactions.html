@@ -250,7 +250,7 @@
           stationSelect.addEventListener("change", () => {
             const selectedStation = stationSelect.value;
             const index = branchStations.indexOf(selectedStation);
-            console.warn("Selected Station: ",selectedStaion);
+            console.log("Selected Station: ",selectedStaion);
         
             if (index !== -1 && branchDates[index]) {
               const date = new Date(branchDates[index]);
@@ -381,6 +381,7 @@
     </script>
   </body>
 </html>
+
 
 
 
