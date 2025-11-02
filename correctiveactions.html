@@ -250,6 +250,7 @@
           stationSelect.addEventListener("change", () => {
             const selectedStation = stationSelect.value;
             const index = branchStations.indexOf(selectedStation);
+            console.warn("Selected Station: ",selectedStaion);
         
             if (index !== -1 && branchDates[index]) {
               const date = new Date(branchDates[index]);
@@ -264,9 +265,12 @@
             fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(selectedStation)}`)
               .then(res => res.json())
               .then(data => {
+                console.log("Fetched Station Details: ",data);
                 if (data.status === "success" && data.details.length > 0) {
+                  console.log("Details found: ",data.details);
                   fillStationDetails(data.details);
                 } else {
+                  console.warn("No locations available");
                   // تفريغ المواقع والتفاصيل إذا لم توجد بيانات
                   locationSelect.innerHTML = '<option value="" disabled selected>No locations</option>';
                   riskInput.value = "";
@@ -377,6 +381,7 @@
     </script>
   </body>
 </html>
+
 
 
 
