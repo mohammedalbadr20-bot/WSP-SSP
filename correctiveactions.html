@@ -343,6 +343,7 @@
         const result = await response.json();
     
         if (result.status === "success") {
+          console.log("status :",status);
           // بعد التحديث، نطلب اعتماد الإجراء
           const approve = confirm("هل تريد اعتماد انتهاء الإجراء؟");
           if (approve) {
@@ -381,6 +382,7 @@
     </script>
   </body>
 </html>
+
 
 
 
