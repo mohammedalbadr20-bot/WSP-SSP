@@ -150,6 +150,44 @@
               option.value = index; 
               option.textContent = detail.location || "Unnamed Location";
               locationSelect.appendChild(option);
+              location       const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";  
+      
+       window.onload = () => {
+                  
+          // تعريف عناصر الصفحة
+          const email = sessionStorage.getItem("email");
+          const department = sessionStorage.getItem("department");
+        
+          document.getElementById("email").value = email || "";
+          document.getElementById("section").value = department || "";
+        
+          const stationSelect = document.getElementById("station");
+          const branchSelect = document.getElementById("branch");
+          const certifiedDateInput = document.getElementById("certifieddate");
+        
+          const locationSelect = document.getElementById("location");
+          const riskInput = document.getElementById("risk");
+          const correctiveActionInput = document.getElementById("action");
+          const durationInput = document.getElementById("duration");
+          const situationSelect = document.getElementById("situation");
+          const branchcomment = document.getElementById("branchcomment");
+          const wspcomment = document.getElementById("wspcomment");
+          const branchbuttons = document.querySelectorAll('.branchbutton');
+          const wspbuttons = document.querySelectorAll('.wspbutton');
+        
+          let branchStations = [];      // قائمة المحطات
+          let branchDates = [];         // قائمة تواريخ الاعتماد الموافقة
+        
+          // دالة لملء قائمة المواقع location فقط
+          function fillStationDetails(details) {
+            locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
+            locationSelect.detailsMap = {};
+        
+            details.forEach((detail, index) => {
+              const option = document.createElement("option");
+              option.value = index; 
+              option.textContent = detail.location || "Unnamed Location";
+              locationSelect.appendChild(option);
               locationSelect.detailsMap[index] = detail;
             });
           }
@@ -276,7 +314,7 @@
               })
               .catch(err => console.error("Error fetching station details:", err));
           });
-};
+       };
       async function updateBranch() {
         const station = document.getElementById("station").value;
         const email = document.getElementById("email").value;
@@ -371,6 +409,7 @@
     </script>
   </body>
 </html>
+
 
 
 
