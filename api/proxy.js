@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
   try {
     // رابط سكريبت Google Apps Script الخاص بك
-    const googleScriptURL = "https://script.google.com/macros/s/AKfycbx.../exec";
+    const googleScriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
 
     // إرسال الطلب إلى Google Script
     const response = await fetch(googleScriptURL, {
