@@ -273,21 +273,21 @@
     
       try {
         const response = await fetch(proxyURL, { method: "POST", body: formData });
-    
         const text = await response.text();
         let result;
+        
         try {
           result = JSON.parse(text);
         } catch (e) {
-          console.error("Invalid JSON response:", text);
-          document.getElementById("messageBox").innerText = "⚠️ خطأ في الاتصال بالخادم أو الرد غير صالح";
-          return;
+          console.warn("⚠️ الرد ليس بصيغة JSON:", text);
+          result = { status: "error", message: text };
         }
-    
+        
         document.getElementById("messageBox").innerText =
           result.status === "success"
             ? "✅ تم حفظ تعديلات الفرع"
-            : "⚠️ خطأ: " + result.message;
+            : "⚠️ خطأ: " + (result.message || "حدث خطأ غير متوقع");
+
     
       } catch (err) {
         console.error("Fetch error:", err);
@@ -368,6 +368,7 @@
 
 </body>
 </html>
+
 
 
 
