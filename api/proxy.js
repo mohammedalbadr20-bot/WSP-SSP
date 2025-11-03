@@ -8,12 +8,10 @@ export default async function handler(req, res) {
   }
 
   try {
-    const googleScriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
+    const googleScriptURL =
+      "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
 
-    console.log("🔹 Forwarding request to:", googleScriptURL);
-    console.log("🔹 Body received from frontend:", req.body);
-
-    // نحافظ على نفس نوع الطلب (GET أو POST)
+    // لاحظ أننا نمرّر بيانات POST بنفس طريقة استلامها
     const response = await fetch(googleScriptURL, {
       method: req.method,
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -21,17 +19,13 @@ export default async function handler(req, res) {
     });
 
     const text = await response.text();
+
+    // 🟩 تسجيل الرد لمعرفة ما يعود من Google Script
     console.log("🔹 Google Script Response:", text);
 
-    try {
-      const json = JSON.parse(text);
-      res.status(200).json(json);
-    } catch {
-      res.status(200).send(text);
-    }
-
+    res.status(response.status).send(text);
   } catch (error) {
     console.error("❌ Proxy Error:", error);
-    res.status(500).json({ status: "error", message: error.message });
+    res.status(500).send("حدث خطأ أثناء الاتصال بـ Google Script");
   }
 }
