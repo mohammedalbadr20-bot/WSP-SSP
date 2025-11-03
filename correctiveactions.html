@@ -251,7 +251,7 @@
       });
     };
   
-    async function updateBranch() {
+   async function updateBranch() {
       const station = document.getElementById("station").value;
       const email = document.getElementById("email").value;
       const rowIndex = document.getElementById("rowIndex").value;
@@ -259,7 +259,7 @@
       const branchRemarks = document.getElementById("branchcomment").value;
       const attachment = document.getElementById("attachment").files[0];
       const branch = document.getElementById("branch").value;
-  
+    
       const formData = new FormData();
       formData.append("action", "update");
       formData.append("station", station);
@@ -270,45 +270,78 @@
       formData.append("branchcomment", branchRemarks);
       if (attachment) formData.append("attachment", attachment);
       formData.append("branch", branch);
-  
-      const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
-      const result = await response.json();
-      document.getElementById("messageBox").innerText = result.status === "success" ? "✅ تم حفظ تعديلات الفرع" : "⚠️ خطأ: " + result.message;
+    
+      try {
+        const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
+    
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          console.error("Invalid JSON response:", text);
+          document.getElementById("messageBox").innerText = "⚠️ خطأ في الاتصال بالخادم أو الرد غير صالح";
+          return;
+        }
+    
+        document.getElementById("messageBox").innerText =
+          result.status === "success"
+            ? "✅ تم حفظ تعديلات الفرع"
+            : "⚠️ خطأ: " + result.message;
+    
+      } catch (err) {
+        console.error("Fetch error:", err);
+        document.getElementById("messageBox").innerText = "⚠️ فشل الاتصال بالخادم";
+      }
     }
-  
-    async function updateBranch() {
+    
+    async function updateWSP() {
       const station = document.getElementById("station").value;
       const email = document.getElementById("email").value;
       const rowIndex = document.getElementById("rowIndex").value;
       const executionStatus = document.getElementById("situation").value;
-      const branchRemarks = document.getElementById("branchcomment").value;
+      const wspRemarks = document.getElementById("wspcomment").value;
+      const attachment = document.getElementById("attachment").files[0];
       const branch = document.getElementById("branch").value;
     
-      try {
-        const response = await fetch(proxyURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams({
-            action: "update",
-            department: "branch",
-            station,
-            email,
-            rowIndex,
-            situation: executionStatus,
-            branchcomment: branchRemarks,
-            branch
-          })
-        });
+      const formData = new FormData();
+      formData.append("action", "update");
+      formData.append("station", station);
+      formData.append("department", "wsp");
+      formData.append("email", email);
+      formData.append("rowIndex", rowIndex);
+      formData.append("situation", executionStatus);
+      formData.append("wspcomment", wspRemarks);
+      if (attachment) formData.append("attachment", attachment);
+      formData.append("branch", branch);
     
-        const result = await response.json();
-        document.getElementById("messageBox").innerText = result.status === "success" ? 
-          "✅ تم حفظ تعديلات الفرع" : 
-          "⚠️ خطأ: " + result.message;
+      try {
+        const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
+    
+        const text = await response.text();
+        let result;
+        try {
+          result = JSON.parse(text);
+        } catch (e) {
+          console.error("Invalid JSON response:", text);
+          document.getElementById("messageBox").innerText = "⚠️ خطأ في الاتصال بالخادم أو الرد غير صالح";
+          return;
+        }
+    
+        if (result.status === "success") {
+          const approve = confirm("هل تريد اعتماد انتهاء الإجراء؟");
+          if (approve) await approveAction(station, email, rowIndex, branch, executionStatus);
+          document.getElementById("messageBox").innerText = "✅ تم تحديث بيانات WSP";
+        } else {
+          document.getElementById("messageBox").innerText = "⚠️ خطأ: " + result.message;
+        }
+    
       } catch (err) {
-        console.error(err);
-        document.getElementById("messageBox").innerText = "⚠️ خطأ في الاتصال بالخادم";
+        console.error("Fetch error:", err);
+        document.getElementById("messageBox").innerText = "⚠️ فشل الاتصال بالخادم";
       }
     }
+
 
   
     async function approveAction(station, email, rowIndex, branch, location) {
@@ -335,6 +368,7 @@
 
 </body>
 </html>
+
 
 
 
