@@ -236,7 +236,7 @@
           certifiedDateInput.value = `${year}-${month}-${day}`;
         } else certifiedDateInput.value = "";
   
-        fetch(proxyURL + scriptURL + "?action=getStationDetails&station=" + encodeURIComponent(selectedStation))
+        fetch(scriptURL + "?action=getStationDetails&station=" + encodeURIComponent(selectedStation))
           .then(res => res.json())
           .then(data => {
             if (data.status === "success" && data.details.length > 0) fillStationDetails(data.details);
@@ -331,6 +331,7 @@
 
 </body>
 </html>
+
 
 
 
