@@ -178,30 +178,37 @@
       });
   
       function fetchStations(branch) {
-        if (!branch) return;
-        stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
-        fetch(proxyURL + scriptURL + "?action=getStations&branch=" + encodeURIComponent(branch))
-          .then(res => res.json())
-          .then(data => {
-            if (data.status === "success") {
-              stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-              branchStations = data.stations;
-              branchDates = data.certifiedDates;
-              data.stations.forEach(station => {
-                const option = document.createElement("option");
-                option.value = station;
-                option.textContent = station;
-                stationSelect.appendChild(option);
+          if (!branch) return;
+      
+          stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+      
+          // استخدام scriptURL مباشرة
+          const url = scriptURL + "?action=getStations&branch=" + encodeURIComponent(branch);
+      
+          fetch(url)
+              .then(res => res.json())
+              .then(data => {
+                  if (data.status === "success") {
+                      stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+                      branchStations = data.stations;
+                      branchDates = data.certifiedDates;
+      
+                      data.stations.forEach(station => {
+                          const option = document.createElement("option");
+                          option.value = station;
+                          option.textContent = station;
+                          stationSelect.appendChild(option);
+                      });
+                  } else {
+                      stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
+                  }
+              })
+              .catch(err => {
+                  console.error("Error fetching stations:", err);
+                  stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
               });
-            } else {
-              stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
-            }
-          })
-          .catch(err => {
-            console.error("Error fetching stations:", err);
-            stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
-          });
       }
+
   
       if (department !== "WSP") {
         branchSelect.value = department;
@@ -324,6 +331,7 @@
 
 </body>
 </html>
+
 
 
 
