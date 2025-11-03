@@ -272,7 +272,7 @@
       formData.append("branch", branch);
     
       try {
-        const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
+        const response = await fetch(proxyURL, { method: "POST", body: formData });
     
         const text = await response.text();
         let result;
@@ -316,7 +316,7 @@
       formData.append("branch", branch);
     
       try {
-        const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
+        const response = await fetch(proxyURL, { method: "POST", body: formData });
     
         const text = await response.text();
         let result;
@@ -368,6 +368,7 @@
 
 </body>
 </html>
+
 
 
 
