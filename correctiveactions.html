@@ -111,18 +111,17 @@
     <div id="messageBox" style="margin-top:10px; color:green; font-weight:bold;"></div>
 
   </form>
-  
   <script>
     const proxyURL = "https://cors-proxy-vercel-ms5e.vercel.app/"; // رابط البروكسي
     const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-
+  
     window.onload = () => {
       const email = sessionStorage.getItem("email");
       const department = sessionStorage.getItem("department");
-    
+  
       document.getElementById("email").value = email || "";
       document.getElementById("section").value = department || "";
-    
+  
       const stationSelect = document.getElementById("station");
       const branchSelect = document.getElementById("branch");
       const certifiedDateInput = document.getElementById("certifieddate");
@@ -135,27 +134,27 @@
       const wspcomment = document.getElementById("wspcomment");
       const branchbuttons = document.querySelectorAll('.branchbutton');
       const wspbuttons = document.querySelectorAll('.wspbutton');
-
+  
       let branchStations = [];
       let branchDates = [];
-
+  
       function fillStationDetails(details) {
         locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
         locationSelect.detailsMap = {};
         details.forEach((detail, index) => {
           const option = document.createElement("option");
-          option.value = index; 
+          option.value = index;
           option.textContent = detail.location || "Unnamed Location";
           locationSelect.appendChild(option);
           locationSelect.detailsMap[index] = detail;
         });
       }
-
+  
       locationSelect.addEventListener("change", () => {
         const selectedIndex = locationSelect.value;
         const detail = locationSelect.detailsMap[selectedIndex];
         document.getElementById("rowIndex").value = detail?.rowIndex || selectedIndex;
-
+  
         if (detail) {
           riskInput.value = detail.risk || "";
           correctiveActionInput.value = detail.correctiveAction || "";
@@ -177,7 +176,7 @@
           }
         }
       });
-
+  
       function fetchStations(branch) {
         if (!branch) return;
         stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
@@ -203,7 +202,7 @@
             stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
           });
       }
-
+  
       if (department !== "WSP") {
         branchSelect.value = department;
         branchSelect.disabled = true;
@@ -218,7 +217,7 @@
         branchbuttons.forEach(btn => btn.disabled = true);
         branchSelect.addEventListener("change", () => fetchStations(branchSelect.value));
       }
-
+  
       stationSelect.addEventListener("change", () => {
         const selectedStation = stationSelect.value;
         const index = branchStations.indexOf(selectedStation);
@@ -229,7 +228,7 @@
           const day = String(date.getDate()).padStart(2, '0');
           certifiedDateInput.value = `${year}-${month}-${day}`;
         } else certifiedDateInput.value = "";
-
+  
         fetch(proxyURL + scriptURL + "?action=getStationDetails&station=" + encodeURIComponent(selectedStation))
           .then(res => res.json())
           .then(data => {
@@ -244,7 +243,7 @@
           .catch(err => console.error("Error fetching station details:", err));
       });
     };
-
+  
     async function updateBranch() {
       const station = document.getElementById("station").value;
       const email = document.getElementById("email").value;
@@ -253,7 +252,7 @@
       const branchRemarks = document.getElementById("branchcomment").value;
       const attachment = document.getElementById("attachment").files[0];
       const branch = document.getElementById("branch").value;
-
+  
       const formData = new FormData();
       formData.append("action", "update");
       formData.append("station", station);
@@ -264,12 +263,12 @@
       formData.append("branchcomment", branchRemarks);
       if (attachment) formData.append("attachment", attachment);
       formData.append("branch", branch);
-
+  
       const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
       const result = await response.json();
       document.getElementById("messageBox").innerText = result.status === "success" ? "✅ تم حفظ تعديلات الفرع" : "⚠️ خطأ: " + result.message;
     }
-
+  
     async function updateWSP() {
       const station = document.getElementById("station").value;
       const email = document.getElementById("email").value;
@@ -278,7 +277,7 @@
       const wspRemarks = document.getElementById("wspcomment").value;
       const attachment = document.getElementById("attachment").files[0];
       const branch = document.getElementById("branch").value;
-
+  
       const formData = new FormData();
       formData.append("action", "update");
       formData.append("station", station);
@@ -289,14 +288,8 @@
       formData.append("wspcomment", wspRemarks);
       if (attachment) formData.append("attachment", attachment);
       formData.append("branch", branch);
-
-      const response = await fetch(proxyURL + scriptURL, { 
-        method: "POST", 
-        body: formData.toString(),
-        headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
-        }
-      
+  
+      const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
       const result = await response.json();
       if (result.status === "success") {
         const approve = confirm("هل تريد اعتماد انتهاء الإجراء؟");
@@ -306,7 +299,7 @@
         document.getElementById("messageBox").innerText = "⚠️ خطأ: " + result.message;
       }
     }
-
+  
     async function approveAction(station, email, rowIndex, branch, location) {
       const formData = new FormData();
       formData.append("email", email);
@@ -315,19 +308,23 @@
       formData.append("rowIndex", rowIndex);
       formData.append("branch", branch);
       formData.append("location", location);
-
+  
       const response = await fetch(proxyURL + scriptURL, { method: "POST", body: formData });
       const result = await response.json();
       if (result.status === "success") alert("✅ تم اعتماد انتهاء الإجراء");
       else alert("⚠️ فشل الاعتماد: " + result.message);
     }
-
+  
     document.getElementById("attachment").addEventListener("change", function() {
       document.getElementById("filename").textContent = this.files[0]?.name || "";
     });
   </script>
+
+  
+
 </body>
 </html>
+
 
 
 
