@@ -50,8 +50,7 @@
     </div>
 
     <hr>
-    <input type="hidden" id="rowIndex">
-
+    
     <div class="location">
       <label>Location</label>
       <select id="location">
@@ -76,9 +75,9 @@
       </div>
 
       <div>
-        <label>Situation</label>
-        <select id="situation">
-          <option value="" selected disabled>Select Situation</option>
+        <label>Status</label>
+        <select id="status">
+          <option value="" selected disabled>Select Status</option>
           <option value="تم">تم</option>
           <option value="جارى">جارى</option>
           <option value="لم يتم">لم يتم</option>
@@ -93,12 +92,12 @@
     </div>
 
     <div class="branchremark">
-      <label>Remarks</label>
+      <label>Branch Comment</label>
       <textarea id="branchcomment" name="Remarks" maxlength="150"></textarea>
     </div>
 
     <div class="wspcomment">
-      <label>WSP Comments</label>
+      <label>WSP Comment</label>
       <textarea id="wspcomment" name="WSP Comments" maxlength="150"></textarea>
     </div>
 
@@ -108,8 +107,7 @@
       <button class="wspbutton" onclick="updateWSP()">WSP Submit</button>
       <button class="branchbutton" onclick="updateBranch()">Branch Submit</button>
     </div>
-    <div id="messageBox" style="margin-top:10px; color:green; font-weight:bold;"></div>
-
+   
   </form>
   <script>
     const proxyURL = "https://wsp-ssp.vercel.app/api/proxy";  // رابط البروكسي
@@ -130,7 +128,7 @@
       const riskInput = document.getElementById("risk");
       const correctiveActionInput = document.getElementById("action");
       const durationInput = document.getElementById("duration");
-      const situationSelect = document.getElementById("situation");
+      const statusSelect = document.getElementById("status");
       const branchcomment = document.getElementById("branchcomment");
       const wspcomment = document.getElementById("wspcomment");
       const branchbuttons = document.querySelectorAll('.branchbutton');
@@ -243,7 +241,7 @@
             if (data.status === "success" && data.details.length > 0) fillStationDetails(data.details);
             else {
               locationSelect.innerHTML = '<option value="" disabled selected>No locations</option>';
-              riskInput.value = correctiveActionInput.value = durationInput.value = situationSelect.value = "";
+              riskInput.value = correctiveActionInput.value = durationInput.value = statusSelect.value = "";
               branchcomment.value = wspcomment.value = "";
               document.getElementById("filename").textContent = "";
             }
@@ -257,6 +255,7 @@
 
 </body>
 </html>
+
 
 
 
