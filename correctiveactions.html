@@ -287,10 +287,7 @@
         const response = await fetch(proxyURL, {
           method: "POST",
           body: formData,
-          headers: {
-            "target-url": scriptURL // 🔑 هذا يُخبر البروكسي إلى أي وجهة يرسل الطلب
-          }
-        });
+          });
     
         const text = await response.text();
         console.log("Raw server response:", text);
@@ -392,6 +389,7 @@
 
 </body>
 </html>
+
 
 
 
