@@ -151,6 +151,8 @@
   
       locationSelect.addEventListener("change", () => {
         const selectedIndex = locationSelect.value;
+        const selectedIndex = locationSelect.selectedIndex - 1; // تجاهل الـ placeholder
+          if (selectedIndex < 0) return; // لم يتم اختيار شيء
         const detail = locationSelect.detailsMap[selectedIndex];
         document.getElementById("rowIndex").value = detail?.rowIndex || selectedIndex;
   
@@ -165,7 +167,7 @@
             case /لم/.test(status): status = "لم يتم"; break;
             default: status = "";
           }
-          situationSelect.value = status;
+          statusSelect.value = status;
           branchcomment.value = detail.branchRemarks || "";
           wspcomment.value = detail.wspRemarks || "";
           if (detail.attachment) {
@@ -255,6 +257,7 @@
 
 </body>
 </html>
+
 
 
 
