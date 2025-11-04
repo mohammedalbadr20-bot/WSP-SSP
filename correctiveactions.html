@@ -279,9 +279,6 @@
         // إرسال البيانات عبر Proxy لتجاوز CORS
         const response = await fetch(proxyURL, {
           method: "POST",
-          headers: {
-            "target-url": "https://wsp-ssp.vercel.app/api/proxy" // رابط السيرفر النهائي
-          },
           body: formData // FormData يسمح بإرسال الملفات
         });
     
@@ -382,6 +379,7 @@
 
 </body>
 </html>
+
 
 
 
