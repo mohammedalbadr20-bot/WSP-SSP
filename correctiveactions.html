@@ -275,7 +275,7 @@
       try {
         console.log("Email sent:", email, "Department sent:", department);
 
-        const response = await fetch("https://cors-proxy-vercel-ms5e.vercel.app/api/proxy", {
+        const response = await fetch(proxyURL, {
           method: "POST",
           body: new URLSearchParams({
             action: "update",
@@ -386,6 +386,7 @@
 
 </body>
 </html>
+
 
 
 
