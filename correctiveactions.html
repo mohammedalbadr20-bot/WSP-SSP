@@ -251,10 +251,9 @@
           .catch(err => console.error("Error fetching station details:", err));
       });
     };
-  
-   async function updateBranch() {
-      // 🔹 1. قراءة البيانات من الصفحة
-      const department = sessionStorage.getItem("department");
+    
+    async function updateBranch() {
+      
       const station = document.getElementById("station").value;
       const email = document.getElementById("email").value;
       const rowIndex = document.getElementById("rowIndex").value;
@@ -263,7 +262,6 @@
       const attachment = document.getElementById("attachment").files[0];
       const branch = document.getElementById("branch").value;
     
-      // 🔹 2. تحضير البيانات للإرسال
       const formData = new FormData();
       formData.append("action", "update");
       formData.append("station", station);
@@ -272,50 +270,50 @@
       formData.append("rowIndex", rowIndex);
       formData.append("situation", executionStatus);
       formData.append("branchcomment", branchRemarks);
+      if (attachment) formData.append("attachment", attachment);
       formData.append("branch", branch);
     
-      // إضافة الملف إذا وُجد
-      if (attachment) {
-        formData.append("attachment", attachment);
-      }
-    
       try {
-        // 🔹 3. إرسال الطلب إلى البروكسي الجديد
-        const proxyURL = "https://wsp-ssp.vercel.app/api/proxy";
-        const scriptURL = "https://script.google.com/macros/s/AKfycbwm-xoojxIaAJ8-cLLIRFAthMHT1FFWS8w0gHtf6xlhU5xP3eqB47CQucqea4GDEm0Zlw/exec";
-    
-        // البروكسي سيحوّل الطلب إلى Google Script تلقائيًا
+        console.log("Email sent:", email, "Department sent:", department);
+
         const response = await fetch(proxyURL, {
           method: "POST",
-          body: formData,
-          });
-    
+          body: new URLSearchParams({
+            action: "update",
+            station,
+            department: "branch",
+            email,
+            rowIndex,
+            situation: executionStatus,
+            branchcomment: branchRemarks,
+            branch
+          })
+        });
+
         const text = await response.text();
-        console.log("Raw server response:", text);
-    
+        console.log("Raw server response:", text);  // هذه السطر الجديد
         let result;
+        
         try {
           result = JSON.parse(text);
         } catch (e) {
-          result = { status: "error", message: text || "استجابة غير صالحة من الخادم" };
+          result = { status: "error", message: text || "استجابة غير صالحة من السيرفر" };
         }
     
-        // 🔹 4. عرض النتيجة للمستخدم
-        const msgBox = document.getElementById("messageBox");
+        // عرض النتيجة في messageBox
         if (result.status === "success") {
-          msgBox.innerText = "✅ تم حفظ تعديلات الفرع بنجاح";
-          msgBox.style.color = "green";
+          document.getElementById("messageBox").innerText = "✅ تم حفظ تعديلات الفرع";
         } else {
-          msgBox.innerText = "⚠️ خطأ: " + (result.message || "حدث خطأ غير متوقع");
-          msgBox.style.color = "red";
+          document.getElementById("messageBox").innerText = "⚠️ خطأ: " + (result.message || "حدث خطأ غير متوقع");
         }
+
     
       } catch (err) {
         console.error("Fetch error:", err);
-        document.getElementById("messageBox").innerText = "⚠️ فشل الاتصال بالخادم أو تم رفض الوصول";
+        document.getElementById("messageBox").innerText = "⚠️ فشل الاتصال بالخادم";
       }
     }
-
+   
     
     async function updateWSP() {
       const station = document.getElementById("station").value;
@@ -390,6 +388,7 @@
 
 </body>
 </html>
+
 
 
 
