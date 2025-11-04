@@ -279,7 +279,7 @@
         // إرسال البيانات عبر Proxy لتجاوز CORS
         const response = await fetch(proxyURL, {
           method: "POST",
-          header: 
+          headers: 
             "Content-Type": "application/json"
             "target-url": scriptURL;
         },
@@ -383,6 +383,7 @@
 
 </body>
 </html>
+
 
 
 
