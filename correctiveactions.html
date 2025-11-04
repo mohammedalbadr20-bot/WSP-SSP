@@ -277,7 +277,7 @@
     
       try {
         // إرسال البيانات عبر Proxy لتجاوز CORS
-        const response = await fetch("https://your-vercel-app.vercel.app/api/proxy", {
+        const response = await fetch(proxyURL, {
           method: "POST",
           headers: {
             "target-url": "https://wsp-ssp.vercel.app/api/proxy" // رابط السيرفر النهائي
@@ -382,6 +382,7 @@
 
 </body>
 </html>
+
 
 
 
