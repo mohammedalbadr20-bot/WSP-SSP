@@ -263,6 +263,7 @@
       const branch = document.getElementById("section").value;
       const department = "branch";
     
+          // إنشاء FormData لدعم المرفقات
       const formData = new FormData();
       formData.append("action", "update");
       formData.append("station", station);
@@ -271,44 +272,36 @@
       formData.append("rowIndex", rowIndex);
       formData.append("situation", executionStatus);
       formData.append("branchcomment", branchRemarks);
-      if (attachment) formData.append("attachment", attachment);
       formData.append("branch", branch);
+      if (attachment) formData.append("attachment", attachment);
     
       try {
-        console.log("Email sent:", email, "Department sent:", branch);
-
-        const response = await fetch(proxyURL, {
+        // إرسال البيانات عبر Proxy لتجاوز CORS
+        const response = await fetch("https://your-vercel-app.vercel.app/api/proxy", {
           method: "POST",
-          body: new URLSearchParams({
-            action: "update",
-            station,
-            department: "branch",
-            email,
-            rowIndex,
-            situation: executionStatus,
-            branchcomment: branchRemarks,
-            branch
-          })
+          headers: {
+            "target-url": "https://wsp-ssp.vercel.app/api/proxy" // رابط السيرفر النهائي
+          },
+          body: formData // FormData يسمح بإرسال الملفات
         });
-
+    
         const text = await response.text();
-        console.log("Raw server response:", text);  // هذه السطر الجديد
+        console.log("Raw server response:", text);
+    
         let result;
-        
         try {
-          result = JSON.parse(text);
+          result = JSON.parse(text); // محاولة تحويل النص إلى JSON
         } catch (e) {
           result = { status: "error", message: text || "استجابة غير صالحة من السيرفر" };
         }
     
         // عرض النتيجة في messageBox
+        const msgBox = document.getElementById("messageBox");
         if (result.status === "success") {
-          document.getElementById("messageBox").innerText = "✅ تم حفظ تعديلات الفرع";
+          msgBox.innerText = "✅ تم حفظ تعديلات الفرع";
         } else {
-          document.getElementById("messageBox").innerText = "⚠️ خطأ: " + (result.message || "حدث خطأ غير متوقع");
+          msgBox.innerText = "⚠️ خطأ: " + (result.message || "حدث خطأ غير متوقع");
         }
-
-    
       } catch (err) {
         console.error("Fetch error:", err);
         document.getElementById("messageBox").innerText = "⚠️ فشل الاتصال بالخادم";
@@ -389,6 +382,7 @@
 
 </body>
 </html>
+
 
 
 
