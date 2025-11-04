@@ -137,29 +137,30 @@
       let branchStations = [];
       let branchDates = [];
   
+        // ملء تفاصيل الموقع
       function fillStationDetails(details) {
         locationSelect.innerHTML = '<option value="" disabled selected>Select Location</option>';
         locationSelect.detailsMap = {};
         details.forEach((detail, index) => {
           const option = document.createElement("option");
-          option.value = index;
+          option.value = index; // المفتاح للوصول
           option.textContent = detail.location || "Unnamed Location";
           locationSelect.appendChild(option);
           locationSelect.detailsMap[index] = detail;
         });
       }
-  
+
       locationSelect.addEventListener("change", () => {
-        const selectedIndex = locationSelect.value;
-        const selectedIndex = locationSelect.selectedIndex - 1; // تجاهل الـ placeholder
-          if (selectedIndex < 0) return; // لم يتم اختيار شيء
-        const detail = locationSelect.detailsMap[selectedIndex];
-        document.getElementById("rowIndex").value = detail?.rowIndex || selectedIndex;
-  
+        const selectedKey = locationSelect.value;
+        if (!selectedKey) return;
+
+        const detail = locationSelect.detailsMap[selectedKey];
+
         if (detail) {
           riskInput.value = detail.risk || "";
           correctiveActionInput.value = detail.correctiveAction || "";
           durationInput.value = detail.duration || "";
+
           let status = (detail.executionStatus || "").trim();
           switch (true) {
             case /تم/.test(status): status = "تم"; break;
@@ -170,6 +171,7 @@
           statusSelect.value = status;
           branchcomment.value = detail.branchRemarks || "";
           wspcomment.value = detail.wspRemarks || "";
+
           if (detail.attachment) {
             document.getElementById("filename").innerHTML = `<a href="${detail.attachment}" target="_blank">Show File</a>`;
           } else {
@@ -177,40 +179,40 @@
           }
         }
       });
-  
+
+      // جلب المحطات بناءً على الفرع
       function fetchStations(branch) {
-          if (!branch) return;
-      
-          stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
-      
-          // استخدام scriptURL مباشرة
-          const url = scriptURL + "?action=getStations&branch=" + encodeURIComponent(branch);
-      
-          fetch(url)
-              .then(res => res.json())
-              .then(data => {
-                  if (data.status === "success") {
-                      stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
-                      branchStations = data.stations;
-                      branchDates = data.certifiedDates;
-      
-                      data.stations.forEach(station => {
-                          const option = document.createElement("option");
-                          option.value = station;
-                          option.textContent = station;
-                          stationSelect.appendChild(option);
-                      });
-                  } else {
-                      stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
-                  }
-              })
-              .catch(err => {
-                  console.error("Error fetching stations:", err);
-                  stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+        if (!branch) return;
+
+        stationSelect.innerHTML = '<option value="" disabled selected>Loading Stations..</option>';
+
+        const url = scriptURL + "?action=getStations&branch=" + encodeURIComponent(branch);
+
+        fetch(url)
+          .then(res => res.json())
+          .then(data => {
+            if (data.status === "success") {
+              stationSelect.innerHTML = '<option value="" disabled selected>Select Station</option>';
+              branchStations = data.stations;
+              branchDates = data.certifiedDates;
+
+              data.stations.forEach(station => {
+                const option = document.createElement("option");
+                option.value = station;
+                option.textContent = station;
+                stationSelect.appendChild(option);
               });
+            } else {
+              stationSelect.innerHTML = '<option value="" disabled selected>Not found</option>';
+            }
+          })
+          .catch(err => {
+            console.error("Error fetching stations:", err);
+            stationSelect.innerHTML = '<option value="" disabled selected>Connection Error</option>';
+          });
       }
 
-  
+      // إعداد الفرع حسب القسم
       if (department !== "WSP") {
         branchSelect.value = department;
         branchSelect.disabled = true;
@@ -225,7 +227,8 @@
         branchbuttons.forEach(btn => btn.disabled = true);
         branchSelect.addEventListener("change", () => fetchStations(branchSelect.value));
       }
-  
+
+      // عند تغيير المحطة
       stationSelect.addEventListener("change", () => {
         const selectedStation = stationSelect.value;
         const index = branchStations.indexOf(selectedStation);
@@ -236,7 +239,7 @@
           const day = String(date.getDate()).padStart(2, '0');
           certifiedDateInput.value = `${year}-${month}-${day}`;
         } else certifiedDateInput.value = "";
-  
+
         fetch(scriptURL + "?action=getStationDetails&station=" + encodeURIComponent(selectedStation))
           .then(res => res.json())
           .then(data => {
@@ -257,6 +260,7 @@
 
 </body>
 </html>
+
 
 
 
