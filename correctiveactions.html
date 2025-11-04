@@ -279,6 +279,10 @@
         // إرسال البيانات عبر Proxy لتجاوز CORS
         const response = await fetch(proxyURL, {
           method: "POST",
+          header: 
+            "Content-Type": "application/json",
+            "target-url": scriptURL;
+        },
           body: formData // FormData يسمح بإرسال الملفات
         });
     
@@ -379,6 +383,7 @@
 
 </body>
 </html>
+
 
 
 
