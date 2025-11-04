@@ -260,7 +260,7 @@
       const executionStatus = document.getElementById("situation").value;
       const branchRemarks = document.getElementById("branchcomment").value;
       const attachment = document.getElementById("attachment").files[0];
-      const branch = document.getElementById("branch").value;
+      const branch = document.getElementById("section").value;
     
       const formData = new FormData();
       formData.append("action", "update");
@@ -274,7 +274,7 @@
       formData.append("branch", branch);
     
       try {
-        console.log("Email sent:", email, "Department sent:", department);
+        console.log("Email sent:", email, "Department sent:", branch);
 
         const response = await fetch(proxyURL, {
           method: "POST",
@@ -388,6 +388,7 @@
 
 </body>
 </html>
+
 
 
 
