@@ -254,12 +254,174 @@
           .catch(err => console.error("Error fetching station details:", err));
       });
     };
+
+   
+    async function updateBranch() {
+      const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
+      if (!confirmUpdate) return;
+    
+      const email = document.getElementById("email").value;
+      const branch = document.getElementById("branch").value;
+      const station = document.getElementById("station").value;
+      const location = document.getElementById("location").selectedOptions[0]?.textContent || "";
+      const status = document.getElementById("status").value;
+      const branchComment = document.getElementById("branchcomment").value;
+      const attachmentFile = document.getElementById("attachment").files[0];
+    
+      if (!branch || !station || !location) {
+        alert("من فضلك اختر الفرع والمحطة والموقع قبل الحفظ");
+        return;
+      }
+    
+      // رفع المرفق (اختياري)
+      let attachmentURL = "";
+      if (attachmentFile) {
+        const formData = new FormData();
+        formData.append("file", attachmentFile);
+        const uploadRes = await fetch(scriptURL + "?action=uploadFile", {
+          method: "POST",
+          body: formData
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadData.status === "success") attachmentURL = uploadData.fileUrl;
+      }
+    
+      // إرسال تحديث الحالة والملاحظات والمرفق
+      const payload = {
+        action: "updateBranch",
+        email,
+        branch,
+        station,
+        location,
+        status,
+        branchComment,
+        attachment: attachmentURL
+      };
+    
+      try {
+        const res = await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+    
+        if (data.status === "success") {
+          alert("✅ تم تحديث البيانات بنجاح");
+    
+          // طلب الاعتماد
+          const approveAction = confirm("هل تريد اعتماد الإجراء؟");
+          if (approveAction) {
+            // إرسال حالة الاعتماد إلى Google Sheet فقط
+            const approvalPayload = {
+              action: "approveAction",
+              branch,
+              station,
+              location,
+              approved: true
+            };
+    
+            const approveRes = await fetch(scriptURL, {
+              method: "POST",
+              body: JSON.stringify(approvalPayload),
+              headers: { "Content-Type": "application/json" }
+            });
+    
+            const approveData = await approveRes.json();
+            if (approveData.status === "success") {
+              alert("✅ تم الاعتماد وتسجيله في الجدول بنجاح");
+            } else {
+              alert("⚠️ حدث خطأ أثناء تسجيل الاعتماد في الجدول");
+            }
+          }
+    
+        } else {
+          alert("❌ حدث خطأ أثناء التحديث، حاول مرة أخرى");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ فشل الاتصال بالخادم");
+      }
+    }
+    
+    
+    
+    // 🟦 تحديث WSP (ملاحظات فقط + اعتماد)
+    async function updateWSP() {
+      const confirmUpdate = confirm("هل تريد تحديث ملاحظات WSP؟");
+      if (!confirmUpdate) return;
+    
+      const email = document.getElementById("email").value;
+      const branch = document.getElementById("branch").value;
+      const station = document.getElementById("station").value;
+      const location = document.getElementById("location").selectedOptions[0]?.textContent || "";
+      const wspComment = document.getElementById("wspcomment").value;
+    
+      if (!branch || !station || !location) {
+        alert("من فضلك اختر الفرع والمحطة والموقع قبل الحفظ");
+        return;
+      }
+    
+      const payload = {
+        action: "updateWSP",
+        email,
+        branch,
+        station,
+        location,
+        wspComment
+      };
+    
+      try {
+        const res = await fetch(scriptURL, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "application/json" }
+        });
+        const data = await res.json();
+    
+        if (data.status === "success") {
+          alert("✅ تم تحديث ملاحظات WSP بنجاح");
+    
+          const approveAction = confirm("هل تريد اعتماد الإجراء؟");
+          if (approveAction) {
+            const approvalPayload = {
+              action: "approveAction",
+              branch,
+              station,
+              location,
+              approved: true
+            };
+    
+            const approveRes = await fetch(scriptURL, {
+              method: "POST",
+              body: JSON.stringify(approvalPayload),
+              headers: { "Content-Type": "application/json" }
+            });
+    
+            const approveData = await approveRes.json();
+            if (approveData.status === "success") {
+              alert("✅ تم الاعتماد وتسجيله في الجدول بنجاح");
+            } else {
+              alert("⚠️ حدث خطأ أثناء تسجيل الاعتماد في الجدول");
+            }
+          }
+    
+        } else {
+          alert("❌ حدث خطأ أثناء التحديث");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("❌ فشل الاتصال بالخادم");
+      }
+    }
+
   </script>
 
   
 
 </body>
 </html>
+
 
 
 
