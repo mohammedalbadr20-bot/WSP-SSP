@@ -256,66 +256,64 @@
     };
 
    
-  async function updateBranch() {
-    const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
-    if (!confirmUpdate) return;
-  
-    const email = document.getElementById("email").value;
-    const department = document.getElementById("section").value;
-    const branch = document.getElementById("branch").value;
-    const station = document.getElementById("station").value;
-    const location = document.getElementById("location").selectedOptions[0]?.textContent || "";
-    const status = document.getElementById("status").value;
-    const branchComment = document.getElementById("branchcomment").value;
-    const attachmentFile = document.getElementById("attachment").files[0];
-  
-    if (!branch || !station || !location) {
-      alert("من فضلك اختر الفرع والمحطة والموقع قبل الحفظ");
-      return;
-    }
-  
-    let attachmentURL = "";
-  
-    if (attachmentFile) {
-      const formData = new FormData();
-      formData.append("file", attachmentFile);
-      formData.append("targetURL", scriptURL + "?action=uploadFile");
-  
-      try {
-        const uploadRes = await fetch(proxyURL, { method: "POST", body: formData });
-        const uploadData = await uploadRes.json();
-        if (uploadData.status === "success") {
-          attachmentURL = uploadData.fileUrl;
-        } else {
-          alert("⚠️ فشل رفع المرفق: " + uploadData.message);
-          return;
-        }
-      } catch (err) {
-        console.error(err);
-        alert("❌ حدث خطأ أثناء رفع المرفق");
+
+    async function updateBranch() {
+      const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
+      if (!confirmUpdate) return;
+    
+      const email = document.getElementById("email").value.trim();
+      const department = document.getElementById("section").value.trim();
+      const branch = document.getElementById("branch").value.trim();
+      const station = document.getElementById("station").value.trim();
+      const location = document.getElementById("location").selectedOptions[0]?.textContent.trim() || "";
+      const status = document.getElementById("status").value.trim();
+      const branchComment = document.getElementById("branchcomment").value.trim();
+      const attachmentFile = document.getElementById("attachment").files[0];
+    
+      if (!branch || !station || !location) {
+        alert("من فضلك اختر الفرع والمحطة والموقع قبل الحفظ");
         return;
       }
-    }
-  
-     // بناء البيانات للإرسال بصيغة application/x-www-form-urlencoded
-      const formData = new URLSearchParams();
-      formData.append("targetURL", scriptURL);
-      formData.append("action", "updateBranch");
-      formData.append("email", email);
-      formData.append("department", department);
-      formData.append("branch", branch);
-      formData.append("station", station);
-      formData.append("location", location);
-      formData.append("status", status);
-      formData.append("branchComment", branchComment);
-      formData.append("attachment", attachmentURL);
+    
+      let attachmentURL = "";
     
       try {
+        // رفع الملف إذا موجود
+        if (attachmentFile) {
+          const formData = new FormData();
+          formData.append("file", attachmentFile);
+          formData.append("targetURL", scriptURL + "?action=uploadFile");
+    
+          const uploadRes = await fetch(proxyURL, { method: "POST", body: formData });
+          const uploadData = await uploadRes.json();
+    
+          if (uploadData.status === "success") {
+            attachmentURL = uploadData.fileUrl;
+          } else {
+            alert("⚠️ فشل رفع المرفق: " + (uploadData.message || "غير معروف"));
+            return;
+          }
+        }
+    
+        // إعداد البيانات لإرسالها
+        const payload = {
+          action: "updateBranch",
+          email,
+          department,
+          branch,
+          station,
+          location,
+          status,
+          branchComment,
+          attachment: attachmentURL
+        };
+    
         const res = await fetch(proxyURL, {
           method: "POST",
-          body: formData,
-          headers: { "Content-Type": "application/x-www-form-urlencoded" }
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ targetURL: scriptURL, body: payload })
         });
+    
         const data = await res.json();
     
         if (data.status === "success") {
@@ -323,11 +321,13 @@
         } else {
           alert("❌ حدث خطأ من السيرفر: " + (data.message || "غير معروف"));
         }
+    
       } catch (err) {
         console.error(err);
         alert("❌ فشل الاتصال بالخادم");
       }
     }
+
 
     
     // 🟦 تحديث WSP (ملاحظات فقط + اعتماد)
@@ -405,6 +405,7 @@
 
 </body>
 </html>
+
 
 
 
