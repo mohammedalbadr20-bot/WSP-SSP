@@ -283,9 +283,7 @@
         try {
           const uploadRes = await fetch(proxyURL, {
             method: "POST",
-            body: JSON.stringify({
-              targetURL: scriptURL + "?action=uploadFile",
-              body: formData,
+            body: formData
             })
           });
     
@@ -413,6 +411,7 @@
 
 </body>
 </html>
+
 
 
 
