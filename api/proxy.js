@@ -1,81 +1,69 @@
-export default async function handler(req, res) {
-  // السماح بالوصول من أي دومين (يمكن تغييره لدومين محدد)
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-
-  if (req.method === "OPTIONS") {
-    // الرد على preflight request
-    return res.status(200).end();
-  }
-
-  // باقي كود البروكسي هنا
-}
-
+// pages/api/proxy.js
 import formidable from "formidable";
 import fs from "fs";
-import FormData from "form-data";
-import fetch from "node-fetch";
+import fetch from "node-fetch"; // إذا استخدمت Node 18+ يمكن حذف هذا
 
 export const config = {
   api: {
-    bodyParser: false, // ضروري لقبول FormData
+    bodyParser: false, // لقبول FormData
   },
 };
 
 export default async function handler(req, res) {
+  // ✅ إضافة هيدرز CORS لجميع الطلبات
+  res.setHeader("Access-Control-Allow-Origin", "*"); // ضع دومينك بدل * لو تحب
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ✅ التعامل مع preflight request
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
   if (req.method !== "POST") {
     return res.status(405).json({ status: "error", message: "Method not allowed" });
   }
 
   const contentType = req.headers["content-type"] || "";
 
-  // حالة FormData (رفع الملفات)
-  if (contentType.includes("multipart/form-data")) {
-    const form = new formidable.IncomingForm();
-    form.parse(req, async (err, fields, files) => {
-      if (err) return res.status(500).json({ status: "error", message: err.message });
+  try {
+    // حالة FormData (رفع الملفات)
+    if (contentType.includes("multipart/form-data")) {
+      const form = new formidable.IncomingForm();
+      form.parse(req, async (err, fields, files) => {
+        if (err) return res.status(500).json({ status: "error", message: err.message });
 
-      const targetURL = fields.targetURL;
-      const file = files.file;
+        const targetURL = fields.targetURL;
+        const file = files.file;
 
-      if (!file) {
-        return res.status(400).json({ status: "error", message: "No file uploaded" });
-      }
+        const formData = new FormData();
+        formData.append("file", fs.createReadStream(file.filepath), file.originalFilename);
 
-      const formData = new FormData();
-      formData.append("file", fs.createReadStream(file.filepath), file.originalFilename);
-
-      try {
         const response = await fetch(targetURL, {
           method: "POST",
           body: formData,
-          headers: formData.getHeaders(),
         });
         const data = await response.json();
         res.status(200).json(data);
-      } catch (err) {
-        res.status(500).json({ status: "error", message: err.message });
-      }
-    });
-  } else {
+      });
+    } 
     // حالة JSON
-    let bodyData = "";
-    req.on("data", (chunk) => (bodyData += chunk));
-    req.on("end", async () => {
-      try {
-        const { targetURL, body } = JSON.parse(bodyData);
+    else {
+      let body = "";
+      req.on("data", chunk => { body += chunk.toString(); });
+      req.on("end", async () => {
+        const { targetURL, body: payload } = JSON.parse(body);
 
         const response = await fetch(targetURL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
+          body: JSON.stringify(payload),
         });
         const data = await response.json();
         res.status(200).json(data);
-      } catch (err) {
-        res.status(500).json({ status: "error", message: err.message });
-      }
-    });
+      });
+    }
+  } catch (err) {
+    res.status(500).json({ status: "error", message: err.message });
   }
 }
