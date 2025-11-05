@@ -1,3 +1,17 @@
+export default async function handler(req, res) {
+  // السماح بالوصول من أي دومين (يمكن تغييره لدومين محدد)
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  if (req.method === "OPTIONS") {
+    // الرد على preflight request
+    return res.status(200).end();
+  }
+
+  // باقي كود البروكسي هنا
+}
+
 import formidable from "formidable";
 import fs from "fs";
 import FormData from "form-data";
