@@ -1,30 +1,67 @@
+import formidable from "formidable";
+import fs from "fs";
+import FormData from "form-data";
+import fetch from "node-fetch";
+
+export const config = {
+  api: {
+    bodyParser: false, // ضروري لقبول FormData
+  },
+};
+
 export default async function handler(req, res) {
-  // هيدرز CORS لكل طلب
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, target-url");
-
-  // الرد على طلب preflight OPTIONS مع نفس الهيدرز
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
+  if (req.method !== "POST") {
+    return res.status(405).json({ status: "error", message: "Method not allowed" });
   }
 
-  const targetUrl = req.headers["target-url"] || process.env.SCRIPT_URL;
-  if (!targetUrl) {
-    return res.status(400).json({ status: "error", message: "Missing target URL" });
-  }
+  const contentType = req.headers["content-type"] || "";
 
-  try {
-    const response = await fetch(targetUrl, {
-      method: req.method,
-      headers: req.headers, // إرسال نفس الهيدرز للمصدر النهائي
-      body: req.method === "POST" ? req.body : undefined,
+  // حالة FormData (رفع الملفات)
+  if (contentType.includes("multipart/form-data")) {
+    const form = new formidable.IncomingForm();
+    form.parse(req, async (err, fields, files) => {
+      if (err) return res.status(500).json({ status: "error", message: err.message });
+
+      const targetURL = fields.targetURL;
+      const file = files.file;
+
+      if (!file) {
+        return res.status(400).json({ status: "error", message: "No file uploaded" });
+      }
+
+      const formData = new FormData();
+      formData.append("file", fs.createReadStream(file.filepath), file.originalFilename);
+
+      try {
+        const response = await fetch(targetURL, {
+          method: "POST",
+          body: formData,
+          headers: formData.getHeaders(),
+        });
+        const data = await response.json();
+        res.status(200).json(data);
+      } catch (err) {
+        res.status(500).json({ status: "error", message: err.message });
+      }
     });
+  } else {
+    // حالة JSON
+    let bodyData = "";
+    req.on("data", (chunk) => (bodyData += chunk));
+    req.on("end", async () => {
+      try {
+        const { targetURL, body } = JSON.parse(bodyData);
 
-    const data = await response.text();
-    res.status(response.status).send(data);
-  } catch (err) {
-    console.error("Proxy fetch error:", err);
-    res.status(500).json({ status: "error", message: "Proxy failed to fetch target URL" });
+        const response = await fetch(targetURL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        const data = await response.json();
+        res.status(200).json(data);
+      } catch (err) {
+        res.status(500).json({ status: "error", message: err.message });
+      }
+    });
   }
 }
