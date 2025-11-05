@@ -1,11 +1,12 @@
 import formidable from "formidable";
 import fs from "fs";
 import FormData from "form-data";
+import fetch from "node-fetch";
 
 export const config = { api: { bodyParser: false } };
 
 export default async function handler(req, res) {
-  // CORS
+  // ترويسات CORS
   res.setHeader("Access-Control-Allow-Origin", "https://mohammedalbadr20-bot.github.io");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
@@ -16,36 +17,45 @@ export default async function handler(req, res) {
   const contentType = req.headers["content-type"] || "";
 
   try {
-    // 1️⃣ multipart/form-data
     if (contentType.includes("multipart/form-data")) {
       const form = new formidable.IncomingForm();
       form.parse(req, async (err, fields, files) => {
         if (err) return res.status(500).json({ status: "error", message: err.message });
 
         const targetURL = fields.targetURL;
+        if (!targetURL) return res.status(400).json({ status: "error", message: "targetURL is required" });
+
         const file = files.file;
+        if (!file) return res.status(400).json({ status: "error", message: "File not found" });
+
         const formData = new FormData();
-
-        if (file) formData.append("file", fs.createReadStream(file.filepath), file.originalFilename);
-
-        // إضافة باقي الحقول
-        for (const key in fields) if (key !== "targetURL") formData.append(key, fields[key]);
+        formData.append("file", fs.createReadStream(file.filepath), file.originalFilename);
 
         const response = await fetch(targetURL, { method: "POST", body: formData });
         const text = await response.text();
 
-        try { return res.status(200).json(JSON.parse(text)); }
-        catch { return res.status(200).send(text); }
+        // محاولة تحويل النص إلى JSON
+        try {
+          const data = JSON.parse(text);
+          return res.status(200).json(data);
+        } catch {
+          return res.status(500).json({ status: "error", message: "Target returned non-JSON response" });
+        }
       });
-
-    // 2️⃣ JSON
-    } else if (contentType.includes("application/json")) {
-      let body = "";
-      req.on("data", chunk => body += chunk);
+    } else {
+      // JSON payload
+      let raw = "";
+      req.on("data", chunk => raw += chunk);
       req.on("end", async () => {
-        const parsed = JSON.parse(body);
-        const targetURL = parsed.targetURL;
-        const payload = parsed.body || {};
+        let parsed;
+        try {
+          parsed = JSON.parse(raw);
+        } catch {
+          return res.status(400).json({ status: "error", message: "Invalid JSON" });
+        }
+
+        const { targetURL, body: payload } = parsed;
+        if (!targetURL || !payload) return res.status(400).json({ status: "error", message: "targetURL or body missing" });
 
         const response = await fetch(targetURL, {
           method: "POST",
@@ -54,13 +64,13 @@ export default async function handler(req, res) {
         });
 
         const text = await response.text();
-        try { return res.status(200).json(JSON.parse(text)); }
-        catch { return res.status(200).send(text); }
+        try {
+          const data = JSON.parse(text);
+          return res.status(200).json(data);
+        } catch {
+          return res.status(500).json({ status: "error", message: "Target returned non-JSON response" });
+        }
       });
-
-    // 3️⃣ غير مدعوم
-    } else {
-      return res.status(400).json({ status: "error", message: "Unsupported content-type" });
     }
   } catch (err) {
     console.error("Proxy error:", err);
