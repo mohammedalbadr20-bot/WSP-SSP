@@ -309,25 +309,30 @@
             alert("حدث خطأ أثناء تنفيذ العملية.");
           });
       }
-    function clearForm() {
-      document.getElementById("location").value = "";
-      document.getElementById("risk").value = "";
-      document.getElementById("action").value = "";
-      document.getElementById("duration").value = "";
-      document.getElementById("status").value = "";
-      document.getElementById("attachment").value = "";
-      document.getElementById("branchcomment").value = "";
-      document.getElementById("wspcomment").value = "";
-      document.getElementById("filename").textContent = "";
-    }
-    function fetchData(email, department) {
-      fetch(`${scriptURL}?action=getData&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.status === "unauthorized") {
-            alert("غير مصرح لك بالوصول");
-            return;
-          }
+      function clearForm() {
+        document.getElementById("location").value = "";
+        document.getElementById("risk").value = "";
+        document.getElementById("action").value = "";
+        document.getElementById("duration").value = "";
+        document.getElementById("status").value = "";
+        document.getElementById("attachment").value = "";
+        document.getElementById("branchcomment").value = "";
+        document.getElementById("wspcomment").value = "";
+        document.getElementById("filename").textContent = "";
+      }
+      function fetchData(email, department) {
+        fetch(`${scriptURL}?action=getData&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`)
+          .then(response => response.json())
+          .then(data => {
+            if (data.status === "unauthorized") {
+              alert("غير مصرح لك بالوصول");
+              return;
+            }
+             .catch(error => {
+            console.error("خطأ:", error);
+            alert("حدث خطأ أثناء تحميل البيانات.");
+          });
+      }
 
 
     // 🟦 تحديث WSP (ملاحظات فقط + اعتماد)
@@ -405,6 +410,7 @@
 
 </body>
 </html>
+
 
 
 
