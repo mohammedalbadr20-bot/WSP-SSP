@@ -328,7 +328,10 @@
               alert("غير مصرح لك بالوصول");
               return;
             }
-             .catch(error => {
+            // هنا يمكنك التعامل مع البيانات
+            console.log(data);
+          })
+          .catch(error => {
             console.error("خطأ:", error);
             alert("حدث خطأ أثناء تحميل البيانات.");
           });
@@ -410,6 +413,7 @@
 
 </body>
 </html>
+
 
 
 
