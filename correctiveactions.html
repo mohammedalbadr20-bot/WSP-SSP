@@ -256,80 +256,60 @@
     };
 
    
-
-    async function updateBranch() {
-      const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
-      if (!confirmUpdate) return;
     
-      const email = document.getElementById("email").value.trim();
-      const department = document.getElementById("section").value.trim();
-      const branch = document.getElementById("branch").value.trim();
-      const station = document.getElementById("station").value.trim();
-      const location = document.getElementById("location").selectedOptions[0]?.textContent.trim() || "";
-      const status = document.getElementById("status").value.trim();
-      const branchComment = document.getElementById("branchcomment").value.trim();
-      const attachmentFile = document.getElementById("attachment").files[0];
     
-      if (!branch || !station || !location) {
-        alert("من فضلك اختر الفرع والمحطة والموقع قبل الحفظ");
-        return;
-      }
-    
-      let attachmentURL = "";
-    
-      try {
-        // رفع الملف إذا موجود
-        if (attachmentFile) {
-          const formData = new FormData();
-          formData.append("file", attachmentFile);
-          formData.append("targetURL", scriptURL + "?action=uploadFile");
-    
-          const uploadRes = await fetch(proxyURL, { method: "POST", body: formData });
-          const uploadData = await uploadRes.json();
-    
-          if (uploadData.status === "success") {
-            attachmentURL = uploadData.fileUrl;
-          } else {
-            alert("⚠️ فشل رفع المرفق: " + (uploadData.message || "غير معروف"));
-            return;
-          }
+    function sendCommentsData(action) {
+        const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
+        if (!confirmUpdate) return;
+        const email = sessionStorage.getItem("email");
+        const department = sessionStorage.getItem("department");
+      
+        // في حالة التحديث أو الحذف، يجب اختيار صف أولاً
+        if ((action === "update") && 
+            (!document.getElementById("location").value ||
+             !document.getElementById("risk").value ||
+             !document.getElementById("action").value ||
+             !document.getElementById("duration").value)) {
+          alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث أو الحذف.");
+          return;
         }
-    
-        // إعداد البيانات لإرسالها
-        const payload = {
-          action: "updateBranch",
-          email,
-          department,
-          branch,
-          station,
-          location,
-          status,
-          branchComment,
-          attachment: attachmentURL
-        };
-    
-        const res = await fetch(proxyURL, {
+      
+        const formData = new URLSearchParams();
+        formData.append("action", action);
+        formData.append("email", email);
+        formData.append("department", department);
+      
+        // 🧩 البيانات الأساسية للتعرف على الصف
+        formData.append("location", document.getElementById("location").value);
+        formData.append("risk", document.getElementById("risk").value);
+        formData.append("action", document.getElementById("action").value);
+        formData.append("duration", document.getElementById("duration").value);
+      
+        // 🧾 البيانات التي سيتم تعديلها
+        formData.append("status", document.getElementById("status").value);
+        formData.append("attachment", document.getElementById("attachment").value);
+        formData.append("branchcomment", document.getElementById("branchcomment").value);
+        formData.append("wspcomment", document.getElementById("wspcomment").value);
+      
+        fetch(scriptURL, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ targetURL: scriptURL, body: payload })
-        });
-    
-        const data = await res.json();
-    
-        if (data.status === "success") {
-          alert("✅ تم تحديث البيانات بنجاح");
-        } else {
-          alert("❌ حدث خطأ من السيرفر: " + (data.message || "غير معروف"));
-        }
-    
-      } catch (err) {
-        console.error(err);
-        alert("❌ فشل الاتصال بالخادم");
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formData.toString()
+        })
+          .then(response => response.text())
+          .then(result => {
+            alert(`تمت عملية ${action === 'update' ? 'التحديث' : action === 'delete' ? 'الحذف' : 'إرسال البيانات'} بنجاح.`);
+            clearForm();
+            fetchData(email, department);
+          })
+          .catch(error => {
+            console.error("خطأ:", error);
+            alert("حدث خطأ أثناء تنفيذ العملية.");
+          });
       }
-    }
 
-
-    
     // 🟦 تحديث WSP (ملاحظات فقط + اعتماد)
     async function updateWSP() {
       const confirmUpdate = confirm("هل تريد تحديث ملاحظات WSP؟");
@@ -405,6 +385,7 @@
 
 </body>
 </html>
+
 
 
 
