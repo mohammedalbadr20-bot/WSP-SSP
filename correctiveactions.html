@@ -105,7 +105,7 @@
 
     <div class="buttons">
       <button class="wspbutton" onclick="updateWSP()">WSP Submit</button>
-      <button class="branchbutton" onclick="sendCommentsData('update')">Branch Submit</button>
+      <button class="branchbutton">Branch Submit</button>
     </div>
    
   </form>
@@ -336,6 +336,10 @@
             alert("حدث خطأ أثناء تحميل البيانات.");
           });
       }
+    document.querySelectorAll(".branchbutton")[0].addEventListener("click", function (e) {
+      e.preventDefault();
+      sendData("update");
+    });
 
 
     // 🟦 تحديث WSP (ملاحظات فقط + اعتماد)
@@ -413,6 +417,7 @@
 
 </body>
 </html>
+
 
 
 
