@@ -320,6 +320,14 @@
       document.getElementById("wspcomment").value = "";
       document.getElementById("filename").textContent = "";
     }
+    function fetchData(email, department) {
+      fetch(`${scriptURL}?action=getData&email=${encodeURIComponent(email)}&department=${encodeURIComponent(department)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "unauthorized") {
+            alert("غير مصرح لك بالوصول");
+            return;
+          }
 
 
     // 🟦 تحديث WSP (ملاحظات فقط + اعتماد)
@@ -397,6 +405,7 @@
 
 </body>
 </html>
+
 
 
 
