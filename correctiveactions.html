@@ -266,10 +266,11 @@
       
         // في حالة التحديث أو الحذف، يجب اختيار صف أولاً
         if ((action === "update") && 
-            (!document.getElementById("location").value ||
+            (!document.getElementById("id").value ||
+             !document.getElementById("location").value ||
              !document.getElementById("risk").value ||
              !document.getElementById("action").value ||
-             !document.getElementById("duration").value)) {
+             !document.getElementById("duration").value ||{
           alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث أو الحذف.");
           return;
         }
@@ -346,6 +347,7 @@
 
 </body>
 </html>
+
 
 
 
