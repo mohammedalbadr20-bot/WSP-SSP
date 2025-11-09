@@ -300,8 +300,9 @@
           },
           body: formData.toString()
         })
+          console.log("Form Data:", formData.toString());  // تحقق من محتويات البيانات التي ستُرسل
           .then(response => response.text())
-          .then(result => {
+          .then(result => {         
             alert(`تمت عملية ${action === 'update' ? 'التحديث' : action === 'delete' ? 'الحذف' : 'إرسال البيانات'} بنجاح.`);
             clearForm();
             fetchData(email, department);
@@ -345,6 +346,7 @@
 
 </body>
 </html>
+
 
 
 
