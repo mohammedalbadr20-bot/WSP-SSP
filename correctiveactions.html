@@ -300,7 +300,7 @@
           },
           body: formData.toString()
         })
-          console.log("Form Data:", formData.toString());  // تحقق من محتويات البيانات التي ستُرسل
+         
           .then(response => response.text())
           .then(result => {         
             alert(`تمت عملية ${action === 'update' ? 'التحديث' : action === 'delete' ? 'الحذف' : 'إرسال البيانات'} بنجاح.`);
@@ -346,6 +346,7 @@
 
 </body>
 </html>
+
 
 
 
