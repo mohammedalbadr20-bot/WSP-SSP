@@ -261,39 +261,42 @@
     function sendCommentsData(action) {
         const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
         if (!confirmUpdate) return;
+        
         const email = sessionStorage.getItem("email");
         const department = sessionStorage.getItem("department");
-      
+        
         // في حالة التحديث أو الحذف، يجب اختيار صف أولاً
         if ((action === "update") && 
             (!document.getElementById("id").value ||
              !document.getElementById("location").value ||
              !document.getElementById("risk").value ||
              !document.getElementById("action").value ||
-             !document.getElementById("duration").value ||{
+             !document.getElementById("duration").value)) {
           alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث أو الحذف.");
           return;
         }
-      
+        
         const formData = new URLSearchParams();
         formData.append("update", action);
         formData.append("email", email);
         formData.append("department", department);
       
-        // 🧩 البيانات الأساسية للتعرف على الصف
+        // البيانات الأساسية للتعرف على الصف
         formData.append("id", document.getElementById("id").value);
         formData.append("location", document.getElementById("location").value);
         formData.append("risk", document.getElementById("risk").value);
         formData.append("action", document.getElementById("action").value);
         formData.append("duration", document.getElementById("duration").value);
       
-        // 🧾 البيانات التي سيتم تعديلها
+        // البيانات التي سيتم تعديلها
         formData.append("status", document.getElementById("status").value);
         formData.append("attachment", document.getElementById("attachment").value);
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
+      
         console.log("Form Data:", formData.toString());  // تأكد من أن البيانات التي ستُرسل صحيحة
       
+        // إرسال البيانات إلى Google Apps Script عبر API
         fetch(scriptURL, {
           method: "POST",
           headers: {
@@ -301,18 +304,18 @@
           },
           body: formData.toString()
         })
-         
           .then(response => response.text())
           .then(result => {         
             alert(`تمت عملية ${action === 'update' ? 'التحديث' : action === 'delete' ? 'الحذف' : 'إرسال البيانات'} بنجاح.`);
-            clearForm();
-            fetchData(email, department);
+            clearForm();  // مسح النموذج بعد العملية
+            fetchData(email, department);  // إعادة تحميل البيانات
           })
           .catch(error => {
             console.error("خطأ:", error);
             alert("حدث خطأ أثناء تنفيذ العملية.");
           });
       }
+
       function clearForm() {
         document.getElementById("location").value = "";
         document.getElementById("risk").value = "";
@@ -347,6 +350,7 @@
 
 </body>
 </html>
+
 
 
 
