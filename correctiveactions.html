@@ -297,7 +297,7 @@
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
       
-        console.log("Form Data:", formData.toString());
+        console.log("📤 Form Data sent to server:", formData.toString());
       
         // ✅ نفس طريقة الإرسال بدون تغيير
         fetch(scriptURL, {
@@ -308,7 +308,18 @@
           body: formData.toString()
         })
           .then(response => response.json()) // 🆕 استقبال JSON لأن الكود الثاني يعيد jsonResponse
-          .then(result => {         
+          console.log("🔍 Raw response object:", response);
+          // للتحقق من حالة الاستجابة قبل التحويل إلى JSON
+          if (!response.ok) {
+            console.error("❌ Network or server error:", response.status, response.statusText);
+            throw new Error(`HTTP Error: ${response.status}`);
+          }
+    
+          return response.json();
+        })
+
+          .then(result => { 
+            console.log("✅ Response JSON from server:", result);
             // ✅ التحقق من النتيجة القادمة من الكود الثاني
             if (result.status === "unauthorized") {
               alert("غير مصرح لك بالوصول.");
@@ -328,7 +339,7 @@
             fetchData(email, department);  
           })
           .catch(error => {
-            console.error("خطأ:", error);
+            cconsole.error("💥 Exception caught:", error);
             alert("حدث خطأ أثناء تنفيذ العملية.");
           });
       }
@@ -368,6 +379,7 @@
 
 </body>
 </html>
+
 
 
 
