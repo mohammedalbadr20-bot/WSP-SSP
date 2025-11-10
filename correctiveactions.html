@@ -288,15 +288,7 @@
           return;
         }
       
-        if (action === "update" && 
-            (!document.getElementById("location").value ||
-             !document.getElementById("risk").value ||
-             !document.getElementById("action").value ||
-             !document.getElementById("duration").value)) {
-          alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث.");
-          return;
-        }
-      
+              
         const formData = new URLSearchParams();
         formData.append("action", "update");  // 🆕 مهم جدًا
         formData.append("station", document.getElementById("station").value);
@@ -311,8 +303,7 @@
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
       
-                // ✅ تحقق من أن الموقع المُرسل ليس فارغًا أو 0
-        const locationValue = document.getElementById("location").value;
+      
         console.log("📍 الموقع المُرسل:", locationValue); // 🧭 لمعرفة ما الذي يُرسل فعلاً
         
         if (!locationValue || locationValue === "0") {
@@ -402,6 +393,7 @@
 
 </body>
 </html>
+
 
 
 
