@@ -260,6 +260,14 @@
     
     function sendCommentsData(action) {
         const locationSelect = document.getElementById("location");
+        const riskInput = document.getElementById("risk");
+        const actionInput = document.getElementById("action");
+        const durationInput = document.getElementById("duration");
+        const statusSelect = document.getElementById("status");
+        const branchcomment = document.getElementById("branchcomment");
+        const wspcomment = document.getElementById("wspcomment");
+        const attachmentInput = document.getElementById("attachment");
+        
         const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
         if (!confirmUpdate) return;
       
@@ -394,6 +402,7 @@
 
 </body>
 </html>
+
 
 
 
