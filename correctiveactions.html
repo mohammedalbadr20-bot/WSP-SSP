@@ -313,10 +313,11 @@
         formData.append("wspcomment", document.getElementById("wspcomment").value);
       
       
-        console.log("📍 الموقع المُرسل:", locationValue); // 🧭 لمعرفة ما الذي يُرسل فعلاً
+        
         
         // تعريف locationValue هنا
         const locationValue = locationSelect.value;
+        console.log("📍 الموقع المُرسل:", locationValue); // 🧭 لمعرفة ما الذي يُرسل فعلاً
         if (!locationValue || locationValue === "0") {
           alert("⚠️ حقل الموقع غير صحيح أو لم يتم اختياره من الجدول!");
           return; // 🚫 إيقاف التنفيذ حتى لا يُرسل الطلب الخاطئ
@@ -404,6 +405,7 @@
 
 </body>
 </html>
+
 
 
 
