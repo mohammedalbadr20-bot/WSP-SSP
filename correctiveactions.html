@@ -246,7 +246,7 @@
             if (data.status === "success" && data.details.length > 0) fillStationDetails(data.details);
             else {
               locationSelect.innerHTML = '<option value="" disabled selected>No locations</option>';
-              riskInput.value = correctiveActionInput.value = durationInput.value = statusSelect.value = "";
+              riskInput.value = actionInput.value = durationInput.value = statusSelect.value = "";
               branchcomment.value = wspcomment.value = "";
               document.getElementById("filename").textContent = "";
             }
@@ -367,6 +367,7 @@
 
 </body>
 </html>
+
 
 
 
