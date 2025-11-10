@@ -143,10 +143,10 @@
         locationSelect.detailsMap = {};
         details.forEach((detail, index) => {
           const option = document.createElement("option");
-          option.value = detail.location || `location_${index}`;  // أرسل نص الموقع
+          option.value = index;  // أرسل نص الموقع
           option.textContent = detail.location || "Unnamed Location";
           locationSelect.appendChild(option);
-          locationSelect.detailsMap[option.value] = detail;
+          locationSelect.detailsMap[index] = detail;
         });
       }
 
@@ -264,7 +264,29 @@
       
         const email = sessionStorage.getItem("email");
         const department = sessionStorage.getItem("department");
-        let location = document.getElementById("location").value; // يجب أن يكون نصاً مثل "محطة مطاي"
+        const selectedKey = locationSelect.value; // هذا index
+        if (!selectedKey) {
+          alert("يرجى اختيار الموقع من القائمة!");
+          return;
+        }
+    
+        const detail = locationSelect.detailsMap[selectedKey];
+        if (!detail || !detail.location) {
+          alert("⚠️ الموقع غير صحيح");
+          return;
+        }
+    
+        // 📝 نص الموقع الحقيقي
+        const locationText = detail.location;
+    
+        if (action === "update" && 
+            (!locationText ||
+             !riskInput.value ||
+             !actionInput.value ||
+             !durationInput.value)) {
+          alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث.");
+          return;
+        }
       
         if (action === "update" && 
             (!document.getElementById("location").value ||
@@ -280,7 +302,7 @@
         formData.append("station", document.getElementById("station").value);
         formData.append("email", email);
         formData.append("department", department);
-        formData.append("location", document.getElementById("location").value);
+        formData.append("location", locationText); // ✅ هنا نص الموقع
         formData.append("risk", document.getElementById("risk").value);
         formData.append("action", document.getElementById("action").value);
         formData.append("duration", document.getElementById("duration").value);
@@ -380,6 +402,7 @@
 
 </body>
 </html>
+
 
 
 
