@@ -275,7 +275,7 @@
         }
       
         const formData = new URLSearchParams();
-      
+        formData.append("action", "update");  // 🆕 مهم جدًا
         formData.append("station", document.getElementById("station").value);
         formData.append("email", email);
         formData.append("department", department);
@@ -370,6 +370,7 @@
 
 </body>
 </html>
+
 
 
 
