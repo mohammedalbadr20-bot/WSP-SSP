@@ -265,7 +265,6 @@
         const email = sessionStorage.getItem("email");
         const department = sessionStorage.getItem("department");
       
-        // ✅ التحقق من الحقول الأساسية المطلوبة قبل التحديث
         if (action === "update" && 
             (!document.getElementById("location").value ||
              !document.getElementById("risk").value ||
@@ -277,21 +276,13 @@
       
         const formData = new URLSearchParams();
       
-        // ✅ تم تعديل اسم المعامل الأساسي ليتناسب مع دالة Apps Script الجديدة
-        // كانت "update" → الآن يجب أن تُرسل "station" بدل "action"
-        formData.append("station", document.getElementById("station").value); // 🆕 إضافة اسم ورقة المحطة
-      
-        // ✅ إرسال بيانات المستخدم للتحقق من الصلاحية كما في الكود الثاني
+        formData.append("station", document.getElementById("station").value);
         formData.append("email", email);
         formData.append("department", department);
-      
-        // ✅ الحقول الأساسية (سيتم البحث باستخدام الموقع بدلاً من ID)
         formData.append("location", document.getElementById("location").value);
         formData.append("risk", document.getElementById("risk").value);
         formData.append("action", document.getElementById("action").value);
         formData.append("duration", document.getElementById("duration").value);
-      
-        // ✅ الحقول التي سيتم تعديلها
         formData.append("status", document.getElementById("status").value);
         formData.append("attachment", document.getElementById("attachment").value);
         formData.append("branchcomment", document.getElementById("branchcomment").value);
@@ -299,7 +290,6 @@
       
         console.log("📤 Form Data sent to server:", formData.toString());
       
-        // ✅ نفس طريقة الإرسال بدون تغيير
         fetch(scriptURL, {
           method: "POST",
           headers: {
@@ -307,20 +297,21 @@
           },
           body: formData.toString()
         })
-          .then(response => response.json()) // 🆕 استقبال JSON لأن الكود الثاني يعيد jsonResponse
-          console.log("🔍 Raw response object:", response);
-          // للتحقق من حالة الاستجابة قبل التحويل إلى JSON
-          if (!response.ok) {
-            console.error("❌ Network or server error:", response.status, response.statusText);
-            throw new Error(`HTTP Error: ${response.status}`);
-          }
-    
-          return response.json();
-        })
-
+          .then(response => {
+            console.log("🔍 Raw response object:", response);
+      
+            // ✅ التحقق من حالة الاستجابة قبل تحويلها إلى JSON
+            if (!response.ok) {
+              console.error("❌ Network or server error:", response.status, response.statusText);
+              throw new Error(`HTTP Error: ${response.status}`);
+            }
+      
+            // ✅ تحويل النتيجة إلى JSON
+            return response.json();
+          })
           .then(result => { 
             console.log("✅ Response JSON from server:", result);
-            // ✅ التحقق من النتيجة القادمة من الكود الثاني
+      
             if (result.status === "unauthorized") {
               alert("غير مصرح لك بالوصول.");
               return;
@@ -339,8 +330,8 @@
             fetchData(email, department);  
           })
           .catch(error => {
-            cconsole.error("💥 Exception caught:", error);
-            alert("حدث خطأ أثناء تنفيذ العملية.");
+            console.error("💥 Exception caught:", error);
+            alert("حدث خطأ أثناء تنفيذ العملية. راجع الـ Console لمعرفة التفاصيل.");
           });
       }
 
@@ -379,6 +370,7 @@
 
 </body>
 </html>
+
 
 
 
