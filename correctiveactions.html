@@ -261,40 +261,45 @@
     function sendCommentsData(action) {
         const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
         if (!confirmUpdate) return;
-        
+      
         const email = sessionStorage.getItem("email");
         const department = sessionStorage.getItem("department");
-        
-        // في حالة التحديث أو الحذف، يجب اختيار صف أولاً
-        if ((action === "update") && 
+      
+        // ✅ التحقق من الحقول الأساسية المطلوبة قبل التحديث
+        if (action === "update" && 
             (!document.getElementById("location").value ||
              !document.getElementById("risk").value ||
              !document.getElementById("action").value ||
              !document.getElementById("duration").value)) {
-          alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث أو الحذف.");
+          alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث.");
           return;
         }
-        
+      
         const formData = new URLSearchParams();
-        formData.append("update", action);
+      
+        // ✅ تم تعديل اسم المعامل الأساسي ليتناسب مع دالة Apps Script الجديدة
+        // كانت "update" → الآن يجب أن تُرسل "station" بدل "action"
+        formData.append("station", document.getElementById("station").value); // 🆕 إضافة اسم ورقة المحطة
+      
+        // ✅ إرسال بيانات المستخدم للتحقق من الصلاحية كما في الكود الثاني
         formData.append("email", email);
         formData.append("department", department);
       
-        // البيانات الأساسية للتعرف على الصف
+        // ✅ الحقول الأساسية (سيتم البحث باستخدام الموقع بدلاً من ID)
         formData.append("location", document.getElementById("location").value);
         formData.append("risk", document.getElementById("risk").value);
         formData.append("action", document.getElementById("action").value);
         formData.append("duration", document.getElementById("duration").value);
       
-        // البيانات التي سيتم تعديلها
+        // ✅ الحقول التي سيتم تعديلها
         formData.append("status", document.getElementById("status").value);
         formData.append("attachment", document.getElementById("attachment").value);
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
       
-        console.log("Form Data:", formData.toString());  // تأكد من أن البيانات التي ستُرسل صحيحة
+        console.log("Form Data:", formData.toString());
       
-        // إرسال البيانات إلى Google Apps Script عبر API
+        // ✅ نفس طريقة الإرسال بدون تغيير
         fetch(scriptURL, {
           method: "POST",
           headers: {
@@ -302,17 +307,31 @@
           },
           body: formData.toString()
         })
-          .then(response => response.text())
+          .then(response => response.json()) // 🆕 استقبال JSON لأن الكود الثاني يعيد jsonResponse
           .then(result => {         
-            alert(`تمت عملية ${action === 'update' ? 'التحديث' : action === 'delete' ? 'الحذف' : 'إرسال البيانات'} بنجاح.`);
-            clearForm();  // مسح النموذج بعد العملية
-            fetchData(email, department);  // إعادة تحميل البيانات
+            // ✅ التحقق من النتيجة القادمة من الكود الثاني
+            if (result.status === "unauthorized") {
+              alert("غير مصرح لك بالوصول.");
+              return;
+            }
+      
+            if (result.result === "Updated") {
+              alert("تم تحديث البيانات بنجاح ✅");
+            } else if (result.result === "Location not found") {
+              alert("❌ لم يتم العثور على الموقع المحدد في الشيت.");
+            } else {
+              alert("حدث خطأ أثناء التحديث.");
+            }
+      
+            clearForm();  
+            fetchData(email, department);  
           })
           .catch(error => {
             console.error("خطأ:", error);
             alert("حدث خطأ أثناء تنفيذ العملية.");
           });
       }
+
 
       function clearForm() {
         document.getElementById("location").value = "";
@@ -348,6 +367,7 @@
 
 </body>
 </html>
+
 
 
 
