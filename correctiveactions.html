@@ -50,7 +50,7 @@
     </div>
 
     <hr>
-    <input value ="" id="id" hidden>
+   
     <div class="location">
       <label>Location</label>
       <select id="location">
@@ -267,8 +267,7 @@
         
         // في حالة التحديث أو الحذف، يجب اختيار صف أولاً
         if ((action === "update") && 
-            (!document.getElementById("id").value ||
-             !document.getElementById("location").value ||
+            (!document.getElementById("location").value ||
              !document.getElementById("risk").value ||
              !document.getElementById("action").value ||
              !document.getElementById("duration").value)) {
@@ -282,7 +281,6 @@
         formData.append("department", department);
       
         // البيانات الأساسية للتعرف على الصف
-        formData.append("id", document.getElementById("id").value);
         formData.append("location", document.getElementById("location").value);
         formData.append("risk", document.getElementById("risk").value);
         formData.append("action", document.getElementById("action").value);
@@ -350,6 +348,7 @@
 
 </body>
 </html>
+
 
 
 
