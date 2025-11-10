@@ -143,10 +143,10 @@
         locationSelect.detailsMap = {};
         details.forEach((detail, index) => {
           const option = document.createElement("option");
-          option.value = index; // المفتاح للوصول
+          option.value = detail.location || `location_${index}`;  // أرسل نص الموقع
           option.textContent = detail.location || "Unnamed Location";
           locationSelect.appendChild(option);
-          locationSelect.detailsMap[index] = detail;
+          locationSelect.detailsMap[option.value] = detail;
         });
       }
 
@@ -380,6 +380,7 @@
 
 </body>
 </html>
+
 
 
 
