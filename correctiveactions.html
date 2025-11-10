@@ -126,7 +126,7 @@
       const certifiedDateInput = document.getElementById("certifieddate");
       const locationSelect = document.getElementById("location");
       const riskInput = document.getElementById("risk");
-      const correctiveActionInput = document.getElementById("action");
+      const actionInput = document.getElementById("action");
       const durationInput = document.getElementById("duration");
       const statusSelect = document.getElementById("status");
       const branchcomment = document.getElementById("branchcomment");
@@ -158,10 +158,10 @@
 
         if (detail) {
           riskInput.value = detail.risk || "";
-          correctiveActionInput.value = detail.correctiveAction || "";
+          actionInput.value = detail.action || "";
           durationInput.value = detail.duration || "";
 
-          let status = (detail.executionStatus || "").trim();
+          let status = (detail.status || "").trim();
           switch (true) {
             case /تم/.test(status): status = "تم"; break;
             case /جار/.test(status): status = "جارى"; break;
@@ -169,8 +169,8 @@
             default: status = "";
           }
           statusSelect.value = status;
-          branchcomment.value = detail.branchRemarks || "";
-          wspcomment.value = detail.wspRemarks || "";
+          branchcomment.value = detail.branchcomment || "";
+          wspcomment.value = detail.wspcomment || "";
 
           if (detail.attachment) {
             document.getElementById("filename").innerHTML = `<a href="${detail.attachment}" target="_blank">Show File</a>`;
@@ -367,6 +367,7 @@
 
 </body>
 </html>
+
 
 
 
