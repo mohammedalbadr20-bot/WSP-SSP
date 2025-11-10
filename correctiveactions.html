@@ -288,6 +288,15 @@
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
       
+                // ✅ تحقق من أن الموقع المُرسل ليس فارغًا أو 0
+        const locationValue = document.getElementById("location").value;
+        console.log("📍 الموقع المُرسل:", locationValue); // 🧭 لمعرفة ما الذي يُرسل فعلاً
+        
+        if (!locationValue || locationValue === "0") {
+          alert("⚠️ حقل الموقع غير صحيح أو لم يتم اختياره من الجدول!");
+          return; // 🚫 إيقاف التنفيذ حتى لا يُرسل الطلب الخاطئ
+        }
+
         console.log("📤 Form Data sent to server:", formData.toString());
       
         fetch(scriptURL, {
@@ -370,6 +379,7 @@
 
 </body>
 </html>
+
 
 
 
