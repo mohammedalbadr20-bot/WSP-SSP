@@ -320,6 +320,7 @@
             } else if (result.result === "Location not found") {
               alert("❌ لم يتم العثور على الموقع المحدد في الشيت.");
             } else {
+              console.warn("⚠️ Unexpected result object:", result);
               alert("حدث خطأ أثناء التحديث.");
             }
       
@@ -367,6 +368,7 @@
 
 </body>
 </html>
+
 
 
 
