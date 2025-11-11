@@ -1,47 +1,31 @@
-module.exports = async (req, res) => {
-  // إضافة رأس CORS
-  res.setHeader('Access-Control-Allow-Origin', '*'); // يسمح لجميع النطاقات بالوصول
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // إذا كان الطلب من نوع OPTIONS (تأكد من أن الخادم يدعم CORS)
+export default async function handler(req, res) {
+  // ✅ تمكين CORS للسماح لموقعك بالوصول إلى هذا الـ Proxy
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  
+  // للتعامل مع طلبات OPTIONS الخاصة بالـ preflight
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // باقي الكود الخاص بالـ Proxy...
-};
-
-// api/proxy.js
-const fetch = require('node-fetch');  // يجب تثبيت مكتبة node-fetch (أو استخدم fetch المتاحة في Vercel)
-
-module.exports = async (req, res) => {
-  // URL الذي تريد إرسال الطلب إليه
-  const targetUrl = "https://script.google.com/macros/s/AKfycbySTLSHN54meG-0lEyLUCYPz8ijSzYEHKYHZe7Syixj5uKtpc3oIgsT0G1m9hSaLArKPA/exec";  // استبدله بعنوان API الخاص بك
+  // 🔗 هذا هو Google Apps Script URL الخاص بك
+  const targetUrl = "https://script.google.com/macros/s/AKfycbySTLSHN54meG-0lEyLUCYPz8ijSzYEHKYHZe7Syixj5uKtpc3oIgsT0G1m9hSaLArKPA/exec";
 
   try {
-    // التحقق من أن الطلب هو POST
-    if (req.method !== "POST") {
-      return res.status(405).json({ error: "Method Not Allowed" });
-    }
-
-    // إرسال الطلب إلى الخادم الأصلي (targetUrl)
+    // تمرير الطلب إلى Google Script
     const response = await fetch(targetUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',  // تأكد من نوع البيانات المناسب
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: new URLSearchParams(req.body)  // نقل بيانات الجسم كما هي
+      body: req.body ? new URLSearchParams(req.body).toString() : undefined,
     });
 
-    // قراءة استجابة الخادم
-    const data = await response.json();
-
-    // إعادة إرسال البيانات إلى العميل
-    return res.status(response.status).json(data);
-
+    const text = await response.text(); // لأن Google Scripts ترجع نص وليس JSON أحيانًا
+    res.status(response.status).send(text);
   } catch (error) {
-    console.error("Error proxying request:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
+    console.error("Proxy error:", error);
+    res.status(500).json({ error: "Proxy request failed" });
   }
-};
+}
