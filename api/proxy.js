@@ -17,7 +17,7 @@ const fetch = require('node-fetch');  // يجب تثبيت مكتبة node-fetch
 
 module.exports = async (req, res) => {
   // URL الذي تريد إرسال الطلب إليه
-  const targetUrl = "https://example.com/api";  // استبدله بعنوان API الخاص بك
+  const targetUrl = "https://script.google.com/macros/s/AKfycbySTLSHN54meG-0lEyLUCYPz8ijSzYEHKYHZe7Syixj5uKtpc3oIgsT0G1m9hSaLArKPA/exec";  // استبدله بعنوان API الخاص بك
 
   try {
     // التحقق من أن الطلب هو POST
