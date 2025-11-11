@@ -1,79 +1,47 @@
-import formidable from "formidable";
-import fs from "fs";
-import FormData from "form-data";
-import fetch from "node-fetch";
+module.exports = async (req, res) => {
+  // إضافة رأس CORS
+  res.setHeader('Access-Control-Allow-Origin', '*'); // يسمح لجميع النطاقات بالوصول
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-export const config = { api: { bodyParser: false } };
+  // إذا كان الطلب من نوع OPTIONS (تأكد من أن الخادم يدعم CORS)
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
 
-export default async function handler(req, res) {
-  // ترويسات CORS
-  res.setHeader("Access-Control-Allow-Origin", "https://mohammedalbadr20-bot.github.io");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Accept");
+  // باقي الكود الخاص بالـ Proxy...
+};
 
-  if (req.method === "OPTIONS") return res.status(200).end();
-  if (req.method !== "POST") return res.status(405).json({ status: "error", message: "Method not allowed" });
+// api/proxy.js
+const fetch = require('node-fetch');  // يجب تثبيت مكتبة node-fetch (أو استخدم fetch المتاحة في Vercel)
 
-  const contentType = req.headers["content-type"] || "";
+module.exports = async (req, res) => {
+  // URL الذي تريد إرسال الطلب إليه
+  const targetUrl = "https://example.com/api";  // استبدله بعنوان API الخاص بك
 
   try {
-    if (contentType.includes("multipart/form-data")) {
-      const form = new formidable.IncomingForm();
-      form.parse(req, async (err, fields, files) => {
-        if (err) return res.status(500).json({ status: "error", message: err.message });
-
-        const targetURL = fields.targetURL;
-        if (!targetURL) return res.status(400).json({ status: "error", message: "targetURL is required" });
-
-        const file = files.file;
-        if (!file) return res.status(400).json({ status: "error", message: "File not found" });
-
-        const formData = new FormData();
-        formData.append("file", fs.createReadStream(file.filepath), file.originalFilename);
-
-        const response = await fetch(targetURL, { method: "POST", body: formData });
-        const text = await response.text();
-
-        // محاولة تحويل النص إلى JSON
-        try {
-          const data = JSON.parse(text);
-          return res.status(200).json(data);
-        } catch {
-          return res.status(500).json({ status: "error", message: "Target returned non-JSON response" });
-        }
-      });
-    } else {
-      // JSON payload
-      let raw = "";
-      req.on("data", chunk => raw += chunk);
-      req.on("end", async () => {
-        let parsed;
-        try {
-          parsed = JSON.parse(raw);
-        } catch {
-          return res.status(400).json({ status: "error", message: "Invalid JSON" });
-        }
-
-        const { targetURL, body: payload } = parsed;
-        if (!targetURL || !payload) return res.status(400).json({ status: "error", message: "targetURL or body missing" });
-
-        const response = await fetch(targetURL, {
-          method: "POST",
-          headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: new URLSearchParams(payload)
-        });
-
-        const text = await response.text();
-        try {
-          const data = JSON.parse(text);
-          return res.status(200).json(data);
-        } catch {
-          return res.status(500).json({ status: "error", message: "Target returned non-JSON response" });
-        }
-      });
+    // التحقق من أن الطلب هو POST
+    if (req.method !== "POST") {
+      return res.status(405).json({ error: "Method Not Allowed" });
     }
-  } catch (err) {
-    console.error("Proxy error:", err);
-    return res.status(500).json({ status: "error", message: err.message || "غير معروف" });
+
+    // إرسال الطلب إلى الخادم الأصلي (targetUrl)
+    const response = await fetch(targetUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',  // تأكد من نوع البيانات المناسب
+      },
+      body: new URLSearchParams(req.body)  // نقل بيانات الجسم كما هي
+    });
+
+    // قراءة استجابة الخادم
+    const data = await response.json();
+
+    // إعادة إرسال البيانات إلى العميل
+    return res.status(response.status).json(data);
+
+  } catch (error) {
+    console.error("Error proxying request:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
-}
+};
