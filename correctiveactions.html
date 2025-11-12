@@ -158,7 +158,7 @@
 
         if (detail) {
           riskInput.value = detail.risk || "";
-          actionInput.value = detail.action || "";
+          corractionInput.value = detail.corraction || "";
           durationInput.value = detail.duration || "";
 
           let status = (detail.status || "").trim();
@@ -246,7 +246,7 @@
             if (data.status === "success" && data.details.length > 0) fillStationDetails(data.details);
             else {
               locationSelect.innerHTML = '<option value="" disabled selected>No locations</option>';
-              riskInput.value = actionInput.value = durationInput.value = statusSelect.value = "";
+              riskInput.value = corractionInput.value = durationInput.value = statusSelect.value = "";
               branchcomment.value = wspcomment.value = "";
               document.getElementById("filename").textContent = "";
             }
@@ -291,7 +291,7 @@
         if (action === "update" && 
             (!locationText ||
              !riskInput.value ||
-             !actionInput.value ||
+             !corractionInput.value ||
              !durationInput.value)) {
           alert("يرجى اختيار صف أو تعبئة جميع الحقول قبل التحديث.");
           return;
@@ -399,6 +399,7 @@
 
 </body>
 </html>
+
 
 
 
