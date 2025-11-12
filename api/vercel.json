@@ -1,11 +1,12 @@
 {
-  "version": 2,
-  "builds": [{ "src": "api/*.js", "use": "@vercel/node" }],
-  "routes": [
+  "headers": [
     {
-      "src": "/api/proxy",
-      "methods": ["POST", "OPTIONS"],
-      "dest": "/api/proxy.js"
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "Access-Control-Allow-Origin", "value": "https://mohammedalbadr20-bot.github.io" },
+        { "key": "Access-Control-Allow-Methods", "value": "GET, POST, OPTIONS" },
+        { "key": "Access-Control-Allow-Headers", "value": "Content-Type" }
+      ]
     }
   ]
 }
