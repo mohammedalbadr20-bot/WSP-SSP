@@ -368,6 +368,7 @@
                       formDataApproval.append("station", document.getElementById("station").value);
                       formDataApproval.append("location", locationText);
                       formDataApproval.append("email", email);
+                      formDataApproval.append("checkbox", "true"); // ✅ إضافة
   
                       fetch(scriptURL, {
                           method: "POST",
@@ -438,6 +439,7 @@
 
 </body>
 </html>
+
 
 
 
