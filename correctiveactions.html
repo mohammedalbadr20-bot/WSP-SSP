@@ -267,7 +267,14 @@
         const branchcomment = document.getElementById("branchcomment");
         const wspcomment = document.getElementById("wspcomment");
         const attachmentInput = document.getElementById("attachment");
-        
+
+            // 🔹 تحديد القسم الحقيقي الذي يرسل (حسب الزر)
+        let currentDepartment = department;
+        if (event.target.classList.contains("branchbutton")) {
+          currentDepartment = "branch";
+        } else if (event.target.classList.contains("wspbutton")) {
+          currentDepartment = "wsp";
+        }
         const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
         if (!confirmUpdate) return;
       
@@ -302,7 +309,7 @@
         formData.append("action", "updatestation");  // 🆕 مهم جدًا
         formData.append("station", document.getElementById("station").value);
         formData.append("email", email);
-        formData.append("department", department);
+       formData.append("department", currentDepartment);
         formData.append("location", locationText); // ✅ هنا نص الموقع
         formData.append("risk", document.getElementById("risk").value);
         formData.append("corraction", document.getElementById("corraction").value);
@@ -399,6 +406,7 @@
 
 </body>
 </html>
+
 
 
 
