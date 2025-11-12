@@ -104,8 +104,8 @@
     <hr>
 
     <div class="buttons">
-      <button class="wspbutton" onclick='sendCommentsData("updatestation")'>WSP Submit</button>
-      <button class="branchbutton" onclick='sendCommentsData("updatestation")'>Branch Submit</button>
+      <button class="wspbutton" onclick='sendCommentsData(event,"updatestation")'>WSP Submit</button>
+      <button class="branchbutton" onclick='sendCommentsData(event,"updatestation")'>Branch Submit</button>
     </div>
    
   </form>
@@ -258,7 +258,8 @@
    
     
     
-    function sendCommentsData(action) {
+    function sendCommentsData(event, action) {
+        event = event || window.event; // ضمان وجود event
         const email = sessionStorage.getItem("email");
         const department = sessionStorage.getItem("department");      
         const locationSelect = document.getElementById("location");
@@ -435,6 +436,7 @@
 
 </body>
 </html>
+
 
 
 
