@@ -105,7 +105,7 @@
 
     <div class="buttons">
       <button class="wspbutton" onclick="updateWSP()">WSP Submit</button>
-      <button class="branchbutton" onclick='sendCommentsData("update")'>Branch Submit</button>
+      <button class="branchbutton" onclick='sendCommentsData("updatestation")'>Branch Submit</button>
     </div>
    
   </form>
@@ -299,7 +299,7 @@
       
               
         const formData = new URLSearchParams();
-        formData.append("action", "update");  // 🆕 مهم جدًا
+        formData.append("action", "updatestation");  // 🆕 مهم جدًا
         formData.append("station", document.getElementById("station").value);
         formData.append("email", email);
         formData.append("department", department);
@@ -399,6 +399,7 @@
 
 </body>
 </html>
+
 
 
 
