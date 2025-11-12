@@ -379,7 +379,8 @@
                           if (res.result === "Approved") {
                               alert("تم اعتماد الاجراء بنجاح ✅");
                           } else {
-                              alert("حدث خطأ أثناء اعتماد الاجراء.");
+                              console.warn("حدث خطأ أثناء اعتماد الاجراء.",result);
+                              alert("حدث خطأ أثناء اعتماد الاجراء.");                            
                           }
                       })
                       .catch(err => console.error("Approval error:", err));
@@ -436,6 +437,7 @@
 
 </body>
 </html>
+
 
 
 
