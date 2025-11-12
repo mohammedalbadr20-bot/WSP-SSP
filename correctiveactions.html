@@ -280,8 +280,7 @@
         const confirmUpdate = confirm("هل تريد تحديث الموقف التنفيذي والملاحظات والمرفق؟");
         if (!confirmUpdate) return;
       
-        const email = sessionStorage.getItem("email");
-        const department = sessionStorage.getItem("department");
+        
         const selectedKey = locationSelect.value; // هذا index
         if (!selectedKey) {
           alert("يرجى اختيار الموقع من القائمة!");
@@ -408,6 +407,7 @@
 
 </body>
 </html>
+
 
 
 
