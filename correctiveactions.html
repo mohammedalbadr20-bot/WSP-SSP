@@ -320,10 +320,9 @@
         formData.append("attachment", document.getElementById("attachment").value);
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
-      
-      
-        
        
+        // 🔹 إضافة حقل لإرسال البريد من جهة السيرفر
+        formData.append("sendEmail", "true"); // Apps Script سيستخدمه لإرسال البريد
 
         console.log("📤 Form Data sent to server:", formData.toString());
       
@@ -439,6 +438,7 @@
 
 </body>
 </html>
+
 
 
 
