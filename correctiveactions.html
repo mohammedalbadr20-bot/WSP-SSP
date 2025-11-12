@@ -356,6 +356,34 @@
       
             if (result.result === "Updated") {
               alert("تم تحديث البيانات بنجاح ✅");
+               // 🔹 إذا كان الزر المستخدم هو WSP، نعرض رسالة اعتماد الاجراء
+              if (event.target.classList.contains("wspbutton")) {
+                  const approve = confirm("هل تريد اعتماد الاجراء؟");
+  
+                  if (approve) {
+                      // 🔹 إرسال تحديث لتفعيل الـ Checkbox أو عمود الاعتماد في Google Sheet
+                      const formDataApproval = new URLSearchParams();
+                      formDataApproval.append("action", "approveAction"); // يجب التعامل مع هذا في Apps Script
+                      formDataApproval.append("station", document.getElementById("station").value);
+                      formDataApproval.append("location", locationText);
+                      formDataApproval.append("email", email);
+  
+                      fetch(scriptURL, {
+                          method: "POST",
+                          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                          body: formDataApproval.toString()
+                      })
+                      .then(res => res.json())
+                      .then(res => {
+                          if (res.result === "Approved") {
+                              alert("تم اعتماد الاجراء بنجاح ✅");
+                          } else {
+                              alert("حدث خطأ أثناء اعتماد الاجراء.");
+                          }
+                      })
+                      .catch(err => console.error("Approval error:", err));
+                  }
+              }
             } else if (result.result === "Location not found") {
               alert("❌ لم يتم العثور على الموقع المحدد في الشيت.");
             } else {
@@ -407,6 +435,7 @@
 
 </body>
 </html>
+
 
 
 
