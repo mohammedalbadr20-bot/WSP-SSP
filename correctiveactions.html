@@ -65,7 +65,7 @@
 
     <div class="action">
       <label>Corrective Action</label>
-      <input value="" readonly id="action">
+      <input value="" readonly id="corraction">
     </div>
 
     <div class="branchresponse">
@@ -126,7 +126,7 @@
       const certifiedDateInput = document.getElementById("certifieddate");
       const locationSelect = document.getElementById("location");
       const riskInput = document.getElementById("risk");
-      const actionInput = document.getElementById("action");
+      const corractionInput = document.getElementById("corraction");
       const durationInput = document.getElementById("duration");
       const statusSelect = document.getElementById("status");
       const branchcomment = document.getElementById("branchcomment");
@@ -261,7 +261,7 @@
     function sendCommentsData(action) {
         const locationSelect = document.getElementById("location");
         const riskInput = document.getElementById("risk");
-        const actionInput = document.getElementById("action");
+        const corractionInput = document.getElementById("corraction");
         const durationInput = document.getElementById("duration");
         const statusSelect = document.getElementById("status");
         const branchcomment = document.getElementById("branchcomment");
@@ -305,7 +305,7 @@
         formData.append("department", department);
         formData.append("location", locationText); // ✅ هنا نص الموقع
         formData.append("risk", document.getElementById("risk").value);
-        formData.append("action", document.getElementById("action").value);
+        formData.append("corraction", document.getElementById("corraction").value);
         formData.append("duration", document.getElementById("duration").value);
         formData.append("status", document.getElementById("status").value);
         formData.append("attachment", document.getElementById("attachment").value);
@@ -368,7 +368,7 @@
       function clearForm() {
         document.getElementById("location").value = "";
         document.getElementById("risk").value = "";
-        document.getElementById("action").value = "";
+        document.getElementById("corraction").value = "";
         document.getElementById("duration").value = "";
         document.getElementById("status").value = "";
         document.getElementById("attachment").value = "";
@@ -399,6 +399,7 @@
 
 </body>
 </html>
+
 
 
 
