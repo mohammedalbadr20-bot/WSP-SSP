@@ -321,96 +321,68 @@
         }
       
               
-              // ✅ إضافة: جلب بيانات الفرع والمحطة من الحقول الحالية
-          const branchName = document.getElementById("branch").value;
-          const stationName = document.getElementById("station").value;
+        const formData = new URLSearchParams();
+        formData.append("action", "updatestation");  // 🆕 مهم جدًا
+        formData.append("station", document.getElementById("station").value);
+        formData.append("email", email);
+        formData.append("department", currentDepartment);
+        formData.append("location", locationText); // ✅ هنا نص الموقع
+        formData.append("risk", document.getElementById("risk").value);
+        formData.append("corraction", document.getElementById("corraction").value);
+        formData.append("duration", document.getElementById("duration").value);
+        formData.append("status", document.getElementById("status").value);
+        formData.append("attachment", document.getElementById("attachment").value);
+        formData.append("branchcomment", document.getElementById("branchcomment").value);
+        formData.append("wspcomment", document.getElementById("wspcomment").value);
+       
+        // 🔹 إضافة حقل لإرسال البريد من جهة السيرفر
+        formData.append("sendEmail", "true"); // Apps Script سيستخدمه لإرسال البريد
+
+        console.log("📤 Form Data sent to server:", formData.toString());
       
-          // ✅ إضافة: التحقق من وجود ملف مرفوع
-          const fileBlob = attachmentInput.files[0];
+        fetch(scriptURL, {
+          method: "POST",
+          mode: "cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formData.toString()
+        })
+          .then(response => {
+            console.log("🔍 Raw response object:", response);
       
-          // ✅ إضافة: إذا كان هناك ملف مرفوع، يتم رفعه أولاً قبل تحديث البيانات
-          if (fileBlob) {
-            const uploadForm = new FormData();
-            uploadForm.append("action", "uploadFile"); // اسم العملية داخل Apps Script
-            uploadForm.append("branch", branchName);
-            uploadForm.append("station", stationName);
-            uploadForm.append("file", fileBlob);
+            // ✅ التحقق من حالة الاستجابة قبل تحويلها إلى JSON
+            if (!response.ok) {
+              console.error("❌ Network or server error:", response.status, response.statusText);
+              throw new Error(`HTTP Error: ${response.status}`);
+            }
       
-            // 🔹 إرسال الملف أولاً إلى Apps Script لحفظه داخل Google Drive
-            fetch(scriptURL, { method: "POST", body: uploadForm })
-              .then(res => res.json())
-              .then(uploadResult => {
-                console.log("📎 File Upload Response:", uploadResult);
+            // ✅ تحويل النتيجة إلى JSON
+            return response.json();
+          })
+          .then(result => { 
+            console.log("✅ Response JSON from server:", result);
       
-                if (uploadResult.status === "success") {
-                  // 🔹 استدعاء الدالة الأصلية لتحديث البيانات بعد رفع الملف
-                  updateStationData(uploadResult.fileUrl);
-                } else {
-                  alert("فشل رفع الملف إلى Drive ❌");
-                }
-              })
-              .catch(err => {
-                console.error("💥 Upload Error:", err);
-                alert("حدث خطأ أثناء رفع الملف.");
-              });
-          } else {
-            // 🔹 إذا لم يكن هناك ملف، نرسل البيانات مباشرة
-            updateStationData("");
-          }
+            if (result.status === "unauthorized") {
+              alert("غير مصرح لك بالوصول.");
+              return;
+            }
       
-          // ✅ إضافة: فصل عملية تحديث البيانات في دالة مستقلة
-          function updateStationData(fileUrl) {
-            const formData = new URLSearchParams();
-            formData.append("action", "updatestation");  // 🆕 مهم جدًا
-            formData.append("station", document.getElementById("station").value);
-            formData.append("email", email);
-            formData.append("department", currentDepartment);
-            formData.append("location", locationText); // ✅ هنا نص الموقع
-            formData.append("risk", document.getElementById("risk").value);
-            formData.append("corraction", document.getElementById("corraction").value);
-            formData.append("duration", document.getElementById("duration").value);
-            formData.append("status", document.getElementById("status").value);
-            // ✅ تعديل: بدلاً من إرسال مسار الملف المحلي، نرسل رابط Google Drive
-            formData.append("attachment", fileUrl || "");  
-            formData.append("branchcomment", document.getElementById("branchcomment").value);
-            formData.append("wspcomment", document.getElementById("wspcomment").value);
-            formData.append("sendEmail", "true"); // Apps Script سيستخدمه لإرسال البريد
-      
-            console.log("📤 Form Data sent to server:", formData.toString());
-          
-            fetch(scriptURL, {
-              method: "POST",
-              mode: "cors",
-              headers: { "Content-Type": "application/x-www-form-urlencoded" },
-              body: formData.toString()
-            })
-              .then(response => {
-                console.log("🔍 Raw response object:", response);
-                if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-                return response.json();
-              })
-              .then(result => { 
-                console.log("✅ Response JSON from server:", result);
-      
-                if (result.status === "unauthorized") {
-                  alert("غير مصرح لك بالوصول.");
-                  return;
-                }
-      
-                if (result.result === "Updated") {
-                  alert("تم تحديث البيانات بنجاح ✅");
-      
-                  // 🔹 إذا كان الزر المستخدم هو WSP، نعرض رسالة اعتماد الاجراء
-                  if (event.target.classList.contains("wspbutton")) {
-                    const approve = confirm("هل تريد اعتماد الاجراء؟");
-                    if (approve) {
+            if (result.result === "Updated") {
+              alert("تم تحديث البيانات بنجاح ✅");
+               // 🔹 إذا كان الزر المستخدم هو WSP، نعرض رسالة اعتماد الاجراء
+              if (event.target.classList.contains("wspbutton")) {
+                  const approve = confirm("هل تريد اعتماد الاجراء؟");
+  
+                  if (approve) {
+                      // 🔹 إرسال تحديث لتفعيل الـ Checkbox أو عمود الاعتماد في Google Sheet
                       const formDataApproval = new URLSearchParams();
-                      formDataApproval.append("action", "approveAction");
+                      formDataApproval.append("action", "approveAction"); // يجب التعامل مع هذا في Apps Script
                       formDataApproval.append("station", document.getElementById("station").value);
                       formDataApproval.append("location", locationText);
                       formDataApproval.append("email", email);
-                      formDataApproval.append("checkbox", "true");
-      
+                      formDataApproval.append("checkbox", "true"); // ✅ إضافة
+  
                       fetch(scriptURL, {
                           method: "POST",
                           headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -423,26 +395,26 @@
                           } else {
                               console.error("حدث خطأ أثناء اعتماد الاجراء.",result);
                               alert("حدث خطأ أثناء اعتماد الاجراء.");
+                              
                           }
                       })
                       .catch(err => console.error("Approval error:", err));
-                    }
                   }
-                } else if (result.result === "Location not found") {
-                  alert("❌ لم يتم العثور على الموقع المحدد في الشيت.");
-                } else {
-                  console.warn("⚠️ Unexpected result object:", result);
-                  alert("حدث خطأ أثناء التحديث.");
-                }
+              }
+            } else if (result.result === "Location not found") {
+              alert("❌ لم يتم العثور على الموقع المحدد في الشيت.");
+            } else {
+              console.warn("⚠️ Unexpected result object:", result);
+              alert("حدث خطأ أثناء التحديث.");
+            }
       
-                clearForm();  
-                fetchData(email, department);  
-              })
-              .catch(error => {
-                console.error("💥 Exception caught:", error);
-                alert("حدث خطأ أثناء تنفيذ العملية. راجع الـ Console لمعرفة التفاصيل.");
-              });
-          }
+            clearForm();  
+            fetchData(email, department);  
+          })
+          .catch(error => {
+            console.error("💥 Exception caught:", error);
+            alert("حدث خطأ أثناء تنفيذ العملية. راجع الـ Console لمعرفة التفاصيل.");
+          });
       }
 
 
@@ -480,6 +452,7 @@
 
 </body>
 </html>
+
 
 
 
