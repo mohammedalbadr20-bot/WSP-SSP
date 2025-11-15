@@ -278,7 +278,7 @@
       }
     
       const formData = new FormData();
-      formData.append("file", fileInput.files[0]);
+      formData.append("attachment", fileInput.files[0]);
       formData.append("action", "uploadFile");
       formData.append("station", station);
       formData.append("branch", branch);
@@ -502,6 +502,7 @@
 
 </body>
 </html>
+
 
 
 
