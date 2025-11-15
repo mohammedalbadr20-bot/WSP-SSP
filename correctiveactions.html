@@ -356,21 +356,35 @@
           return;
         }
       
-        // 🔹 رفع الملف إذا موجود
+        // 🔹 رفع الملف أولاً إذا تم اختياره
         let attachmentLink = "";
         if (attachmentInput.files.length > 0) {
-            attachmentLink = await uploadAttachment(
-                document.getElementById("station").value,
-                document.getElementById("branch").value // استخدم currentDepartment بدل department
-            );
+            const formDataFile = new FormData();
+            formDataFile.append("action", "uploadFile");
+            formDataFile.append("station", stationInput.value);
+            formDataFile.append("branch", branchInput.value || currentDepartment);
+            formDataFile.append("attachment", attachmentInput.files[0]);
+    
+            try {
+                const uploadResp = await fetch(scriptURL, {
+                    method: "POST",
+                    body: formDataFile
+                });
+                const uploadResult = await uploadResp.json();
+                if (uploadResult.status === "success") {
+                    attachmentLink = uploadResult.link;
+                } else {
+                    console.error("Upload error:", uploadResult);
+                    alert("حدث خطأ أثناء رفع الملف.");
+                    return;
+                }
+            } catch (err) {
+                console.error("Upload exception:", err);
+                alert("حدث خطأ أثناء رفع الملف.");
+                return;
+            }
         }
-        
-        // 🔹 التحقق من نجاح رفع الملف
-        if (attachmentInput.files.length > 0 && !attachmentLink) {
-            alert("❌ لم يتم رفع الملف بنجاح، يرجى المحاولة مرة أخرى.");
-            return; // منع إرسال الفورم بدون رابط الملف
-        }
-      
+          
               
         const formData = new URLSearchParams();
         formData.append("action", "updatestation");  // 🆕 مهم جدًا
@@ -508,6 +522,7 @@
 
 </body>
 </html>
+
 
 
 
