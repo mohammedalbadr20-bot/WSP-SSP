@@ -503,10 +503,13 @@
             
                           locationSelect.detailsMap[index] = detail;
                       });
-                  }
-
-            
-          })
+                }
+            })
+            .catch(err => {
+                console.error("Error refreshing station details:", err);
+            });
+          
+          })   // ← هذا الإغلاق كان مفقود
           .catch(error => {
             console.error("💥 Exception caught:", error);
             alert("حدث خطأ أثناء تنفيذ العملية. راجع الـ Console لمعرفة التفاصيل.");
@@ -621,6 +624,7 @@
 
 </body>
 </html>
+
 
 
 
