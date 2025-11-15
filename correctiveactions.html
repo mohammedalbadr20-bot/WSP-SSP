@@ -303,7 +303,7 @@
    
     
     
-    function sendCommentsData(event, action) {
+    async function sendCommentsData(event, action) {
         event = event || window.event; // ضمان وجود event
         const email = sessionStorage.getItem("email");
         const department = sessionStorage.getItem("department");      
@@ -493,6 +493,7 @@
 
 </body>
 </html>
+
 
 
 
