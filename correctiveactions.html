@@ -361,8 +361,14 @@
         if (attachmentInput.files.length > 0) {
             attachmentLink = await uploadAttachment(
                 document.getElementById("station").value,
-                department
+                branchValue // استخدم currentDepartment بدل department
             );
+        }
+        
+        // 🔹 التحقق من نجاح رفع الملف
+        if (attachmentInput.files.length > 0 && !attachmentLink) {
+            alert("❌ لم يتم رفع الملف بنجاح، يرجى المحاولة مرة أخرى.");
+            return; // منع إرسال الفورم بدون رابط الملف
         }
       
               
@@ -502,6 +508,7 @@
 
 </body>
 </html>
+
 
 
 
