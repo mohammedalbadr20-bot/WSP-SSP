@@ -351,6 +351,15 @@
           return;
         }
       
+        // 🔹 رفع الملف إذا موجود
+        let attachmentLink = "";
+        if (attachmentInput.files.length > 0) {
+            attachmentLink = await uploadAttachment(
+                document.getElementById("station").value,
+                department
+            );
+        }
+      
               
         const formData = new URLSearchParams();
         formData.append("action", "updatestation");  // 🆕 مهم جدًا
@@ -362,7 +371,8 @@
         formData.append("corraction", document.getElementById("corraction").value);
         formData.append("duration", document.getElementById("duration").value);
         formData.append("status", document.getElementById("status").value);
-        formData.append("attachment", document.getElementById("attachment").value);
+        // 🔹 هنا نرسل الرابط الفعلي وليس قيمة input
+        formData.append("attachment", attachmentLink);
         formData.append("branchcomment", document.getElementById("branchcomment").value);
         formData.append("wspcomment", document.getElementById("wspcomment").value);
        
@@ -483,6 +493,7 @@
 
 </body>
 </html>
+
 
 
 
