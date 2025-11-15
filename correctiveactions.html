@@ -107,6 +107,9 @@
       <button class="wspbutton" onclick='sendCommentsData(event,"updatestation")'>WSP Submit</button>
       <button class="branchbutton" onclick='sendCommentsData(event,"updatestation")'>Branch Submit</button>
     </div>
+    <div>
+      <button type="button" id="printReport">طباعة التقرير</button>
+    </div>
    
   </form>
   <script>
@@ -513,6 +516,78 @@
             alert("حدث خطأ أثناء تحميل البيانات.");
           });
       }
+      // طباعة الاجراءات التصحيحة 
+      document.getElementById("printReport").addEventListener("click", () => {
+      const branch = document.getElementById("branch").value || "----";
+      const station = document.getElementById("station").value || "----";
+      const certifiedDate = document.getElementById("certifieddate").value || "----";
+  
+      const locationSelect = document.getElementById("location");
+      const detailsMap = locationSelect.detailsMap;
+  
+      if (!detailsMap || Object.keys(detailsMap).length === 0) {
+          alert("لا توجد بيانات مواقع للطباعة!");
+          return;
+      }
+  
+      // تصفية المواقع المعتمدة فقط (checkbox = false)
+      const approvedLocations = Object.values(detailsMap).filter(detail => detail.checkbox === false);
+  
+      if (approvedLocations.length === 0) {
+          alert("لا توجد مواقع معتمدة للطباعة!");
+          return;
+      }
+  
+      let rowsHtml = approvedLocations.map(detail => `
+          <tr>
+              <td>${detail.location || ""}</td>
+              <td>${detail.risk || ""}</td>
+              <td>${detail.corraction || ""}</td>
+              <td>${detail.duration || ""}</td>
+              <td>${detail.status || ""}</td>
+          </tr>
+      `).join("");
+  
+      const htmlContent = `
+          <html>
+          <head>
+              <title>تقرير الاعتماد</title>
+              <style>
+                  body { font-family: Arial, sans-serif; direction: rtl; text-align: right; }
+                  table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                  th, td { border: 1px solid #000; padding: 5px; }
+                  th { background-color: #f0f0f0; }
+                  h2 { text-align: center; }
+              </style>
+          </head>
+          <body>
+              <h2>تقرير الاعتماد</h2>
+              <p><strong>الفرع:</strong> ${branch} &nbsp;&nbsp; <strong>المحطة:</strong> ${station} &nbsp;&nbsp; <strong>تاريخ الاعتماد:</strong> ${certifiedDate}</p>
+              <table>
+                  <thead>
+                      <tr>
+                          <th>الموقع</th>
+                          <th>الخطر</th>
+                          <th>الإجراء التصحيحي</th>
+                          <th>المدة الزمنية</th>
+                          <th>الموقف التنفيذي</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      ${rowsHtml}
+                  </tbody>
+              </table>
+          </body>
+          </html>
+      `;
+  
+      const printWindow = window.open('', '', 'height=600,width=800');
+      printWindow.document.write(htmlContent);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+  });
+
 
 
   </script>
@@ -521,6 +596,7 @@
 
 </body>
 </html>
+
 
 
 
