@@ -294,6 +294,11 @@
       if (result.status === "success") {
         return result.link;   // رابط Google Drive
       } else {
+        console.log("Uploading file:", fileInput.files[0]);
+        console.log("FormData content:");
+        for (let pair of formData.entries()) {
+          console.log(pair[0]+ ': '+ pair[1]);
+        }
         alert("خطأ أثناء رفع الملف");
         return "";
       }
@@ -391,6 +396,8 @@
         })
           .then(response => {
             console.log("🔍 Raw response object:", response);
+            console.log("Raw response:", response);
+
       
             // ✅ التحقق من حالة الاستجابة قبل تحويلها إلى JSON
             if (!response.ok) {
@@ -403,6 +410,8 @@
           })
           .then(result => { 
             console.log("✅ Response JSON from server:", result);
+            console.log("Result from server:", result);
+
       
             if (result.status === "unauthorized") {
               alert("غير مصرح لك بالوصول.");
@@ -493,6 +502,7 @@
 
 </body>
 </html>
+
 
 
 
