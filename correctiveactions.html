@@ -361,7 +361,7 @@
         if (attachmentInput.files.length > 0) {
             attachmentLink = await uploadAttachment(
                 document.getElementById("station").value,
-                branchValue // استخدم currentDepartment بدل department
+                document.getElementById("branch").value // استخدم currentDepartment بدل department
             );
         }
         
@@ -508,6 +508,7 @@
 
 </body>
 </html>
+
 
 
 
