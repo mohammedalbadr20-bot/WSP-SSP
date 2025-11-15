@@ -269,6 +269,37 @@
       });
     };
 
+    
+    async function uploadAttachment(station, branch) {
+      const fileInput = document.getElementById("attachment");
+    
+      if (fileInput.files.length === 0) {
+        return ""; // لا يوجد ملف
+      }
+    
+      const formData = new FormData();
+      formData.append("file", fileInput.files[0]);
+      formData.append("action", "uploadFile");
+      formData.append("station", station);
+      formData.append("branch", branch);
+    
+      const response = await fetch(scriptURL, {
+        method: "POST",
+        body: formData
+      });
+    
+      const result = await response.json();
+      console.log("Uploaded file result:", result);
+    
+      if (result.status === "success") {
+        return result.link;   // رابط Google Drive
+      } else {
+        alert("خطأ أثناء رفع الملف");
+        return "";
+      }
+    }
+
+
    
     
     
@@ -452,6 +483,7 @@
 
 </body>
 </html>
+
 
 
 
