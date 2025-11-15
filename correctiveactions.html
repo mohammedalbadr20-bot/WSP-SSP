@@ -481,7 +481,31 @@
             }
       
             clearForm();  
-            fetchData(email, department);  
+            fetchData(email, department);
+            //تحديث تلقائى للاجراءات التصحيحة الغير معتمدة
+            // 🔄 تحديث قائمة المواقع المعتمدة
+            const station = document.getElementById("station").value;
+            
+            fetch(`${scriptURL}?action=getStationDetails&station=${encodeURIComponent(station)}`)
+              .then(res => res.json())
+              .then(data => {
+                  if (data.status === "success") {
+                      const locationSelect = document.getElementById("location");
+            
+                      locationSelect.innerHTML = '<option value="" disabled selected>اختر الموقع</option>';
+                      locationSelect.detailsMap = {};
+            
+                      data.details.forEach((detail, index) => {
+                          const option = document.createElement("option");
+                          option.value = index;
+                          option.textContent = detail.location;
+                          locationSelect.appendChild(option);
+            
+                          locationSelect.detailsMap[index] = detail;
+                      });
+                  }
+
+            
           })
           .catch(error => {
             console.error("💥 Exception caught:", error);
@@ -597,6 +621,7 @@
 
 </body>
 </html>
+
 
 
 
