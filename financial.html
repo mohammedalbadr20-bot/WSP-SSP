@@ -378,28 +378,26 @@ createFinancialTable(data.details);
 
 function createFinancialTable(details){
 
-
-
 let tbody =
 document.getElementById("financialTableBody");
 
-
 tbody.innerHTML="";
-
-
 
 
 details.forEach(row=>{
 
 
+// إخفاء الإجراءات غير المعتمدة عن التخطيط
+if(department === "التخطيط" && row.checkbox !== true){
+    return;
+}
+
+
 let tr=document.createElement("tr");
 
 
-
 tr.dataset.location=row.location;
-
 tr.dataset.risk=row.risk;
-
 
 
 
@@ -408,20 +406,15 @@ let expenseDisabled="";
 
 
 
-
-
 if(department==="المشروعات"){
 
-
-expenseDisabled="disabled";
+    expenseDisabled="disabled";
 
 }
 
-
 else if(department==="التخطيط"){
 
-
-approxDisabled="disabled";
+    approxDisabled="disabled";
 
 }
 
@@ -444,85 +437,54 @@ ${row.corraction}
 </td>
 
 
-
 <td>
 
 <input type="number"
-
 class="approximate"
-
 value="${row.aproximatevalue || ""}"
-
 ${approxDisabled}
-
 >
 
 </td>
-
 
 
 
 <td>
 
 <input type="number"
-
 class="expense"
-
 value="${row.expensedvalue || ""}"
-
 ${expenseDisabled}
-
 >
 
 </td>
-
-
 
 
 
 <td>
 
 <textarea class="remarks">
-
 ${row.remarks || ""}
-
 </textarea>
 
-
 </td>
-
-
-
 
 
 <td>
 
-
-<button
-
-onclick="saveFinancial(this)"
-
->
-
+<button onclick="saveFinancial(this)">
 Save
-
 </button>
-
 
 </td>
 
-
 `;
-
 
 
 tbody.appendChild(tr);
 
 
-
 });
-
-
 
 }
 
