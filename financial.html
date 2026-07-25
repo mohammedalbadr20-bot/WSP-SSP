@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Corrective Actions</title>
+
+    <link rel="stylesheet" href="corr_action.css">
+
+</head>
+
+<body>
+
+<div class="topbar">
+
+    <div class="left">
+
+        <button class="logout-button" onclick="logout()">
+            Logout
+        </button>
+
+        <button class="homepage-button" onclick="AccessedToPage('mainpage')">
+            <img src="myhome.webp" title="Main Page">
+        </button>
+
+    </div>
+
+
+    <div class="right">
+
+        <div class="userinfo">
+
+            <label>Section</label>
+
+            <input id="section" disabled>
+
+        </div>
+
+
+        <img src="https://wssp.hcww.com.eg/public/static/media/wsp.22cd4e849308ae80b006.png"
+             class="logo">
+
+    </div>
+
+</div>
+
+
+
+<div class="page-container">
+
+
+<h1>
+    Financial Corrective Actions
+</h1>
+
+
+
+<div class="generalinfo">
+
+
+<div>
+
+<label class="infolabel">
+Branch
+</label>
+
+
+<select id="branch">
+
+<option value="" disabled selected>
+Select Branch
+</option>
+
+<option value="العدوه">العدوه</option>
+<option value="مغاغة">مغاغة</option>
+<option value="بنى مزار">بنى مزار</option>
+<option value="مطاى">مطاى</option>
+<option value="سمالوط">سمالوط</option>
+<option value="المنيا">المنيا</option>
+<option value="ابوقرقاص">ابوقرقاص</option>
+<option value="ملوى">ملوى</option>
+<option value="ديرمواس">ديرمواس</option>
+
+</select>
+
+
+</div>
+
+
+
+
+<div>
+
+<label class="infolabel">
+Station
+</label>
+
+
+<select id="station">
+
+<option value="" disabled selected>
+Select Station
+</option>
+
+</select>
+
+
+</div>
+
+
+</div>
+
+
+
+<hr>
+
+
+
+<div id="financialTableContainer">
+
+
+<table class="ca-table">
+
+
+<thead>
+
+<tr>
+
+<th>
+الموقع
+</th>
+
+
+<th>
+الخطر
+</th>
+
+
+<th>
+الإجراء التصحيحي
+</th>
+
+
+<th>
+القيمة التقديرية
+</th>
+
+
+<th>
+القيمة المنصرفة الفعلية
+</th>
+
+
+<th>
+ملاحظات
+</th>
+
+
+<th>
+حفظ
+</th>
+
+
+</tr>
+
+
+</thead>
+
+
+
+<tbody id="financialTableBody">
+
+
+</tbody>
+
+
+
+</table>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script>
+
+
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbzZOaQ1wmkGrztcwpSUN22fS5RwOJgfUVQwvjzPawbjvXfuFstbMNWggN_DgMZOBjgtYA/exec";
+
+
+
+let department = "";
+let email = "";
+
+let currentStation = "";
+
+
+
+window.onload = function(){
+
+
+email = sessionStorage.getItem("email");
+
+department = sessionStorage.getItem("department");
+
+
+document.getElementById("section").value =
+department || "";
+
+
+
+if(department !== "WSP"){
+
+    document.getElementById("branch").value =
+    department;
+
+    document.getElementById("branch").disabled=true;
+
+
+    loadStations(department);
+
+}
+
+else{
+
+
+document.getElementById("branch").disabled=false;
+
+
+document.getElementById("branch")
+.addEventListener("change",function(){
+
+loadStations(this.value);
+
+});
+
+
+}
+
+
+
+};
+
+
+
+
+
+
+function loadStations(branch){
+
+
+let station =
+document.getElementById("station");
+
+
+station.innerHTML=
+`
+<option>
+Loading...
+</option>
+`;
+
+
+
+fetch(
+scriptURL+
+"?action=getStations&branch="+
+encodeURIComponent(branch)
+
+)
+
+
+.then(r=>r.json())
+
+
+.then(data=>{
+
+
+station.innerHTML=
+`
+<option value="">
+Select Station
+</option>
+`;
+
+
+
+data.stations.forEach(s=>{
+
+
+let op=document.createElement("option");
+
+op.value=s;
+
+op.textContent=s;
+
+
+station.appendChild(op);
+
+
+
+});
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+
+document.getElementById("station")
+.addEventListener("change",function(){
+
+
+currentStation=this.value;
+
+
+loadFinancialData(this.value);
+
+
+});
+
+
+
+
+
+
+
+
+
+function loadFinancialData(station){
+
+
+
+fetch(
+scriptURL+
+"?action=getStationDetails&station="+
+encodeURIComponent(station)
+
+)
+
+
+.then(r=>r.json())
+
+
+.then(data=>{
+
+
+createFinancialTable(data.details);
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function createFinancialTable(details){
+
+
+
+let tbody =
+document.getElementById("financialTableBody");
+
+
+tbody.innerHTML="";
+
+
+
+
+details.forEach(row=>{
+
+
+let tr=document.createElement("tr");
+
+
+
+tr.dataset.location=row.location;
+
+tr.dataset.risk=row.risk;
+
+
+
+
+let approxDisabled="";
+let expenseDisabled="";
+
+
+
+
+
+if(department==="المشروعات"){
+
+
+expenseDisabled="disabled";
+
+}
+
+
+else if(department==="التخطيط"){
+
+
+approxDisabled="disabled";
+
+}
+
+
+
+tr.innerHTML=`
+
+<td>
+${row.location}
+</td>
+
+
+<td>
+${row.risk}
+</td>
+
+
+<td>
+${row.corraction}
+</td>
+
+
+
+<td>
+
+<input type="number"
+
+class="approximate"
+
+value="${row.aproximatevalue || ""}"
+
+${approxDisabled}
+
+>
+
+</td>
+
+
+
+
+<td>
+
+<input type="number"
+
+class="expense"
+
+value="${row.expensedvalue || ""}"
+
+${expenseDisabled}
+
+>
+
+</td>
+
+
+
+
+
+<td>
+
+<textarea class="remarks">
+
+${row.remarks || ""}
+
+</textarea>
+
+
+</td>
+
+
+
+
+
+<td>
+
+
+<button
+
+onclick="saveFinancial(this)"
+
+>
+
+Save
+
+</button>
+
+
+</td>
+
+
+`;
+
+
+
+tbody.appendChild(tr);
+
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+
+
+
+function saveFinancial(btn){
+
+
+
+let row =
+btn.closest("tr");
+
+
+
+let data = new URLSearchParams();
+
+
+
+data.append(
+"action",
+"financialStationDetails"
+);
+
+
+
+data.append(
+"station",
+currentStation
+);
+
+
+
+data.append(
+"location",
+row.dataset.location
+);
+
+
+
+data.append(
+"risk",
+row.dataset.risk
+);
+
+
+
+data.append(
+"aproximatevalue",
+row.querySelector(".approximate").value
+);
+
+
+
+data.append(
+"expensedvalue",
+row.querySelector(".expense").value
+);
+
+
+
+data.append(
+"remarks",
+row.querySelector(".remarks").value
+);
+
+
+
+data.append(
+"email",
+email
+);
+
+
+
+data.append(
+"department",
+department
+);
+
+
+
+
+fetch(scriptURL,{
+
+method:"POST",
+
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
+
+body:data.toString()
+
+
+})
+
+
+.then(r=>r.json())
+
+
+.then(result=>{
+
+
+if(result.result==="Updated"){
+
+
+alert("تم حفظ البيانات بنجاح");
+
+
+}
+
+else{
+
+
+alert("حدث خطأ أثناء الحفظ");
+
+
+}
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+
+function logout(){
+
+sessionStorage.clear();
+
+window.location.href="index.html";
+
+
+}
+
+
+
+function AccessedToPage(pagename){
+
+window.location.href=pagename+".html";
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>
