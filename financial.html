@@ -125,40 +125,13 @@ Select Station
 
 <tr>
 
-<th>
-الموقع
-</th>
-
-
-<th>
-الخطر
-</th>
-
-
-<th>
-الإجراء التصحيحي
-</th>
-
-
-<th>
-القيمة التقديرية
-</th>
-
-
-<th>
-القيمة المنصرفة الفعلية
-</th>
-
-
-<th>
-ملاحظات
-</th>
-
-
-<th>
-حفظ
-</th>
-
+<th>الموقع</th>
+<th>الخطر</th>
+<th>الإجراء التصحيحي</th>
+<th>القيمة التقديرية</th>
+<th>القيمة المنصرفة الفعلية</th>
+<th>ملاحظات</th>
+<th>حفظ</th>
 
 </tr>
 
@@ -196,7 +169,6 @@ const scriptURL =
 
 let department = "";
 let email = "";
-
 let currentStation = "";
 
 
@@ -205,40 +177,15 @@ window.onload = function(){
 
 
 email = sessionStorage.getItem("email");
-
 department = sessionStorage.getItem("department");
+document.getElementById("section").value = department || "";
+document.getElementById("branch").value = department;
+loadStations(department);
 
 
-document.getElementById("section").value =
-department || "";
-
-
-
-
-
-    document.getElementById("branch").value =
-    department;
-
-   loadStations(department);
-
-
-
-
-
-
-
-document.getElementById("branch")
-.addEventListener("change",function(){
-
+document.getElementById("branch").addEventListener("change",function(){
 loadStations(this.value);
-
 });
-
-
-
-
-
-
 };
 
 
@@ -251,8 +198,6 @@ function loadStations(branch){
 
 let station =
 document.getElementById("station");
-
-
 station.innerHTML=
 `
 <option>
@@ -416,60 +361,26 @@ else if(department==="التخطيط"){
 
 tr.innerHTML=`
 
+<td>${row.location}</td>
+<td>${row.risk}</td>
+<td>${row.corraction}</td>
 <td>
-${row.location}
+    <input type="number" class="approximate" value="${row.aproximatevalue || ""}" ${approxDisabled}>
 </td>
-
-
 <td>
-${row.risk}
-</td>
-
-
-<td>
-${row.corraction}
-</td>
-
-
-<td>
-
-<input type="number"
-class="approximate"
-value="${row.aproximatevalue || ""}"
-${approxDisabled}
->
-
+    <input type="number" class="expense" value="${row.expensedvalue || ""}" ${expenseDisabled}>
 </td>
 
 
 
 <td>
-
-<input type="number"
-class="expense"
-value="${row.expensedvalue || ""}"
-${expenseDisabled}
->
-
-</td>
-
-
-
-<td>
-
-<textarea class="remarks">
-${row.remarks || ""}
-</textarea>
-
+    <textarea class="remarks">${row.remarks || ""}
+    </textarea>
 </td>
 
 
 <td>
-
-<button onclick="saveFinancial(this)">
-Save
-</button>
-
+    <button onclick="saveFinancial(this)">Submit</button>
 </td>
 
 `;
@@ -502,68 +413,15 @@ btn.closest("tr");
 let data = new URLSearchParams();
 
 
-
-data.append(
-"action",
-"financialStationDetails"
-);
-
-
-
-data.append(
-"station",
-currentStation
-);
-
-
-
-data.append(
-"location",
-row.dataset.location
-);
-
-
-
-data.append(
-"risk",
-row.dataset.risk
-);
-
-
-
-data.append(
-"aproximatevalue",
-row.querySelector(".approximate").value
-);
-
-
-
-data.append(
-"expensedvalue",
-row.querySelector(".expense").value
-);
-
-
-
-data.append(
-"remarks",
-row.querySelector(".remarks").value
-);
-
-
-
-data.append(
-"email",
-email
-);
-
-
-
-data.append(
-"department",
-department
-);
-
+data.append("action","financialStationDetails");
+data.append("station",currentStation);
+data.append("location",row.dataset.location);
+data.append("risk",row.dataset.risk);
+data.append("aproximatevalue",row.querySelector(".approximate").value);
+data.append("expensedvalue",row.querySelector(".expense").value);
+data.append("remarks",row.querySelector(".remarks").value);
+data.append("email",email);
+data.append("department",department);
 
 
 
@@ -577,7 +435,6 @@ headers:{
 },
 
 body:data.toString()
-
 
 })
 
@@ -612,27 +469,15 @@ alert("حدث خطأ أثناء الحفظ");
 }
 
 
-
-
-
-
-
 function logout(){
-
-sessionStorage.clear();
-
-window.location.href="index.html";
-
-
+    sessionStorage.clear();
+    window.location.href="index.html";
 }
 
 
 
 function AccessedToPage(pagename){
-
-window.location.href=pagename+".html";
-
-
+    window.location.href=pagename+".html";
 }
 
 
