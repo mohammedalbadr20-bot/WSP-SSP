@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 
@@ -195,43 +196,64 @@ loadStations(this.value);
 
 function loadStations(branch){
 
-    let station = document.getElementById("station");
 
-    station.innerHTML = `
-        <option>Loading...</option>
-    `;
+let station =
+document.getElementById("station");
+station.innerHTML=
+`
+<option>
+Loading...
+</option>
+`;
 
-    fetch(
-        scriptURL +
-        "?action=getStations" +
-        "&branch=" + encodeURIComponent(branch) +
-        "&department=" + encodeURIComponent(department)
-    )
 
-    .then(r => r.json())
 
-    .then(data => {
+fetch(
+scriptURL+
+"?action=getStations&branch="+
+encodeURIComponent(branch)
 
-        station.innerHTML = `
-            <option value="">Select Station</option>
-        `;
+)
 
-        data.stations.forEach(item => {
 
-            let op = document.createElement("option");
+.then(r=>r.json())
 
-            op.value = item.station;
-            op.textContent = `${item.station} (${item.pending})`;
 
-            op.dataset.pending = item.pending;
+.then(data=>{
 
-            station.appendChild(op);
 
-        });
+station.innerHTML=
+`
+<option value="">
+Select Station
+</option>
+`;
 
-    });
+
+
+data.stations.forEach(s=>{
+
+
+let op=document.createElement("option");
+
+op.value=s;
+
+op.textContent=s;
+
+
+station.appendChild(op);
+
+
+
+});
+
+
+});
+
+
 
 }
+
 
 
 
@@ -347,7 +369,7 @@ tr.innerHTML=`
     <input type="number" class="approximate" value="${row.aproximatevalue || ""}" ${approxDisabled}>
 </td>
 <td>
-    <input type="number" class="expense" value="${row.expensedvalue || ""}" data-old-value="${row.expensedvalue || ""}" ${expenseDisabled}>
+    <input type="number" class="expense" value="${row.expensedvalue || ""}" ${expenseDisabled}>
 </td>
 
 
@@ -382,100 +404,71 @@ tbody.appendChild(tr);
 
 function saveFinancial(btn){
 
-    let row = btn.closest("tr");
 
-    let expenseInput = row.querySelector(".expense");
 
-    let oldValue = expenseInput.dataset.oldValue || "";
-    let newValue = expenseInput.value.trim();
+let row =
+btn.closest("tr");
 
-    let data = new URLSearchParams();
 
-    data.append("action","financialStationDetails");
-    data.append("station",currentStation);
-    data.append("location",row.dataset.location);
-    data.append("risk",row.dataset.risk);
-    data.append("aproximatevalue",row.querySelector(".approximate").value);
-    data.append("expensedvalue",newValue);
-    data.append("remarks",row.querySelector(".remarks").value);
-    data.append("email",email);
-    data.append("department",department);
 
-    fetch(scriptURL,{
+let data = new URLSearchParams();
 
-        method:"POST",
 
-        headers:{
-            "Content-Type":"application/x-www-form-urlencoded"
-        },
+data.append("action","financialStationDetails");
+data.append("station",currentStation);
+data.append("location",row.dataset.location);
+data.append("risk",row.dataset.risk);
+data.append("aproximatevalue",row.querySelector(".approximate").value);
+data.append("expensedvalue",row.querySelector(".expense").value);
+data.append("remarks",row.querySelector(".remarks").value);
+data.append("email",email);
+data.append("department",department);
 
-        body:data.toString()
 
-    })
 
-    .then(r=>r.json())
+fetch(scriptURL,{
 
-    .then(result=>{
+method:"POST",
 
-        if(result.result==="Updated"){
+headers:{
+"Content-Type":
+"application/x-www-form-urlencoded"
+},
 
-            alert("تم حفظ البيانات بنجاح");
+body:data.toString()
 
-            // تحديث عداد المحطة
-            let stationSelect = document.getElementById("station");
-            let option = stationSelect.selectedOptions[0];
+})
 
-            if(option){
 
-                let pending = parseInt(option.dataset.pending || 0);
+.then(r=>r.json())
 
-                // فارغ -> رقم
-                if(oldValue === "" && newValue !== ""){
-                    pending--;
-                }
 
-                // رقم -> فارغ
-                else if(oldValue !== "" && newValue === ""){
-                    pending++;
-                }
+.then(result=>{
 
-                if(pending < 0){
-                    pending = 0;
-                }
 
-                option.dataset.pending = pending;
-                option.textContent = `${option.value} (${pending})`;
+if(result.result==="Updated"){
 
-                // حفظ القيمة الجديدة كقيمة قديمة
-                expenseInput.dataset.oldValue = newValue;
 
-                // إذا انتهت جميع الإجراءات
-                if(pending === 0){
+alert("تم حفظ البيانات بنجاح");
 
-                    option.remove();
-
-                    document.getElementById("financialTableBody").innerHTML = "";
-
-                    currentStation = "";
-
-                    stationSelect.selectedIndex = 0;
-
-                    alert("تم الانتهاء من جميع الإجراءات المعتمدة لهذه المحطة.");
-
-                }
-
-            }
-
-        }
-        else{
-
-            alert("حدث خطأ أثناء الحفظ");
-
-        }
-
-    });
 
 }
+
+else{
+
+
+alert("حدث خطأ أثناء الحفظ");
+
+
+}
+
+
+});
+
+
+
+}
+
 
 function logout(){
     sessionStorage.clear();
