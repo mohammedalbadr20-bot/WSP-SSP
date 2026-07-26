@@ -41,6 +41,7 @@
                          <option value="التوعية">التوعية</option>
                          <option value="التشغيل والصيانة جنوب">التشغيل والصيانة جنوب</option>
                         <option value="المشروعات">المشروعات</option>
+                        <option value="التخطيط">"التخطيط"</option>option>
                         <option value="العدوه">العدوه</option>
                         <option value="مغاغة">مغاغة</option>
                         <option value="بنى مزار">بنى مزار</option>
@@ -88,6 +89,12 @@
                 <img src="https://i0.wp.com/hellonimbly.com/wp-content/uploads/2022/09/BLOG-Social-Media_September_5-Important-Benefits-of-Corrective-Action-Report-in-Business.jpg?fit=1281%2C721&ssl=1" alt="Corrective Actions" title="Corrective Actions">
                 <span>Corrective Actions</span>
             </button> 
+             
+            <button onclick="AccessedToPage('financial')" class="buttonlabel">
+                
+                <img src="financial.png" alt="Financial" title="Financial">
+                <span>Financial</span>
+            </button>
 
             <button onclick="AccessedToPage('reports')" class="buttonlabel">
                 <img src="business-report.webp" alt="Reports" title="Reports">
@@ -121,6 +128,12 @@
             "التشغيل والصيانة جنوب",
             "المشروعات"
         ];
+
+         const financialAllowed = [
+             "wsp",
+             "التخطيط",
+             "المشروعات"
+        ];
         
         // تعطيل Water Monitoring للتوعية والتشغيل والصيانة جنوب فقط
         if (waterMonitoringBlocked.includes(dep)) {
@@ -135,6 +148,13 @@
             reportsButton.style.opacity = "0.5";
             reportsButton.style.pointerEvents = "none";
         }
+
+        //تعطيل financial لاى قسم غير مسموح له
+         if (!financialAllowed.inculdes(dep)){
+            financialButton.disabled =true;
+            financialButton.style.opacity = "0.5";
+            financialButton.style.pointerEvents = "none";
+         }
             // ================= Users Management =================
 
           let usersData = [];
