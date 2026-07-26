@@ -214,22 +214,17 @@ department || "";
 
 
 
-if(department !== "WSP"){
+
 
     document.getElementById("branch").value =
     department;
 
-    document.getElementById("branch").disabled=true;
+   loadStations(department);
 
 
-    loadStations(department);
-
-}
-
-else{
 
 
-document.getElementById("branch").disabled=false;
+
 
 
 document.getElementById("branch")
@@ -240,7 +235,7 @@ loadStations(this.value);
 });
 
 
-}
+
 
 
 
