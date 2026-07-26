@@ -1,0 +1,331 @@
+/* ===== الصفحة بالكامل ===== */
+body {
+    margin: 0;
+    background: #f4f6fa;
+    font-family: "Segoe UI", sans-serif;
+}
+
+
+/* === TOPBAR === */
+.topbar {
+    width: 100%;
+    height: 65px;
+    background: rgba(135, 206, 250, 0.637);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    box-sizing: border-box;
+    border-style: groove;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 999;
+}
+/* ===== الجهة اليسار (Logout + Home) ===== */
+.left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* زر Logout على اليسار */
+.logout-button {
+    background: #3c94e7;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.logout-button:hover,
+.homepage-button:hover {
+    background: #c0392b;
+}
+.homepage-button{
+    background: #3c94e7;
+    color: white;
+    padding: 2px 4px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 15px;  /* المسافة بين الأزرار */
+}
+
+
+.homepage-button img{
+    width: 35px; 
+    height: 35px; 
+    object-fit: cover;
+}
+/* ===== الجهة اليمين (User Info + Logo) ===== */
+.right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+/* === صندوق الـ Section بجانب الشعار === */
+.userinfo {
+    background: rgba(255, 255, 255, 0.733);
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: 1px solid #d0d0d0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    min-width: 90px;
+    margin-right: 10px;
+}
+
+.userinfo label{
+    font-size: 13px;
+    font-weight: bold;
+    color: #333;
+    
+}
+
+.userinfo input{
+    padding: 4px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    text-align:center;
+    width:110px;
+    font-weight:bold;
+}
+
+/* الشعار على أقصى اليمين */
+.logo {
+    
+    width:4%;
+}
+
+/* العنوان */
+h1{
+    text-align:center;
+    color:#1d3557;
+    font-size:28px;
+    margin:20px 0;
+}
+
+
+
+/* الحاوية */
+.page-container{
+    width:95%;
+    margin:auto;
+}
+
+
+
+
+
+
+select{
+    width:100%;
+    height:40px;
+    border:1px solid #aaa;
+    border-radius:5px;
+    padding:5px;
+    font-size:15px;
+}
+
+
+
+/* الجدول */
+#financialTableContainer{
+    overflow-x:auto;
+}
+
+
+.ca-table{
+
+    width:100%;
+    border-collapse:collapse;
+    background:white;
+    table-layout:fixed;
+    direction: rtl;
+
+}
+
+
+
+.ca-table th{
+
+    background:#258dcc;
+    color:white;
+    padding:3px 8px;
+    font-size:14px;
+    border:1px solid #ddd;
+    height: 10px;
+    
+
+}
+
+
+
+.ca-table td{
+
+    border:1px solid #ddd;
+    padding:8px;
+    text-align:center;
+    vertical-align:middle;
+    font-size:14px;
+    line-height:1.5;
+
+}
+
+
+
+/* عرض الأعمدة */
+
+.ca-table th:nth-child(1),
+.ca-table td:nth-child(1){
+    width:10%;
+}
+
+
+.ca-table th:nth-child(2),
+.ca-table td:nth-child(2){
+    width:18%;
+}
+
+
+.ca-table th:nth-child(3),
+.ca-table td:nth-child(3){
+    width:18%;
+}
+
+
+.ca-table th:nth-child(4),
+.ca-table td:nth-child(4),
+.ca-table th:nth-child(5),
+.ca-table td:nth-child(5){
+    width:10%;
+}
+
+
+.ca-table th:nth-child(6),
+.ca-table td:nth-child(6){
+    width:26%;
+}
+
+
+.ca-table th:nth-child(7),
+.ca-table td:nth-child(7){
+    width:8%;
+}
+
+
+
+/* الإدخالات */
+
+input[type="number"]{
+
+    width:90%;
+    height:32px;
+    border:1px solid #bbb;
+    border-radius:4px;
+    text-align:center;
+
+}
+
+
+
+textarea{
+
+    width:95%;
+    height:55px;
+    resize:none;
+    border:1px solid #bbb;
+    border-radius:5px;
+    padding:5px;
+
+}
+
+
+
+/* الزر */
+
+button{
+
+    background:#258dcc;
+    color:white;
+    border:none;
+    padding:8px 14px;
+    border-radius:5px;
+    cursor:pointer;
+    font-size:14px;
+
+}
+
+
+button:hover{
+
+    background:#126da3;
+
+}
+
+
+
+/* صفوف الجدول */
+
+.ca-table tbody tr:nth-child(even){
+
+    background:#f8fbfd;
+
+}
+
+
+.ca-table tbody tr:hover{
+
+    background:#e9f5ff;
+
+}
+
+
+/* GRID للمعلومات */
+.generalinfo,
+.branchresponse {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    margin: 0 0;
+}
+
+
+
+
+/* تنسيق المدخلات */
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #bbb;
+    border-radius: 5px;
+    font-size: 15px;
+    font-weight: bolder;
+}
+
+
+
+
+
+/* ===== متجاوب للشاشات الصغيرة ===== */
+@media (max-width: 768px) {
+    .buttonlabel {
+        width: 220px;
+        height: 220px;
+    }
+}
+
+@media (max-width: 500px) {
+    .buttonlabel {
+        width: 90%;
+        height: 230px;
+    }
+}
