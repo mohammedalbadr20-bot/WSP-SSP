@@ -217,7 +217,9 @@ select{
 
 
 .ca-table th:nth-child(8),
-.ca-table td:nth-child(8){
+.ca-table td:nth-child(8),
+.ca-table th:nth-child(9),
+.ca-table td:nth-child(9){
     width:8%;
 }
 
