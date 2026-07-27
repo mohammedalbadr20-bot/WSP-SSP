@@ -130,6 +130,7 @@ Select Station
 <th>الخطر</th>
 <th>الإجراء التصحيحي</th>
 <th>القيمة التقديرية</th>
+<th>مصدر التمويل</th>
 <th>القيمة المنصرفة الفعلية</th>
 <th>ملاحظات</th>
 <th>حفظ</th>
@@ -368,6 +369,7 @@ tr.innerHTML=`
 <td>
     <input type="number" class="approximate" value="${row.aproximatevalue || ""}" ${approxDisabled}>
 </td>
+<td><textarea class="sources"></textarea></td>
 <td>
     <input type="number" class="expense" value="${row.expensedvalue || ""}" ${expenseDisabled}>
 </td>
