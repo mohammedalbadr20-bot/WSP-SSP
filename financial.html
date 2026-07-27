@@ -457,6 +457,9 @@ function saveFinancial(btn) {
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
+            row.queryselector(".location").diabled = true;
+            row.queryselector(".risk").diabled = true;
+            row.queryselector(".corraction").diabled = true;
             row.querySelector(".approximate").disabled = true;
             row.querySelector(".resources").disabled = true;
             row.querySelector(".expense").disabled = true;
@@ -533,6 +536,7 @@ function undoFinancial(btn){
                 expensedvalue: row.querySelector(".expense").value,
                 remarks: row.querySelector(".remarks").value
             });
+            
             row.querySelector(".approximate").disabled = false;
             row.querySelector(".resources").disabled = false;
             row.querySelector(".expense").disabled = false;
