@@ -348,6 +348,10 @@ let approxDisabled="";
 let expenseDisabled="";
 let remarksDisabled="";
 let resourcesDisabled="";
+let hasExpense =
+    row.expensedvalue !== null &&
+    row.expensedvalue !== undefined &&
+    row.expensedvalue !== "";
 
 
 // صلاحيات قسم التخطيط
@@ -370,7 +374,7 @@ if(department === "المشروعات"){
 
 // إذا كان هناك قيمة منصرفة فعلية
 if(row.expensedvalue !== "" && row.expensedvalue !== null){
-
+    tr.classList.add("locked-row");
     approxDisabled = "disabled";
     resourcesDisabled = "disabled";
     expenseDisabled = "disabled";
@@ -418,11 +422,11 @@ tr.innerHTML=`
 
 <td class="action-cell">
     <div class="action-buttons">
-        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${row.expensedvalue != null && row.expensedvalue !== "" ? "disabled" : ""}>
+        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${hasExpense ? "disabled" : ""}>
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
         
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo"  ${row.expensedvalue != null && row.expensedvalue !== "" ? "disabled" : ""}>
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasExpense ? "disabled" : ""}>
             <i class="fa-solid fa-rotate-left"></i>
         </button>
     </div>
