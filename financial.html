@@ -384,6 +384,7 @@ tr.innerHTML=`
 
 <td>
     <button onclick="saveFinancial(this)">Submit</button>
+    <button onclinck="undoFinancial(this)">Undo</button>
 </td>
 
 `;
@@ -471,7 +472,52 @@ alert("حدث خطأ أثناء الحفظ");
 
 }
 
+function undoFinancial() {
 
+    if (!lastData) {
+        alert("لا يوجد عملية يمكن التراجع عنها");
+        return;
+    }
+
+    let row = lastData.row;
+
+    // إرجاع القيم في الشاشة
+    row.querySelector(".approximate").value = lastData.aproximatevalue;
+    row.querySelector(".expense").value = lastData.expensedvalue;
+    row.querySelector(".remarks").value = lastData.remarks;
+
+    // إعادة حفظ القيم القديمة في قاعدة البيانات
+    let data = new URLSearchParams();
+
+    data.append("action","financialStationDetails");
+    data.append("station",currentStation);
+    data.append("location",row.dataset.location);
+    data.append("risk",row.dataset.risk);
+    data.append("aproximatevalue",lastData.aproximatevalue);
+    data.append("expensedvalue",lastData.expensedvalue);
+    data.append("remarks",lastData.remarks);
+    data.append("email",email);
+    data.append("department",department);
+
+    fetch(scriptURL,{
+        method:"POST",
+        headers:{
+            "Content-Type":"application/x-www-form-urlencoded"
+        },
+        body:data.toString()
+    })
+    .then(r=>r.json())
+    .then(result=>{
+
+        if(result.result==="Updated"){
+            alert("تم التراجع عن آخر تعديل");
+        }else{
+            alert("فشل التراجع");
+        }
+
+    });
+
+}
 function logout(){
     sessionStorage.clear();
     window.location.href="index.html";
