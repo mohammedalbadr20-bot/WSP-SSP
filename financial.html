@@ -400,80 +400,57 @@ tbody.appendChild(tr);
 }
 
 
+let lastData = null;
 
+function saveFinancial(btn) {
 
+    let row = btn.closest("tr");
 
+    // حفظ البيانات الحالية قبل الإرسال
+    lastData = {
+        row: row,
+        aproximatevalue: row.dataset.oldApproximate || row.querySelector(".approximate").value,
+        expensedvalue: row.dataset.oldExpense || row.querySelector(".expense").value,
+        remarks: row.dataset.oldRemarks || row.querySelector(".remarks").value
+    };
 
+    let data = new URLSearchParams();
 
+    data.append("action", "financialStationDetails");
+    data.append("station", currentStation);
+    data.append("location", row.dataset.location);
+    data.append("risk", row.dataset.risk);
+    data.append("aproximatevalue", row.querySelector(".approximate").value);
+    data.append("expensedvalue", row.querySelector(".expense").value);
+    data.append("remarks", row.querySelector(".remarks").value);
+    data.append("email", email);
+    data.append("department", department);
 
+    fetch(scriptURL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: data.toString()
+    })
+    .then(r => r.json())
+    .then(result => {
 
-function saveFinancial(btn){
+        if(result.result === "Updated"){
 
+            // تحديث القيم القديمة بعد نجاح الحفظ
+            row.dataset.oldApproximate = row.querySelector(".approximate").value;
+            row.dataset.oldExpense = row.querySelector(".expense").value;
+            row.dataset.oldRemarks = row.querySelector(".remarks").value;
 
+            alert("تم حفظ البيانات بنجاح");
+        } else {
+            alert("حدث خطأ أثناء الحفظ");
+        }
 
-let row =
-btn.closest("tr");
-
-
-
-let data = new URLSearchParams();
-
-
-data.append("action","financialStationDetails");
-data.append("station",currentStation);
-data.append("location",row.dataset.location);
-data.append("risk",row.dataset.risk);
-data.append("aproximatevalue",row.querySelector(".approximate").value);
-data.append("expensedvalue",row.querySelector(".expense").value);
-data.append("remarks",row.querySelector(".remarks").value);
-data.append("email",email);
-data.append("department",department);
-
-
-
-fetch(scriptURL,{
-
-method:"POST",
-
-headers:{
-"Content-Type":
-"application/x-www-form-urlencoded"
-},
-
-body:data.toString()
-
-})
-
-
-.then(r=>r.json())
-
-
-.then(result=>{
-
-
-if(result.result==="Updated"){
-
-
-alert("تم حفظ البيانات بنجاح");
-
+    });
 
 }
-
-else{
-
-
-alert("حدث خطأ أثناء الحفظ");
-
-
-}
-
-
-});
-
-
-
-}
-
 function undoFinancial() {
 
     if (!lastData) {
