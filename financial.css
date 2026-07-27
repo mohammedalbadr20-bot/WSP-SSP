@@ -217,10 +217,8 @@ select{
 
 
 .ca-table th:nth-child(8),
-.ca-table td:nth-child(8),
-.ca-table th:nth-child(9),
-.ca-table td:nth-child(9){
-    width:8%;
+.ca-table td:nth-child(8){
+    width:12%;
 }
 
 
@@ -269,14 +267,28 @@ select{
 
 }
 
-.ca-table td:last-child button{
 
-    width:80px;
-    height:35px;
-    padding:0;
-    font-weight:bold;
 
+/* عمود الأزرار */
+.ca-table td:last-child{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
 }
+
+/* الأزرار */
+.ca-table td:last-child button{
+    width: 75px;
+    height: 34px;
+    margin: 0;
+    padding: 0;
+    font-size: 13px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
 /* الزر */
 
 button{
