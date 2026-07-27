@@ -346,8 +346,37 @@ tr.dataset.risk=row.risk;
 
 let approxDisabled="";
 let expenseDisabled="";
-let remarksDisabled= "";
-let resourcesDisabled= "";  
+let remarksDisabled="";
+let resourcesDisabled="";
+
+
+// صلاحيات قسم التخطيط
+if(department === "التخطيط"){
+
+    approxDisabled = "disabled";
+    resourcesDisabled = "disabled";
+
+}
+
+
+// صلاحيات قسم المشروعات
+if(department === "المشروعات"){
+
+    expenseDisabled = "disabled";
+    remarksDisabled = "disabled";
+
+}
+
+
+// إذا كان هناك قيمة منصرفة فعلية
+if(row.expensedvalue !== "" && row.expensedvalue !== null){
+
+    approxDisabled = "disabled";
+    resourcesDisabled = "disabled";
+    expenseDisabled = "disabled";
+    remarksDisabled = "disabled";
+
+}
 
 
 if(department==="المشروعات"){
@@ -389,11 +418,11 @@ tr.innerHTML=`
 
 <td class="action-cell">
     <div class="action-buttons">
-        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save">
+        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${row.expensedvalue != null && row.expensedvalue !== "" ? "disabled" : ""}>
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
         
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo">
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo"  ${row.expensedvalue != null && row.expensedvalue !== "" ? "disabled" : ""}>
             <i class="fa-solid fa-rotate-left"></i>
         </button>
     </div>
