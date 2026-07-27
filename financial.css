@@ -403,6 +403,16 @@ textarea {
     font-weight: bolder;
 }
 
+.locked-row td{
+    background:#f2f2f2;
+    color:#777;
+}
+
+.locked-row input:disabled,
+.locked-row textarea:disabled{
+    background:#f2f2f2;
+    color:#777;
+}
 
 
 
