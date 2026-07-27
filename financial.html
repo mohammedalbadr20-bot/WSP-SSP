@@ -167,8 +167,7 @@ Select Station
 <script>
 
 
-const scriptURL =
-"https://script.google.com/macros/s/AKfycbzZOaQ1wmkGrztcwpSUN22fS5RwOJgfUVQwvjzPawbjvXfuFstbMNWggN_DgMZOBjgtYA/exec";
+const scriptURL = "https://script.google.com/macros/s/AKfycbxreY-8oyjJ7Mu7RdFF43dt50GVdBscwHmI_iPUs6I89GgUXexKx7lLnOk7MKWqtbApPg/exec";
 
 
 
@@ -347,19 +346,18 @@ tr.dataset.risk=row.risk;
 
 let approxDisabled="";
 let expenseDisabled="";
-
+let remarksDisabled= "";
+let resourcesDisabled= "";  
 
 
 if(department==="المشروعات"){
-
-    expenseDisabled="disabled";
-
+    expenseDisabled = "disabled";
+    remarksDisabled = "disabled";
 }
 
 else if(department==="التخطيط"){
-
-    approxDisabled="disabled";
-
+    approxDisabled = "disabled";
+    resourcesDisabled = "disabled";
 }
 
 
@@ -372,7 +370,10 @@ tr.innerHTML=`
 <td>
     <input type="number" class="approximate" value="${row.aproximatevalue || ""}" ${approxDisabled}>
 </td>
-<td><textarea class="sources"></textarea></td>
+<td>
+    <textarea class="resources" ${resourcesDisabled}>${row.resources || ""}</textarea>
+</td>
+
 <td>
     <input type="number" class="expense" value="${row.expensedvalue || ""}" ${expenseDisabled}>
 </td>
@@ -388,15 +389,13 @@ tr.innerHTML=`
 
 <td class="action-cell">
     <div class="action-buttons">
-
-        <button class="icon-btn save-btn" title="Save">
+        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save">
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
-
-        <button class="icon-btn undo-btn" title="Undo">
+        
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo">
             <i class="fa-solid fa-rotate-left"></i>
         </button>
-
     </div>
 </td>
 
@@ -413,19 +412,19 @@ tbody.appendChild(tr);
 }
 
 
-let lastData = null;
 
 function saveFinancial(btn) {
 
     let row = btn.closest("tr");
 
     // حفظ البيانات الحالية قبل الإرسال
-    lastData = {
-        row: row,
-        aproximatevalue: row.dataset.oldApproximate || row.querySelector(".approximate").value,
-        expensedvalue: row.dataset.oldExpense || row.querySelector(".expense").value,
-        remarks: row.dataset.oldRemarks || row.querySelector(".remarks").value
-    };
+       row.dataset.previous = JSON.stringify({
+        aproximatevalue: row.querySelector(".approximate").value,
+        resources: row.querySelector(".resources").value,
+        expensedvalue: row.querySelector(".expense").value,
+        remarks: row.querySelector(".remarks").value
+    });
+
 
     let data = new URLSearchParams();
 
@@ -434,6 +433,7 @@ function saveFinancial(btn) {
     data.append("location", row.dataset.location);
     data.append("risk", row.dataset.risk);
     data.append("aproximatevalue", row.querySelector(".approximate").value);
+    data.append("resources",row.querySelector(".resources").value);
     data.append("expensedvalue", row.querySelector(".expense").value);
     data.append("remarks", row.querySelector(".remarks").value);
     data.append("email", email);
@@ -453,8 +453,10 @@ function saveFinancial(btn) {
 
             // تحديث القيم القديمة بعد نجاح الحفظ
             row.dataset.oldApproximate = row.querySelector(".approximate").value;
+            row.dataset.oldResources = row.querySelector(".resources").value;
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
+
 
             alert("تم حفظ البيانات بنجاح");
         } else {
@@ -464,32 +466,41 @@ function saveFinancial(btn) {
     });
 
 }
-function undoFinancial() {
+function undoFinancial(btn){
 
-    if (!lastData) {
-        alert("لا يوجد عملية يمكن التراجع عنها");
+    let row = btn.closest("tr");
+
+    if(!row.dataset.previous){
+        alert("لا يوجد تعديل سابق لهذا الصف");
         return;
     }
 
-    let row = lastData.row;
+
+    let oldData = JSON.parse(row.dataset.previous);
+
 
     // إرجاع القيم في الشاشة
-    row.querySelector(".approximate").value = lastData.aproximatevalue;
-    row.querySelector(".expense").value = lastData.expensedvalue;
-    row.querySelector(".remarks").value = lastData.remarks;
+    row.querySelector(".approximate").value = oldData.aproximatevalue;
+    row.querySelector(".resources").value = oldData.resources;
+    row.querySelector(".expense").value = oldData.expensedvalue;
+    row.querySelector(".remarks").value = oldData.remarks;
 
-    // إعادة حفظ القيم القديمة في قاعدة البيانات
+
+
     let data = new URLSearchParams();
 
     data.append("action","financialStationDetails");
     data.append("station",currentStation);
     data.append("location",row.dataset.location);
     data.append("risk",row.dataset.risk);
-    data.append("aproximatevalue",lastData.aproximatevalue);
-    data.append("expensedvalue",lastData.expensedvalue);
-    data.append("remarks",lastData.remarks);
+    data.append("aproximatevalue",oldData.aproximatevalue);
+    data.append("resources",oldData.resources);
+    data.append("expensedvalue",oldData.expensedvalue);
+    data.append("remarks",oldData.remarks);
     data.append("email",email);
     data.append("department",department);
+
+
 
     fetch(scriptURL,{
         method:"POST",
@@ -498,18 +509,29 @@ function undoFinancial() {
         },
         body:data.toString()
     })
+
     .then(r=>r.json())
+
     .then(result=>{
 
         if(result.result==="Updated"){
-            alert("تم التراجع عن آخر تعديل");
-        }else{
+            row.dataset.previous = JSON.stringify({
+                aproximatevalue: row.querySelector(".approximate").value,
+                resources: row.querySelector(".resources").value,
+                expensedvalue: row.querySelector(".expense").value,
+                remarks: row.querySelector(".remarks").value
+            });
+
+            alert("تم التراجع بنجاح");
+        }
+        else{
             alert("فشل التراجع");
         }
 
     });
 
 }
+
 function logout(){
     sessionStorage.clear();
     window.location.href="index.html";
