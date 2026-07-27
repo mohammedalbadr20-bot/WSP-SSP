@@ -133,8 +133,8 @@ Select Station
 <th>مصدر التمويل</th>
 <th>القيمة المنصرفة الفعلية</th>
 <th>ملاحظات</th>
-<th>حفظ</th>
-<th>رجوع</th>
+<th></th>
+
 
 </tr>
 
@@ -384,9 +384,10 @@ tr.innerHTML=`
 
 
 <td>
-    <button onclick="saveFinancial(this)">Submit</button>  
+    <button onclick="saveFinancial(this)" src="https://cdn-icons-png.flaticon.com/512/6896/6896907.png"></button>  
+    <button onclinck="undoFinancial(this)" scr="https://cdn-icons-png.flaticon.com/512/4250/4250945.png"></button>
 </td>
-<th><button onclinck="undoFinancial(this)">Undo</button></td>
+
 
 `;
 
