@@ -370,16 +370,12 @@ button:hover{
 /* صفوف الجدول */
 
 .ca-table tbody tr:nth-child(even){
-
     background:#f8fbfd;
-
 }
 
 
 .ca-table tbody tr:hover{
-
     background:#e9f5ff;
-
 }
 
 
