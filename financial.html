@@ -456,6 +456,18 @@ function saveFinancial(btn) {
             row.dataset.oldResources = row.querySelector(".resources").value;
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
+            // تعطيل جميع المدخلات في الصف
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+            row.querySelector(".expense").disabled = true;
+            row.querySelector(".remarks").disabled = true;
+            
+            // تعطيل زر Save
+            row.querySelector(".save-btn").disabled = true;
+            
+            // تفعيل زر Undo
+            row.querySelector(".undo-btn").disabled = false;
+
 
 
             alert("تم حفظ البيانات بنجاح");
@@ -521,6 +533,16 @@ function undoFinancial(btn){
                 expensedvalue: row.querySelector(".expense").value,
                 remarks: row.querySelector(".remarks").value
             });
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
+        
+            // إعادة تفعيل Save
+            row.querySelector(".save-btn").disabled = false;
+        
+            // تعطيل Undo مرة أخرى
+            row.querySelector(".undo-btn").disabled = true;
 
             alert("تم التراجع بنجاح");
         }
