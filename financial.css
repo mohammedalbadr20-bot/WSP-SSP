@@ -206,20 +206,24 @@ select{
 
 .ca-table th:nth-child(4),
 .ca-table td:nth-child(4),
-.ca-table th:nth-child(5),
-.ca-table td:nth-child(5){
+.ca-table th:nth-child(6),
+.ca-table td:nth-child(6){
     width:10%;
 }
 
 
-.ca-table th:nth-child(6),
-.ca-table td:nth-child(6){
+.ca-table th:nth-child(5),
+.ca-table td:nth-child(5){
     width:26%;
 }
 
-
 .ca-table th:nth-child(7),
 .ca-table td:nth-child(7){
+    width:26%;
+}
+
+.ca-table th:nth-child(8),
+.ca-table td:nth-child(8){
     width:8%;
 }
 
