@@ -348,10 +348,10 @@ let approxDisabled="";
 let expenseDisabled="";
 let remarksDisabled="";
 let resourcesDisabled="";
-let hasExpense =
+let hasExpense = 
     row.expensedvalue !== null &&
     row.expensedvalue !== undefined &&
-    row.expensedvalue !== "";
+    String(row.expensedvalue).trim() !== "";
 
 
 // صلاحيات قسم التخطيط
@@ -397,9 +397,10 @@ else if(department==="التخطيط"){
 
 tr.innerHTML=`
 
-<td>${row.location}</td>
-<td>${row.risk}</td>
-<td>${row.corraction}</td>
+<td class="locked-field">${row.location}</td>
+<td class="locked-field">${row.risk}</td>
+<td class="locked-field">${row.corraction}</td>
+
 <td>
     <input type="number" class="approximate" value="${row.aproximatevalue || ""}" ${approxDisabled}>
 </td>
@@ -490,9 +491,7 @@ function saveFinancial(btn) {
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
-            row.queryselector(".location").diabled = true;
-            row.queryselector(".risk").diabled = true;
-            row.queryselector(".corraction").diabled = true;
+            row.classList.add("locked-row");
             row.querySelector(".approximate").disabled = true;
             row.querySelector(".resources").disabled = true;
             row.querySelector(".expense").disabled = true;
@@ -503,6 +502,7 @@ function saveFinancial(btn) {
             
             // تفعيل زر Undo
             row.querySelector(".undo-btn").disabled = false;
+            row.classList.add("locked-row");
 
 
 
@@ -570,10 +570,25 @@ function undoFinancial(btn){
                 remarks: row.querySelector(".remarks").value
             });
             
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
+            if(department==="التخطيط"){
+                row.querySelector(".approximate").disabled = true;
+                row.querySelector(".resources").disabled = true;
+            }
+            else{
+                row.querySelector(".approximate").disabled = false;
+                row.querySelector(".resources").disabled = false;
+            }
+            
+            
+            if(department==="المشروعات"){
+                row.querySelector(".expense").disabled = true;
+                row.querySelector(".remarks").disabled = true;
+            }
+            else{
+                row.querySelector(".expense").disabled = false;
+                row.querySelector(".remarks").disabled = false;
+            }
+
         
             // إعادة تفعيل Save
             row.querySelector(".save-btn").disabled = false;
