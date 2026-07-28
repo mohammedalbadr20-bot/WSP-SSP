@@ -340,7 +340,12 @@ let tr=document.createElement("tr");
 tr.dataset.location=row.location;
 tr.dataset.risk=row.risk;
 tr.dataset.coraction=row.corraction;    
-
+tr.dataset.previous = JSON.stringify({
+    aproximatevalue: row.aproximatevalue || "",
+    resources: row.resources || "",
+    expensedvalue: row.expensedvalue || "",
+    remarks: row.remarks || ""
+});
 
 
 let approxDisabled="";
