@@ -426,7 +426,7 @@ tr.innerHTML=`
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
         
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasExpense ? : ""}>
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasExpense ? "" : "disabled"}>
             <i class="fa-solid fa-rotate-left"></i>
         </button>
     </div>
