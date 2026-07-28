@@ -330,10 +330,7 @@ tbody.innerHTML="";
 details.forEach(row=>{
 console.log("Branch:", branch);
 console.log("Executor:", row.executor);
-// فلترة الفرع
-if(row.branch !== branch){
-    return;
-}
+
 
 // إظهار الصف إذا كانت الجهة المنفذة تحتوي على:
 // الفرع أو التشغيل والصيانة - جنوب أو المشروعات أو التخطيط
