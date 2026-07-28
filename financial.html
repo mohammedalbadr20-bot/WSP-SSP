@@ -333,8 +333,8 @@ if(row.branch !== branch){
 
 // فلترة executor
 if (
-    row.executor !== "التشغيل والصيانة - جنوب" &&
-    row.executor !== "المشروعات" &&
+    row.executor !== "التشغيل والصيانة - جنوب" ||
+    row.executor !== "المشروعات" ||
     row.executor !== "التخطيط"
 ){
     return;
