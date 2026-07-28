@@ -361,9 +361,9 @@ tr.dataset.location=row.location;
 tr.dataset.risk=row.risk;
 tr.dataset.coraction=row.corraction;    
 tr.dataset.previous = JSON.stringify({
-    aproximatevalue: row.aproximatevalue || "",
+    aproximatevalue: row.aproximatevalue ?? "",
     resources: row.resources || "",
-    expensedvalue: row.expensedvalue || "",
+    expensedvalue: row.expensedvalue ?? "",
     remarks: row.remarks || ""
 });
 
@@ -426,14 +426,14 @@ tr.innerHTML=`
 <td class="locked-field">${row.corraction}</td>
 
 <td>
-    <input type="number" class="approximate" value="${row.aproximatevalue || ""}" ${approxDisabled}>
+    <input type="number" class="approximate" value="${row.aproximatevalue ?? ""}" ${approxDisabled}>
 </td>
 <td>
     <textarea class="resources" ${resourcesDisabled}>${row.resources || ""}</textarea>
 </td>
 
 <td>
-    <input type="number" class="expense" value="${row.expensedvalue || ""}" ${expenseDisabled}>
+    <input type="number" class="expense" value="${row.expensedvalue ?? ""}" ${expenseDisabled}>
 </td>
 
 
