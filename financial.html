@@ -318,7 +318,7 @@ createFinancialTable(data.details);
 
 
 function createFinancialTable(details){
-
+let branch = document.getElementById("branch");
 let tbody =
 document.getElementById("financialTableBody");
 
@@ -327,7 +327,7 @@ tbody.innerHTML="";
 
 details.forEach(row=>{
 // فلترة البيانات حسب executor
-if (row.executor !== "التشغيل والصيانة - جنوب" || row.executor !== "المشروعات" || row.executor !== "التخطيط" || row.executor !== branch){
+if (row.executor !== "التشغيل والصيانة - جنوب" && row.executor !== "المشروعات" && row.executor !== "التخطيط" && row.executor !== branch){
     return;
 }
 
