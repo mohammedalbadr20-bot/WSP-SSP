@@ -184,6 +184,7 @@ email = sessionStorage.getItem("email");
 department = sessionStorage.getItem("department");
 document.getElementById("section").value = department || "";
 document.getElementById("branch").value = department;
+branch.innerHTML= `<option value="" disabled selected>Select Branch</option>`;
 loadStations(department);
 
 
