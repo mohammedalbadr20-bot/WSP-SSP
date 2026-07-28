@@ -319,10 +319,7 @@ createFinancialTable(data.details);
 
 function createFinancialTable(details){
 
-    if(!Array.isArray(details)){
-        console.error("details is not array:", details);
-        return;
-    }    
+      
 const branch = document.getElementById("branch").value;
 let tbody =
 document.getElementById("financialTableBody");
