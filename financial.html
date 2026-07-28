@@ -380,7 +380,21 @@ const hasExpense =
     row.expensedvalue !== null &&
     row.expensedvalue !== undefined &&
     String(row.expensedvalue).trim() !== "";
+const hasRemarks =
+    row.remarks !== null &&
+    row.remarks !== undefined &&
+    String(row.remarks).trim() !== "";
 
+let hasChanges = false;
+
+if(department === "المشروعات"){
+    hasChanges = hasApproximate || hasResources;
+}
+
+if(department === "التخطيط"){
+    hasChanges = hasExpense || hasRemarks;
+}
+    
 
 // صلاحيات قسم التخطيط
 if(department === "التخطيط"){
@@ -415,12 +429,12 @@ if(hasApproximate){
 }
     
 
-if(department==="المشروعات"){
+if(department === "المشروعات" && (hasApproximate || hasResources)){
     expenseDisabled = "disabled";
     remarksDisabled = "disabled";
 }
 
-else if(department==="التخطيط"){
+else if(department==="التخطيط" && (hasExpense || hasRemarks)){
     approxDisabled = "disabled";
     resourcesDisabled = "disabled";
 }
@@ -454,11 +468,11 @@ tr.innerHTML=`
 
 <td class="action-cell">
     <div class="action-buttons">
-        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${hasExpense ? "disabled" : ""}>
+        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${hasChanges ? "disabled" : ""}>
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
         
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasExpense ? "" : "disabled"}>
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasChanges ? "" : "disabled"}>
             <i class="fa-solid fa-rotate-left"></i>
         </button>
     </div>
