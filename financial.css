@@ -57,7 +57,6 @@ body {
     margin-right: 15px;  /* المسافة بين الأزرار */
 }
 
-
 .homepage-button img{
     width: 35px; 
     height: 35px; 
@@ -115,37 +114,24 @@ h1{
 }
 
 
-
-/* الحاوية */
+/* الحاوية لمحتوى الصفحة */
 .page-container{
     width:95%;
     margin:auto;
 }
 
 
-
-
-
-
-select{
-    width:100%;
-    height:40px;
-    border:1px solid #aaa;
-    border-radius:5px;
-    padding:5px;
-    font-size:15px;
-}
-
-
-
+/* ==================================================
+   عناصر الإدخال العامة
+   ================================================== */
 /* الجدول */
+/*لإظهار شريط تمرير أفقي عند الحاجة*/
 #financialTableContainer{
     overflow-x:auto;
 }
 
 
 .ca-table{
-
     width:100%;
     border-collapse:collapse;
     background:white;
@@ -155,9 +141,10 @@ select{
 }
 
 
-
+/* ==================================================
+   رؤوس الجدول
+   ================================================== */
 .ca-table th{
-
     background:#258dcc;
     color:white;
     padding:3px 8px;
@@ -167,11 +154,10 @@ select{
     
 
 }
-
-
-
+/* ==================================================
+   خلايا الجدول
+   ================================================== */
 .ca-table td{
-
     border:1px solid #ddd;
     padding:6px;
     text-align:center;
@@ -179,7 +165,6 @@ select{
     font-size:14px;
     line-height:1.4;
     overflow:hidden;
-
 }
 
 
@@ -191,14 +176,12 @@ select{
     width:10%;
 }
 
-
 .ca-table th:nth-child(2),
 .ca-table td:nth-child(2),
 .ca-table th:nth-child(3),
 .ca-table td:nth-child(3){
     width:18%;
 }
-
 
 .ca-table th:nth-child(4),
 .ca-table td:nth-child(4),
@@ -207,14 +190,12 @@ select{
     width:10%;
 }
 
-
 .ca-table th:nth-child(5),
 .ca-table td:nth-child(5),
 .ca-table th:nth-child(7),
 .ca-table td:nth-child(7){
     width:26%;
 }
-
 
 .ca-table th:nth-child(8),
 .ca-table td:nth-child(8){
@@ -224,11 +205,9 @@ select{
 
 
 /* الإدخالات */
-
 /* ===== مدخلات الجدول فقط ===== */
 
 .ca-table input[type="number"]{
-
     width:100%;
     height:35px;
     padding:5px;
@@ -237,12 +216,9 @@ select{
     text-align:center;
     font-size:14px;
     background:#fff;
-
 }
 
-
 .ca-table textarea{
-
     width:100%;
     height:60px;
     padding:8px;
@@ -252,7 +228,6 @@ select{
     font-size:14px;
     line-height:1.4;
     background:#fff;
-
 }
 
 
@@ -260,16 +235,11 @@ select{
 /* عند الضغط */
 .ca-table input:focus,
 .ca-table textarea:focus{
-
     outline:none;
     border-color:#258dcc;
     box-shadow:0 0 5px rgba(37,141,204,.4);
-
 }
 
-
-
-/* عمود الأزرار */
 /* خلية الأزرار */
 .action-cell{
     text-align:center;
@@ -285,7 +255,7 @@ select{
     gap:8px;
 }
 
-/* الأزرار */
+/* أزرار العمليات داخل الحاوية */
 .action-buttons button{
     width:70px;
     height:34px;
@@ -295,7 +265,7 @@ select{
     font-weight:bold;
 }
 
-/* الأزرار */
+/* أزرار العمود الأخير داخل الجدول */
 .ca-table td:last-child button{
     width: 75px;
     height: 34px;
@@ -306,13 +276,9 @@ select{
     flex-shrink: 0;
 }
 
-.action-buttons{
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    gap:8px;
-}
-
+/* ==================================================
+   الأزرار بالأيقونات
+   ================================================== */
 .icon-btn{
     width:40px;
     height:40px;
@@ -332,11 +298,13 @@ select{
     background:#f57c00;
 }
 
+/* الأزرار المعطلة */
 .icon-btn:disabled{
     opacity:0.5;
     cursor:not-allowed;
 }
 
+/* حقول المعطلة */
 .ca-table input:disabled,
 .ca-table textarea:disabled{
     background:#f2f2f2;
@@ -347,7 +315,6 @@ select{
 /* الزر */
 
 button{
-
     background:#258dcc;
     color:white;
     border:none;
@@ -355,31 +322,29 @@ button{
     border-radius:5px;
     cursor:pointer;
     font-size:14px;
-
 }
 
 
 button:hover{
-
     background:#126da3;
-
 }
 
 
 
-/* صفوف الجدول */
-
+/* تلوين الصفوف الزوجية بلون مختلف لتسهيل القراءة */
 .ca-table tbody tr:nth-child(even){
     background:#f8fbfd;
 }
 
-
+/* تغيير لون الصف عند مرور مؤشر الماوس عليه */
 .ca-table tbody tr:hover{
     background:#e9f5ff;
 }
 
 
-/* GRID للمعلومات */
+/* ==================================================
+   بيانات الفرع والمحطة (General Information)
+   ================================================== */
 .generalinfo,
 .branchresponse {
     display: grid;
@@ -399,10 +364,14 @@ textarea {
     padding: 8px;
     border: 1px solid #bbb;
     border-radius: 5px;
+    padding:5px;
     font-size: 15px;
     font-weight: bolder;
 }
 
+/* ==================================================
+   الصفوف المقفلة (Locked Rows)
+   ================================================== */
 .locked-row td{
     background:#f2f2f2;
     color:#777;
