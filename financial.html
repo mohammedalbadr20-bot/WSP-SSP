@@ -318,7 +318,7 @@ createFinancialTable(data.details);
 
 
 function createFinancialTable(details){
-const branch = [العدوه, مغاغة, بنى مزار, مطاى, سمالوط, المنيا, ابوقرقاص, ملوى, ديرمواس];
+const branch = document.getElementById("branch").value;
 let tbody =
 document.getElementById("financialTableBody");
 
@@ -327,7 +327,10 @@ tbody.innerHTML="";
 
 details.forEach(row=>{
 // فلترة البيانات حسب executor
-if (row.executor !== "التشغيل والصيانة - جنوب" && row.executor !== "المشروعات" && row.executor !== "التخطيط" && row.executor !== branch){
+if(row.branch !== branch){
+    return;
+}
+if (row.executor !== "التشغيل والصيانة - جنوب" && row.executor !== "المشروعات" && row.executor !== "التخطيط"){
     return;
 }
 
