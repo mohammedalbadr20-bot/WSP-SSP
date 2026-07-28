@@ -372,6 +372,10 @@ let approxDisabled="";
 let expenseDisabled="";
 let remarksDisabled="";
 let resourcesDisabled="";
+const hasApproximate =
+    row.aproximatevalue !== null &&
+    row.aproximatevalue !== undefined &&
+    String(row.aproximatevalue).trim() !== "";
 const hasExpense =
     row.expensedvalue !== null &&
     row.expensedvalue !== undefined &&
@@ -399,13 +403,17 @@ if(department === "المشروعات"){
 // إذا كان هناك قيمة منصرفة فعلية
 if(hasExpense){
     tr.classList.add("locked-row");
-    approxDisabled = "disabled";
-    resourcesDisabled = "disabled";
     expenseDisabled = "disabled";
     remarksDisabled = "disabled";
 
 }
-
+    
+if(hasApproximate){
+    tr.classList.add("locked-row");
+    approxDisabled = "disabled";
+    resourcesDisabled = "disabled";
+}
+    
 
 if(department==="المشروعات"){
     expenseDisabled = "disabled";
