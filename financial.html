@@ -327,10 +327,7 @@ tbody.innerHTML="";
 
 details.forEach(row=>{
 // فلترة البيانات حسب executor
-if(row.branch !== branch){
-    return;
-}
-if (row.executor !== "التشغيل والصيانة - جنوب" && row.executor !== "المشروعات" && row.executor !== "التخطيط"){
+if (row.executor !== "التشغيل والصيانة - جنوب" && row.executor !== "المشروعات" && row.executor !== "التخطيط" && row.branch !== branch){
     return;
 }
 
