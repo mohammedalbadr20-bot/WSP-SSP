@@ -592,9 +592,12 @@ function undoFinancial(btn){
                 expensedvalue: row.querySelector(".expense").value,
                 remarks: row.querySelector(".remarks").value
             });
-            // إعادة قفل location / risk / corraction
+           
+            // إعادة الصف للحالة الطبيعية بعد Undo
+            row.classList.remove("locked-row");
+            
             row.querySelectorAll(".locked-field").forEach(cell => {
-                cell.classList.add("locked-row");
+                cell.classList.remove("locked-row");
             });
             if(department==="التخطيط"){
                 row.querySelector(".approximate").disabled = true;
