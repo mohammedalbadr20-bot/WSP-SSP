@@ -326,7 +326,10 @@ tbody.innerHTML="";
 
 
 details.forEach(row=>{
-
+// فلترة البيانات حسب executor
+if (row.executor !== "التشغيل والصيانة - جنوب" || row.executor !== "المشروعات" || row.executor !== "التخطيط" || row.executor !== branch){
+    return;
+}
 
 // إخفاء الإجراءات غير المعتمدة عن التخطيط
 if(department === "التخطيط" && row.checkbox !== true){
