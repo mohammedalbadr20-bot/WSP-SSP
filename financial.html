@@ -285,8 +285,6 @@ loadFinancialData(this.value);
 
 function loadFinancialData(station){
 
-
-
 fetch(
 scriptURL+
 "?action=getStationDetails&station="+
@@ -341,6 +339,7 @@ let tr=document.createElement("tr");
 
 tr.dataset.location=row.location;
 tr.dataset.risk=row.risk;
+tr.dataset.coraction=row.corraction;    
 
 
 
@@ -427,7 +426,7 @@ tr.innerHTML=`
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
         
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasExpense ? "disabled" : ""}>
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasExpense ? : ""}>
             <i class="fa-solid fa-rotate-left"></i>
         </button>
     </div>
