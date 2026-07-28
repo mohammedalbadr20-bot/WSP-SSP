@@ -368,7 +368,7 @@ let approxDisabled="";
 let expenseDisabled="";
 let remarksDisabled="";
 let resourcesDisabled="";
-let hasExpense = 
+const hasExpense =
     row.expensedvalue !== null &&
     row.expensedvalue !== undefined &&
     String(row.expensedvalue).trim() !== "";
@@ -393,7 +393,7 @@ if(department === "المشروعات"){
 
 
 // إذا كان هناك قيمة منصرفة فعلية
-if(row.expensedvalue !== "" && row.expensedvalue !== null){
+if(hasExpense){
     tr.classList.add("locked-row");
     approxDisabled = "disabled";
     resourcesDisabled = "disabled";
