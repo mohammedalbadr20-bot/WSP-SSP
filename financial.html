@@ -333,15 +333,18 @@ if(row.branch !== branch){
     return;
 }
 
-// فلترة executor
-if (
-    row.executor !== "التشغيل والصيانة - جنوب" ||
-    row.executor !== "المشروعات" ||
-    row.executor !== "التخطيط"
-){
+// إظهار الصف إذا كانت الجهة المنفذة تحتوي على:
+// الفرع أو التشغيل والصيانة - جنوب أو المشروعات أو التخطيط
+const allowedExecutors = [
+    branch,
+    "التشغيل والصيانة - جنوب",
+    "المشروعات",
+    "التخطيط"
+];
+
+if (!allowedExecutors.some(executor => String(row.executor || "").includes(executor))){
     return;
 }
-
 // إخفاء الإجراءات غير المعتمدة عن التخطيط
 if(department === "التخطيط" && row.checkbox !== true){
     return;
