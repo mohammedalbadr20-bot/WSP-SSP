@@ -391,11 +391,11 @@ const hasResources =
 
 let hasChanges = false;
 
-if(department === "المشروعات"){
+if(department === "المشروعات" || department === "WSP"){
     hasChanges = hasApproximate || hasResources;
 }
 
-if(department === "التخطيط"){
+if(department === "التخطيط" || department === "WSP"){
     hasChanges = hasExpense || hasRemarks;
 }
     
