@@ -1,0 +1,116 @@
+.report-filter{
+    display:flex;
+    gap:20px;
+    align-items:end;
+    margin:20px;
+    flex-wrap:wrap;
+}
+
+
+.report-filter div{
+    display:flex;
+    flex-direction:column;
+}
+
+
+.report-filter input,
+.report-filter select,
+.report-filter button{
+    padding:8px;
+    font-size:16px;
+}
+
+
+.dashboard{
+    display:flex;
+    gap:20px;
+    justify-content:center;
+    margin:30px;
+}
+
+
+.card{
+
+    width:220px;
+    background:#f3f6fa;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 3px 8px #ccc;
+
+}
+
+
+.card h3{
+    margin:0;
+    color:#555;
+}
+
+
+.card span{
+
+    display:block;
+    font-size:28px;
+    font-weight:bold;
+    margin-top:15px;
+    color:#0066cc;
+
+}
+
+
+
+.report-buttons{
+
+    text-align:center;
+    margin:20px;
+
+}
+
+
+.report-buttons button{
+
+    padding:10px 25px;
+    margin:5px;
+    cursor:pointer;
+
+}
+
+
+
+table{
+
+    width:95%;
+    margin:auto;
+    border-collapse:collapse;
+
+}
+
+
+th{
+
+    background:#0066cc;
+    color:white;
+
+}
+
+
+td,th{
+
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:center;
+
+}
+
+
+
+@media print{
+
+    .report-filter,
+    .report-buttons{
+
+        display:none;
+
+    }
+
+}
