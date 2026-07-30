@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Approximate Report</title>
+
+<link rel="stylesheet" href="financial.css">
+
+
+<style>
+
+.report-filter{
+    display:flex;
+    gap:20px;
+    align-items:end;
+    margin:25px;
+    flex-wrap:wrap;
+}
+
+
+.report-filter div{
+    display:flex;
+    flex-direction:column;
+}
+
+
+input,select,button{
+
+    padding:8px;
+    font-size:16px;
+
+}
+
+
+.dashboard{
+
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    margin:30px;
+
+}
+
+
+
+.card{
+
+    width:250px;
+    background:#f4f7fb;
+    border-radius:12px;
+    padding:20px;
+    text-align:center;
+    box-shadow:0 3px 8px #ccc;
+
+}
+
+
+.card h3{
+
+    color:#555;
+
+}
+
+
+.card span{
+
+    display:block;
+    margin-top:15px;
+    font-size:28px;
+    font-weight:bold;
+    color:#0066cc;
+
+}
+
+
+
+.buttons{
+
+    text-align:center;
+    margin:20px;
+
+}
+
+
+
+table{
+
+    width:90%;
+    margin:auto;
+    border-collapse:collapse;
+
+}
+
+
+th{
+
+    background:#0066cc;
+    color:white;
+
+}
+
+
+td,th{
+
+    border:1px solid #ccc;
+    padding:10px;
+    text-align:center;
+
+}
+
+
+
+@media print{
+
+.report-filter,
+.buttons{
+
+display:none;
+
+}
+
+}
+
+
+</style>
+
+
+</head>
+
+
+
+<body>
+
+
+<h1 style="text-align:center">
+تقرير القيم التقديرية
+</h1>
+
+
+
+
+<div class="report-filter">
+
+
+<div>
+
+<label>
+الفرع
+</label>
+
+
+<select id="branch"
+onchange="loadStations()">
+
+<option value="">
+اختر الفرع
+</option>
+
+</select>
+
+
+</div>
+
+
+
+
+<div>
+
+<label>
+المحطة
+</label>
+
+
+<select id="station">
+
+<option value="">
+اختر المحطة
+</option>
+
+</select>
+
+
+</div>
+
+
+
+<button onclick="loadReport()">
+
+عرض التقرير
+
+</button>
+
+
+
+</div>
+
+
+
+
+
+<div class="dashboard">
+
+
+<div class="card">
+
+<h3>
+إجمالي القيم التقديرية
+</h3>
+
+<span id="total">
+0
+</span>
+
+</div>
+
+
+
+<div class="card">
+
+<h3>
+عدد الإجراءات
+</h3>
+
+<span id="count">
+0
+</span>
+
+</div>
+
+
+</div>
+
+
+
+
+
+<div class="buttons">
+
+
+<button onclick="window.print()">
+
+🖨 طباعة
+
+</button>
+
+
+<button onclick="exportExcel()">
+
+📊 تصدير Excel
+
+</button>
+
+
+</div>
+
+
+
+
+
+<table>
+
+
+<thead>
+
+<tr>
+
+<th>
+م
+</th>
+
+
+<th>
+المحطة
+</th>
+
+
+<th>
+الإجراء التصحيحي
+</th>
+
+
+<th>
+القيمة التقديرية
+</th>
+
+
+<th>
+مصادر التمويل
+</th>
+
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="reportBody">
+
+
+</tbody>
+
+
+</table>
+
+
+
+
+
+
+<script>
+
+
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbwTqwlt5P1klQLwzObXhuS6DN-IR2jdlvTVdED-oOFddgdM55Evo1769wfiyL6vk96q3g/exec";
+
+
+
+let reportData=[];
+
+
+
+
+window.onload=function(){
+
+loadBranches();
+
+};
+
+
+
+
+
+function loadBranches(){
+
+
+fetch(
+scriptURL+
+"?action=getStations&branch="
+)
+
+.then(r=>r.json())
+
+.then(data=>{
+
+
+let branch =
+document.getElementById("branch");
+
+
+
+data.stations.forEach(s=>{
+
+
+
+});
+
+
+
+});
+
+
+/*
+تحميل الفروع مباشرة من Sheet stations
+سيتم إضافتها بدالة منفصلة
+*/
+
+
+}
+
+
+
+
+
+// تحميل المحطات حسب الفرع
+
+function loadStations(){
+
+
+let branch =
+document.getElementById("branch").value;
+
+
+
+let station =
+document.getElementById("station");
+
+
+station.innerHTML=
+`
+<option>
+Loading...
+</option>
+`;
+
+
+
+fetch(
+scriptURL+
+"?action=getStations&branch="+
+encodeURIComponent(branch)
+)
+
+
+
+.then(r=>r.json())
+
+
+.then(data=>{
+
+
+station.innerHTML=
+`
+<option value="">
+اختر المحطة
+</option>
+`;
+
+
+
+data.stations.forEach(s=>{
+
+
+let op =
+document.createElement("option");
+
+
+op.value=s;
+
+op.textContent=s;
+
+
+station.appendChild(op);
+
+
+
+});
+
+
+});
+
+
+
+}
+
+
+
+
+
+
+function loadReport(){
+
+
+let station =
+document.getElementById("station").value;
+
+
+
+if(!station){
+
+alert("اختر المحطة");
+
+return;
+
+}
+
+
+
+fetch(
+
+scriptURL+
+"?action=getApproximateReport"+
+"&station="+
+encodeURIComponent(station)
+
+)
+
+
+.then(r=>r.json())
+
+
+.then(data=>{
+
+
+if(data.status!=="success"){
+
+alert("حدث خطأ");
+
+return;
+
+}
+
+
+
+document.getElementById("total").innerHTML =
+Number(data.total).toLocaleString();
+
+
+
+document.getElementById("count").innerHTML =
+data.count;
+
+
+
+reportData=data.rows;
+
+
+
+let tbody =
+document.getElementById("reportBody");
+
+
+tbody.innerHTML="";
+
+
+
+data.rows.forEach((r,i)=>{
+
+
+tbody.innerHTML +=
+
+`
+<tr>
+
+<td>${i+1}</td>
+
+<td>${r.station}</td>
+
+<td>${r.corraction}</td>
+
+<td>${Number(r.approximate).toLocaleString()}</td>
+
+<td>${r.resources}</td>
+
+
+</tr>
+
+`;
+
+
+
+});
+
+
+});
+
+
+}
+
+
+
+
+
+function exportExcel(){
+
+
+let csv =
+"المحطة,الإجراء التصحيحي,القيمة التقديرية,مصادر التمويل\n";
+
+
+
+reportData.forEach(r=>{
+
+
+csv +=
+
+`${r.station},${r.corraction},${r.approximate},${r.resources}\n`;
+
+
+});
+
+
+
+let blob =
+new Blob(
+[csv],
+{
+type:"text/csv;charset=utf-8;"
+}
+);
+
+
+
+let link =
+document.createElement("a");
+
+
+link.href =
+URL.createObjectURL(blob);
+
+
+link.download =
+"approximate_report.csv";
+
+
+link.click();
+
+
+
+}
+
+
+
+</script>
+
+
+</body>
+
+</html>
