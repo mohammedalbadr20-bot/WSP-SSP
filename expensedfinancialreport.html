@@ -27,6 +27,15 @@
         <label>Branch</label>
         <select id="branch">
             <option value="ALL">All</option>
+            <option value="العدوه">العدوه</option>
+            <option value="مغاغة">مغاغة</option>
+            <option value="بنى مزار">بنى مزار</option>
+            <option value="مطاى">مطاى</option>
+            <option value="سمالوط">سمالوط</option>
+            <option value="المنيا">المنيا</option>
+            <option value="ابوقرقاص">ابوقرقاص</option>
+            <option value="ملوى">ملوى</option>
+            <option value="ديرمواس">ديرمواس</option>
         </select>
     </div>
 
@@ -66,76 +75,37 @@
 <script>
 
 
-const scriptURL =
-"https://script.google.com/macros/s/AKfycbytRhNKLLSNVRiqUAQ17D5Jc4VBcFWGcFHgYwfK4DGAhuI0h_EtltmbZ2n9Am9CB1m1xg/exec";
-
-
-
+const scriptURL = "https://script.google.com/macros/s/AKfycbxoi1HnbAL7V4bRetSgz3UrXrNjRFL8wniFMXn0D9kw9kjKMgYzT1BqFjzEpVrmOPlwMA/exec";
 
 let reportData=[];
 
-
-
-
 window.onload=function(){
-
     loadBranches();
-
 };
 
 
-
-
-
 function loadBranches(){
-
 
 fetch(
 scriptURL+
 "?action=getStations&branch="
 )
-
-
 .then(r=>r.json())
-
 .then(data=>{
-
-
 });
-
-
-
 }
-
-
 
 
 function loadReport(){
 
-
-let from =
-document.getElementById("fromDate").value;
-
-
-let to =
-document.getElementById("toDate").value;
-
-
-let branch =
-document.getElementById("branch").value;
-
-
+let from = document.getElementById("fromDate").value;
+let to = document.getElementById("toDate").value;
+let branch = document.getElementById("branch").value;
 
 if(!from || !to){
-
-alert("اختر الفترة الزمنية");
-
-return;
-
+    alert("اختر الفترة الزمنية");
+    return;
 }
-
-
-
 
 fetch(
 scriptURL+
@@ -143,125 +113,62 @@ scriptURL+
 "&from="+from+
 "&to="+to+
 "&branch="+encodeURIComponent(branch)
-
 )
-
-
 .then(r=>r.json())
-
 .then(data=>{
 
 
 if(data.status!=="success"){
-
-alert("حدث خطأ");
-
-return;
-
+    alert("حدث خطأ");
+    return;
 }
 
-
-
-document.getElementById("total").innerHTML =
-Number(data.total).toLocaleString();
-
-
-
-document.getElementById("count").innerHTML =
-data.count;
-
-
-
+document.getElementById("total").innerHTML = Number(data.total).toLocaleString();
+document.getElementById("count").innerHTML = data.count;
 reportData=data.rows;
-
-
-let tbody =
-document.getElementById("reportBody");
-
+let tbody = document.getElementById("reportBody");
 
 tbody.innerHTML="";
-
-
-
 data.rows.forEach((r,i)=>{
-
-
 tbody.innerHTML +=
-
 `
 <tr>
 
 <td>${i+1}</td>
-
 <td>${r.branch}</td>
-
 <td>${r.station}</td>
-
 <td>${r.corraction}</td>
-
 <td>${Number(r.expense).toLocaleString()}</td>
 
 </tr>
 `;
 
-
 });
-
-
-
 });
-
-
 }
-
-
-
 
 
 function exportExcel(){
 
-
-let csv =
-"الفرع,المحطة,الإجراء التصحيحي,القيمة المنصرفة\n";
-
-
-
-reportData.forEach(r=>{
-
-
-csv +=
-`${r.branch},${r.station},${r.corraction},${r.expense}\n`;
-
-
-});
-
-
-
-let blob =
-new Blob(
-[csv],
-{
-type:"text/csv;charset=utf-8;"
-}
-);
-
-
-
-let link =
-document.createElement("a");
-
-
-link.href =
-URL.createObjectURL(blob);
-
-
-link.download =
-"financial_report.csv";
-
-
-link.click();
-
-
+    let csv = "الفرع,المحطة,الإجراء التصحيحي,القيمة المنصرفة\n";
+    reportData.forEach(r=>{
+    csv +=
+    `${r.branch},${r.station},${r.corraction},${r.expense}\n`;
+    });
+    
+    
+    let blob = new Blob([csv],{
+    type:"text/csv;charset=utf-8;"
+    }
+    );
+    
+    let link = document.createElement("a");
+    
+    link.href = URL.createObjectURL(blob);
+    
+    link.download = "financial_report.csv";
+    
+    link.click();
 }
 
 
