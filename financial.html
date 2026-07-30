@@ -391,11 +391,11 @@ const hasResources =
 
 let hasChanges = false;
 
-if(department === "المشروعات" || department === "WSP"){
+if(department === "المشروعات"){
     hasChanges = hasApproximate || hasResources;
 }
 
-if(department === "التخطيط" || department === "WSP"){
+if(department === "التخطيط"){
     hasChanges = hasExpense || hasRemarks;
 }
     
@@ -502,8 +502,24 @@ async function saveFinancial(btn) {
     if (selectedDepartment === null) {
         return;
     }
+    if (department === "WSP") {
+
+        if (selectedDepartment === "المشروعات") {
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+            row.querySelector(".expense").disabled = true;
+            row.querySelector(".remarks").disabled = true;
+        } else {
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
+        }
+    }
+    
 
     let row = btn.closest("tr");
+    let oldData = JSON.parse(row.dataset.previous);
 
     // حفظ البيانات الحالية قبل الإرسال
        row.dataset.previous = JSON.stringify({
@@ -520,10 +536,17 @@ async function saveFinancial(btn) {
     data.append("station", currentStation);
     data.append("location", row.dataset.location);
     data.append("risk", row.dataset.risk);
-    data.append("aproximatevalue", row.querySelector(".approximate").value);
-    data.append("resources",row.querySelector(".resources").value);
-    data.append("expensedvalue", row.querySelector(".expense").value);
-    data.append("remarks", row.querySelector(".remarks").value);
+    if(selectedDepartment === "المشروعات"){
+        data.append("aproximatevalue", row.querySelector(".approximate").value);
+        data.append("resources", row.querySelector(".resources").value);
+        data.append("expensedvalue", oldData.expensedvalue);
+        data.append("remarks", oldData.remarks);
+    }else{
+        data.append("aproximatevalue", oldData.aproximatevalue);
+        data.append("resources", oldData.resources);
+        data.append("expensedvalue", row.querySelector(".expense").value);
+        data.append("remarks", row.querySelector(".remarks").value);
+    }
     data.append("email", email);
     data.append("department", selectedDepartment);
     fetch(scriptURL, {
@@ -549,7 +572,6 @@ async function saveFinancial(btn) {
             row.querySelector(".resources").disabled = true;
             row.querySelector(".expense").disabled = true;
             row.querySelector(".remarks").disabled = true;
-            
             // تعطيل زر Save
             row.querySelector(".save-btn").disabled = true;
             
@@ -557,21 +579,32 @@ async function saveFinancial(btn) {
             row.querySelector(".undo-btn").disabled = false;
             row.classList.add("locked-row");
 
-
-
             alert("تم حفظ البيانات بنجاح");
         } else {
             alert("حدث خطأ أثناء الحفظ");
         }
-
     });
-
 }
+    
 async function undoFinancial(btn){
 
     const selectedDepartment = await chooseSection();
     if (selectedDepartment === null) {
         return;
+    }
+    if (department === "WSP") {
+
+        if (selectedDepartment === "المشروعات") {
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+            row.querySelector(".expense").disabled = true;
+            row.querySelector(".remarks").disabled = true;
+        } else {
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
+        }
     }
     let row = btn.closest("tr");
 
@@ -598,10 +631,17 @@ async function undoFinancial(btn){
     data.append("station",currentStation);
     data.append("location",row.dataset.location);
     data.append("risk",row.dataset.risk);
-    data.append("aproximatevalue",oldData.aproximatevalue);
-    data.append("resources",oldData.resources);
-    data.append("expensedvalue",oldData.expensedvalue);
-    data.append("remarks",oldData.remarks);
+    if(selectedDepartment === "المشروعات"){
+        data.append("aproximatevalue", row.querySelector(".approximate").value);
+        data.append("resources", row.querySelector(".resources").value);
+        data.append("expensedvalue", oldData.expensedvalue);
+        data.append("remarks", oldData.remarks);
+    }else{
+        data.append("aproximatevalue", oldData.aproximatevalue);
+        data.append("resources", oldData.resources);
+        data.append("expensedvalue", row.querySelector(".expense").value);
+        data.append("remarks", row.querySelector(".remarks").value);
+    }
     data.append("email",email);
     data.append("department", selectedDepartment);
 
