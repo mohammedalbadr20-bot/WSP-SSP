@@ -497,7 +497,7 @@ tbody.appendChild(tr);
 
 
 async function saveFinancial(btn) {
-    
+    let row = btn.closest("tr");
     const selectedDepartment = await chooseSection();
     if (selectedDepartment === null) {
         return;
@@ -518,7 +518,7 @@ async function saveFinancial(btn) {
     }
     
 
-    let row = btn.closest("tr");
+  
     let oldData = JSON.parse(row.dataset.previous);
 
     // حفظ البيانات الحالية قبل الإرسال
@@ -587,7 +587,7 @@ async function saveFinancial(btn) {
 }
     
 async function undoFinancial(btn){
-
+    let row = btn.closest("tr");
     const selectedDepartment = await chooseSection();
     if (selectedDepartment === null) {
         return;
@@ -606,7 +606,7 @@ async function undoFinancial(btn){
             row.querySelector(".remarks").disabled = false;
         }
     }
-    let row = btn.closest("tr");
+   
 
     if(!row.dataset.previous){
         alert("لا يوجد تعديل سابق لهذا الصف");
