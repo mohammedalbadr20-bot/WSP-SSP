@@ -496,7 +496,12 @@ tbody.appendChild(tr);
 
 
 
-function saveFinancial(btn) {
+async function saveFinancial(btn) {
+    
+    const selectedDepartment = await chooseSection();
+    if (selectedDepartment === null) {
+        return;
+    }
 
     let row = btn.closest("tr");
 
@@ -520,8 +525,7 @@ function saveFinancial(btn) {
     data.append("expensedvalue", row.querySelector(".expense").value);
     data.append("remarks", row.querySelector(".remarks").value);
     data.append("email", email);
-    data.append("department", department);
-
+    data.append("department", selectedDepartment);
     fetch(scriptURL, {
         method: "POST",
         headers: {
@@ -563,8 +567,12 @@ function saveFinancial(btn) {
     });
 
 }
-function undoFinancial(btn){
+async function undoFinancial(btn){
 
+    const selectedDepartment = await chooseSection();
+    if (selectedDepartment === null) {
+        return;
+    }
     let row = btn.closest("tr");
 
     if(!row.dataset.previous){
@@ -595,7 +603,7 @@ function undoFinancial(btn){
     data.append("expensedvalue",oldData.expensedvalue);
     data.append("remarks",oldData.remarks);
     data.append("email",email);
-    data.append("department",department);
+    data.append("department", selectedDepartment);
 
 
 
@@ -660,6 +668,36 @@ function undoFinancial(btn){
     });
 
 }
+//////اختيار جهه الحفظ والتعديل ل WSP //////
+async function chooseSection() {
+
+    if (department !== "WSP") {
+        return department;
+    }
+
+    let choice = prompt(
+    `اختر الجزء المطلوب:
+    
+    1 - المشروعات
+    (القيمة التقديرية + مصدر التمويل)
+    
+    2 - التخطيط
+    (القيمة المنصرفة + الملاحظات)
+    
+    0 - إلغاء`
+    );
+
+    switch (choice) {
+        case "1":
+            return "المشروعات";
+
+        case "2":
+            return "التخطيط";
+
+        default:
+            return null;
+    }
+}    
 
 function logout(){
     sessionStorage.clear();
