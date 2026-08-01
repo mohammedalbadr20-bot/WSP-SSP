@@ -552,7 +552,7 @@ updateRowState(tr);
 
 }
 
-function updateRowState(row){
+function updateRowState(row, selectedDepartment = null){
 
     const hasApprox =
         row.querySelector(".approximate").value.trim() !== "" ||
@@ -600,17 +600,39 @@ function updateRowState(row){
             row.querySelector(".undo-btn").disabled = false;
         }
 
-        else{
+       else{
 
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
+    if(selectedDepartment === "المشروعات"){
 
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
+        row.querySelector(".approximate").disabled = false;
+        row.querySelector(".resources").disabled = false;
 
-            row.querySelector(".save-btn").disabled = false;
-            row.querySelector(".undo-btn").disabled = true;
-        }
+        row.querySelector(".expense").disabled = true;
+        row.querySelector(".remarks").disabled = true;
+
+    }
+    else if(selectedDepartment === "التخطيط"){
+
+        row.querySelector(".approximate").disabled = true;
+        row.querySelector(".resources").disabled = true;
+
+        row.querySelector(".expense").disabled = false;
+        row.querySelector(".remarks").disabled = false;
+
+    }
+    else{
+
+        row.querySelector(".approximate").disabled = false;
+        row.querySelector(".resources").disabled = false;
+
+        row.querySelector(".expense").disabled = false;
+        row.querySelector(".remarks").disabled = false;
+
+    }
+
+    row.querySelector(".save-btn").disabled = false;
+    row.querySelector(".undo-btn").disabled = true;
+}
     }
 
     else{
@@ -730,7 +752,7 @@ async function saveFinancial(btn) {
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
-            updateRowState(row);
+            updateRowState(row, selectedDepartment);
 
             alert("تم حفظ البيانات بنجاح");
         } else {
@@ -840,7 +862,7 @@ async function undoFinancial(btn){
             row.querySelectorAll(".locked-field").forEach(cell => {
                 cell.classList.remove("locked-row");
             });
-            updateRowState(row);
+            updateRowState(row, selectedDepartment);
             alert("تم التراجع بنجاح");
         }
         else{
