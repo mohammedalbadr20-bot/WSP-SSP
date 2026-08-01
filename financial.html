@@ -360,13 +360,15 @@ let tr=document.createElement("tr");
 tr.dataset.location=row.location;
 tr.dataset.risk=row.risk;
 tr.dataset.coraction=row.corraction;    
-tr.dataset.previous = JSON.stringify({
+tr.dataset.previousProjects = JSON.stringify({
     aproximatevalue: row.aproximatevalue ?? "",
-    resources: row.resources || "",
+    resources: row.resources || ""
+});
+
+tr.dataset.previousPlanning = JSON.stringify({
     expensedvalue: row.expensedvalue ?? "",
     remarks: row.remarks || ""
 });
-
 
 let approxDisabled="";
 let expenseDisabled="";
@@ -544,13 +546,108 @@ tr.innerHTML=`
 
 
 tbody.appendChild(tr);
-
+updateRowState(tr);
 
 });
 
 }
 
+function updateRowState(row){
 
+    const hasApprox =
+        row.querySelector(".approximate").value.trim() !== "" ||
+        row.querySelector(".resources").value.trim() !== "";
+
+    const hasExpense =
+        row.querySelector(".expense").value.trim() !== "" ||
+        row.querySelector(".remarks").value.trim() !== "";
+
+    if(department === "WSP"){
+
+        if(hasApprox && !hasExpense){
+
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
+
+            row.querySelector(".save-btn").disabled = false;
+            row.querySelector(".undo-btn").disabled = false;
+        }
+
+        else if(!hasApprox && hasExpense){
+
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+
+            row.querySelector(".expense").disabled = true;
+            row.querySelector(".remarks").disabled = true;
+
+            row.querySelector(".save-btn").disabled = false;
+            row.querySelector(".undo-btn").disabled = false;
+        }
+
+        else if(hasApprox && hasExpense){
+
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+
+            row.querySelector(".expense").disabled = true;
+            row.querySelector(".remarks").disabled = true;
+
+            row.querySelector(".save-btn").disabled = true;
+            row.querySelector(".undo-btn").disabled = false;
+        }
+
+        else{
+
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
+
+            row.querySelector(".save-btn").disabled = false;
+            row.querySelector(".undo-btn").disabled = true;
+        }
+    }
+
+    else{
+
+        if(department==="المشروعات"){
+
+            row.querySelector(".expense").disabled=true;
+            row.querySelector(".remarks").disabled=true;
+
+            if(hasApprox){
+                row.querySelector(".approximate").disabled=true;
+                row.querySelector(".resources").disabled=true;
+
+                row.querySelector(".save-btn").disabled=true;
+                row.querySelector(".undo-btn").disabled=false;
+            }
+
+        }
+
+        else if(department==="التخطيط"){
+
+            row.querySelector(".approximate").disabled=true;
+            row.querySelector(".resources").disabled=true;
+
+            if(hasExpense){
+                row.querySelector(".expense").disabled=true;
+                row.querySelector(".remarks").disabled=true;
+
+                row.querySelector(".save-btn").disabled=true;
+                row.querySelector(".undo-btn").disabled=false;
+            }
+
+        }
+
+    }
+
+}
 
 async function saveFinancial(btn) {
     let row = btn.closest("tr");
@@ -575,15 +672,25 @@ async function saveFinancial(btn) {
     
 
   
-    let oldData = JSON.parse(row.dataset.previous);
+    let oldProjects = JSON.parse(row.dataset.previousProjects);
+    let oldPlanning = JSON.parse(row.dataset.previousPlanning);
 
     // حفظ البيانات الحالية قبل الإرسال
-       row.dataset.previous = JSON.stringify({
-        aproximatevalue: row.querySelector(".approximate").value,
-        resources: row.querySelector(".resources").value,
-        expensedvalue: row.querySelector(".expense").value,
-        remarks: row.querySelector(".remarks").value
-    });
+       if (selectedDepartment === "المشروعات") {
+
+            row.dataset.previousProjects = JSON.stringify({
+                aproximatevalue: row.querySelector(".approximate").value,
+                resources: row.querySelector(".resources").value
+            });
+        
+        } else {
+        
+            row.dataset.previousPlanning = JSON.stringify({
+                expensedvalue: row.querySelector(".expense").value,
+                remarks: row.querySelector(".remarks").value
+            });
+        
+        }
 
 
     let data = new URLSearchParams();
@@ -595,11 +702,11 @@ async function saveFinancial(btn) {
     if(selectedDepartment === "المشروعات"){
         data.append("aproximatevalue", row.querySelector(".approximate").value);
         data.append("resources", row.querySelector(".resources").value);
-        data.append("expensedvalue", oldData.expensedvalue);
-        data.append("remarks", oldData.remarks);
+        data.append("expensedvalue", oldPlanning.expensedvalue);
+        data.append("remarks", oldPlanning.remarks);
     }else{
-        data.append("aproximatevalue", oldData.aproximatevalue);
-        data.append("resources", oldData.resources);
+        data.append("aproximatevalue", oldProjects.aproximatevalue);
+        data.append("resources", oldProjects.resources);
         data.append("expensedvalue", row.querySelector(".expense").value);
         data.append("remarks", row.querySelector(".remarks").value);
     }
@@ -623,57 +730,7 @@ async function saveFinancial(btn) {
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
-           if (department === "WSP") {
-
-    if (selectedDepartment === "المشروعات") {
-
-        // اقفل حقول المشروعات فقط
-        row.querySelector(".approximate").disabled = true;
-        row.querySelector(".resources").disabled = true;
-
-        // لو التخطيط لم يحفظ بعد، يظل مفتوح
-        if (!row.querySelector(".expense").value.trim()) {
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
-            row.querySelector(".save-btn").disabled = false;
-        } else {
-            row.querySelector(".expense").disabled = true;
-            row.querySelector(".remarks").disabled = true;
-            row.querySelector(".save-btn").disabled = true;
-        }
-
-    } else {
-
-        // اقفل حقول التخطيط فقط
-        row.querySelector(".expense").disabled = true;
-        row.querySelector(".remarks").disabled = true;
-
-        // لو المشروعات لم تحفظ بعد، تظل مفتوحة
-        if (!row.querySelector(".approximate").value.trim()) {
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
-            row.querySelector(".save-btn").disabled = false;
-        } else {
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
-            row.querySelector(".save-btn").disabled = true;
-        }
-
-    }
-
-    row.querySelector(".undo-btn").disabled = false;
-
-} else {
-
-    row.querySelector(".approximate").disabled = true;
-    row.querySelector(".resources").disabled = true;
-    row.querySelector(".expense").disabled = true;
-    row.querySelector(".remarks").disabled = true;
-
-    row.querySelector(".save-btn").disabled = true;
-    row.querySelector(".undo-btn").disabled = false;
-
-}
+            updateRowState(row);
 
             alert("تم حفظ البيانات بنجاح");
         } else {
@@ -710,14 +767,28 @@ async function undoFinancial(btn){
     }
 
 
-    let oldData = JSON.parse(row.dataset.previous);
+    let oldData;
 
+    if(selectedDepartment === "المشروعات"){
+        oldData = JSON.parse(row.dataset.previousProjects);
+    }
+    else{
+        oldData = JSON.parse(row.dataset.previousPlanning);
+    }
 
     // إرجاع القيم في الشاشة
-    row.querySelector(".approximate").value = oldData.aproximatevalue;
-    row.querySelector(".resources").value = oldData.resources;
-    row.querySelector(".expense").value = oldData.expensedvalue;
-    row.querySelector(".remarks").value = oldData.remarks;
+    if(selectedDepartment === "المشروعات"){
+
+        row.querySelector(".approximate").value = oldData.aproximatevalue;
+        row.querySelector(".resources").value = oldData.resources;
+    
+    }
+    else{
+    
+        row.querySelector(".expense").value = oldData.expensedvalue;
+        row.querySelector(".remarks").value = oldData.remarks;
+    
+    }
 
 
 
@@ -769,32 +840,7 @@ async function undoFinancial(btn){
             row.querySelectorAll(".locked-field").forEach(cell => {
                 cell.classList.remove("locked-row");
             });
-            if(selectedDepartment==="التخطيط"){
-                row.querySelector(".approximate").disabled = true;
-                row.querySelector(".resources").disabled = true;
-            }
-            else{
-                row.querySelector(".approximate").disabled = false;
-                row.querySelector(".resources").disabled = false;
-            }
-            
-            
-            if(selectedDepartment==="المشروعات"){
-                row.querySelector(".expense").disabled = true;
-                row.querySelector(".remarks").disabled = true;
-            }
-            else{
-                row.querySelector(".expense").disabled = false;
-                row.querySelector(".remarks").disabled = false;
-            }
-
-        
-            // إعادة تفعيل Save
-            row.querySelector(".save-btn").disabled = false;
-        
-            // تعطيل Undo مرة أخرى
-            row.querySelector(".undo-btn").disabled = true;
-
+            updateRowState(row);
             alert("تم التراجع بنجاح");
         }
         else{
