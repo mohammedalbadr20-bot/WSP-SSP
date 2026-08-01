@@ -767,26 +767,18 @@ async function undoFinancial(btn){
     if (selectedDepartment === null) {
         return;
     }
-    if (department === "WSP") {
-
-        if (selectedDepartment === "المشروعات") {
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
-            row.querySelector(".expense").disabled = true;
-            row.querySelector(".remarks").disabled = true;
-        } else {
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
-        }
-    }
+   
    
 
-    if(!row.dataset.previous){
-        alert("لا يوجد تعديل سابق لهذا الصف");
-        return;
+    if(selectedDepartment === "المشروعات" && !row.dataset.previousProjects){
+    alert("لا يوجد تعديل سابق للمشروعات");
+    return;
     }
+
+if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
+    alert("لا يوجد تعديل سابق للتخطيط");
+    return;
+}
 
 
     let oldData;
@@ -849,12 +841,19 @@ async function undoFinancial(btn){
     .then(result=>{
 
         if(result.result==="Updated"){
-            row.dataset.previous = JSON.stringify({
-                aproximatevalue: row.querySelector(".approximate").value,
-                resources: row.querySelector(".resources").value,
-                expensedvalue: row.querySelector(".expense").value,
-                remarks: row.querySelector(".remarks").value
-            });
+            if(selectedDepartment === "المشروعات"){
+
+    row.dataset.previousProjects = JSON.stringify({
+        aproximatevalue: row.querySelector(".approximate").value,
+        resources: row.querySelector(".resources").value
+        });    
+    }
+    else{
+        row.dataset.previousPlanning = JSON.stringify({
+            expensedvalue: row.querySelector(".expense").value,
+            remarks: row.querySelector(".remarks").value
+        });    
+    }
            
             // إعادة الصف للحالة الطبيعية بعد Undo
             row.classList.remove("locked-row");
@@ -863,6 +862,8 @@ async function undoFinancial(btn){
                 cell.classList.remove("locked-row");
             });
             updateRowState(row, selectedDepartment);
+            row.querySelector(".save-btn").disabled = false;
+            row.querySelector(".undo-btn").disabled = true;
             alert("تم التراجع بنجاح");
         }
         else{
