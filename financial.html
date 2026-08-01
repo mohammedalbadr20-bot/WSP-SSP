@@ -472,17 +472,20 @@ if(department === "المشروعات"){
 
 
 // إذا كان هناك قيمة منصرفة فعلية
-if(hasExpense){
-    tr.classList.add("locked-row");
-    expenseDisabled = "disabled";
-    remarksDisabled = "disabled";
+if (department !== "WSP") {
 
-}
-    
-if(hasApproximate){
-    tr.classList.add("locked-row");
-    approxDisabled = "disabled";
-    resourcesDisabled = "disabled";
+    if (hasExpense) {
+        tr.classList.add("locked-row");
+        expenseDisabled = "disabled";
+        remarksDisabled = "disabled";
+    }
+
+    if (hasApproximate) {
+        tr.classList.add("locked-row");
+        approxDisabled = "disabled";
+        resourcesDisabled = "disabled";
+    }
+
 }
     
 
@@ -620,17 +623,57 @@ async function saveFinancial(btn) {
             row.dataset.oldExpense = row.querySelector(".expense").value;
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
-            row.classList.add("locked-row");
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
+           if (department === "WSP") {
+
+    if (selectedDepartment === "المشروعات") {
+
+        // اقفل حقول المشروعات فقط
+        row.querySelector(".approximate").disabled = true;
+        row.querySelector(".resources").disabled = true;
+
+        // لو التخطيط لم يحفظ بعد، يظل مفتوح
+        if (!row.querySelector(".expense").value.trim()) {
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
+            row.querySelector(".save-btn").disabled = false;
+        } else {
             row.querySelector(".expense").disabled = true;
             row.querySelector(".remarks").disabled = true;
-            // تعطيل زر Save
             row.querySelector(".save-btn").disabled = true;
-            
-            // تفعيل زر Undo
-            row.querySelector(".undo-btn").disabled = false;
-            row.classList.add("locked-row");
+        }
+
+    } else {
+
+        // اقفل حقول التخطيط فقط
+        row.querySelector(".expense").disabled = true;
+        row.querySelector(".remarks").disabled = true;
+
+        // لو المشروعات لم تحفظ بعد، تظل مفتوحة
+        if (!row.querySelector(".approximate").value.trim()) {
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+            row.querySelector(".save-btn").disabled = false;
+        } else {
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+            row.querySelector(".save-btn").disabled = true;
+        }
+
+    }
+
+    row.querySelector(".undo-btn").disabled = false;
+
+} else {
+
+    row.querySelector(".approximate").disabled = true;
+    row.querySelector(".resources").disabled = true;
+    row.querySelector(".expense").disabled = true;
+    row.querySelector(".remarks").disabled = true;
+
+    row.querySelector(".save-btn").disabled = true;
+    row.querySelector(".undo-btn").disabled = false;
+
+}
 
             alert("تم حفظ البيانات بنجاح");
         } else {
