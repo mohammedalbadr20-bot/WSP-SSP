@@ -389,14 +389,67 @@ const hasResources =
     row.resources !== undefined &&
     String(row.resources).trim() !== "";    
 
-let hasChanges = false;
+let saveDisabled = false;
+let undoDisabled = true;
 
-if(department === "المشروعات"){
-    hasChanges = hasApproximate || hasResources;
+if (department === "WSP") {
+
+    if (hasApproximate && !hasExpense) {
+
+        // المشروعات انتهت
+        approxDisabled = "disabled";
+        resourcesDisabled = "disabled";
+
+        // التخطيط مازال يعمل
+        expenseDisabled = "";
+        remarksDisabled = "";
+
+        saveDisabled = false;
+        undoDisabled = false;
+    }
+
+    else if (!hasApproximate && hasExpense) {
+
+        approxDisabled = "";
+        resourcesDisabled = "";
+
+        expenseDisabled = "disabled";
+        remarksDisabled = "disabled";
+
+        saveDisabled = false;
+        undoDisabled = false;
+    }
+
+    else if (hasApproximate && hasExpense) {
+
+        approxDisabled = "disabled";
+        resourcesDisabled = "disabled";
+        expenseDisabled = "disabled";
+        remarksDisabled = "disabled";
+
+        saveDisabled = true;
+        undoDisabled = false;
+    }
+
+    else {
+
+        saveDisabled = false;
+        undoDisabled = true;
+    }
+
 }
+else {
 
-if(department === "التخطيط"){
-    hasChanges = hasExpense || hasRemarks;
+    let hasChanges = false;
+
+    if (department === "المشروعات")
+        hasChanges = hasApproximate || hasResources;
+
+    if (department === "التخطيط")
+        hasChanges = hasExpense || hasRemarks;
+
+    saveDisabled = hasChanges;
+    undoDisabled = !hasChanges;
 }
     
 
@@ -472,11 +525,11 @@ tr.innerHTML=`
 
 <td class="action-cell">
     <div class="action-buttons">
-        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${hasChanges ? "disabled" : ""}>
+        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${saveDisabled ? "disabled" : ""}>
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
         
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${hasChanges ? "" : "disabled"}>
+        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${undoDisabled ? "" : "disabled"}>
             <i class="fa-solid fa-rotate-left"></i>
         </button>
     </div>
@@ -673,7 +726,7 @@ async function undoFinancial(btn){
             row.querySelectorAll(".locked-field").forEach(cell => {
                 cell.classList.remove("locked-row");
             });
-            if(department==="التخطيط"){
+            if(selectedDepartment==="التخطيط"){
                 row.querySelector(".approximate").disabled = true;
                 row.querySelector(".resources").disabled = true;
             }
@@ -683,7 +736,7 @@ async function undoFinancial(btn){
             }
             
             
-            if(department==="المشروعات"){
+            if(selectedDepartment==="المشروعات"){
                 row.querySelector(".expense").disabled = true;
                 row.querySelector(".remarks").disabled = true;
             }
