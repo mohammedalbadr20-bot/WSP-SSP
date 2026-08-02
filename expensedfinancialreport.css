@@ -82,6 +82,7 @@ table{
     width:95%;
     margin:auto;
     border-collapse:collapse;
+    direction:rtl;
 
 }
 
