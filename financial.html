@@ -763,92 +763,101 @@ async function saveFinancial(btn) {
 }
     
 async function undoFinancial(btn){
+
     let row = btn.closest("tr");
+
     const selectedDepartment = await chooseSection();
+
     if (selectedDepartment === null) {
         return;
     }
-   
-   
+
 
     if(selectedDepartment === "المشروعات" && !row.dataset.previousProjects){
-    alert("لا يوجد تعديل سابق للمشروعات");
-    return;
+
+        alert("لا يوجد تعديل سابق للمشروعات");
+        return;
     }
 
-if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
-    alert("لا يوجد تعديل سابق للتخطيط");
-    return;
-}
+
+    if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
+
+        alert("لا يوجد تعديل سابق للتخطيط");
+        return;
+    }
+
 
 
     let oldProjects = JSON.parse(row.dataset.previousProjects);
     let oldPlanning = JSON.parse(row.dataset.previousPlanning);
 
-    
 
-    // إرجاع القيم في الشاشة
+
+    // إعادة آخر بيانات محفوظة في الشاشة فقط
     if(selectedDepartment === "المشروعات"){
 
-        row.querySelector(".approximate").value = oldProjects.aproximatevalue;
-        row.querySelector(".resources").value = oldProjects.resources;
-    
+        row.querySelector(".approximate").value =
+            oldProjects.aproximatevalue;
+
+        row.querySelector(".resources").value =
+            oldProjects.resources;
+
+
+        // فتح جزء المشروعات للتعديل
+        row.querySelector(".approximate").disabled = false;
+        row.querySelector(".resources").disabled = false;
+
+
+        // إغلاق جزء التخطيط
+        row.querySelector(".expense").disabled = true;
+        row.querySelector(".remarks").disabled = true;
+
+
     }
-    else{
-    
-        row.querySelector(".expense").value = oldPlanning.expensedvalue;
-        row.querySelector(".remarks").value = oldPlanning.remarks;
-    
+    else if(selectedDepartment === "التخطيط"){
+
+
+        row.querySelector(".expense").value =
+            oldPlanning.expensedvalue;
+
+        row.querySelector(".remarks").value =
+            oldPlanning.remarks;
+
+
+
+        // فتح جزء التخطيط للتعديل
+        row.querySelector(".expense").disabled = false;
+        row.querySelector(".remarks").disabled = false;
+
+
+        // إغلاق جزء المشروعات
+        row.querySelector(".approximate").disabled = true;
+        row.querySelector(".resources").disabled = true;
+
     }
 
 
 
-    let data = new URLSearchParams();
+    // إزالة حالة القفل المرئي
+    row.classList.remove("locked-row");
 
-    data.append("action","financialStationDetails");
-    data.append("station",currentStation);
-    data.append("location",row.dataset.location);
-    data.append("risk",row.dataset.risk);
-    data.append("aproximatevalue", row.querySelector(".approximate").value);
-    data.append("resources", row.querySelector(".resources").value);
-    data.append("expensedvalue", row.querySelector(".expense").value);
-    data.append("remarks", row.querySelector(".remarks").value);
-    data.append("email",email);
-    data.append("department", selectedDepartment);
+    row.querySelectorAll(".locked-field").forEach(cell=>{
 
-
-
-    fetch(scriptURL,{
-        method:"POST",
-        headers:{
-            "Content-Type":"application/x-www-form-urlencoded"
-        },
-        body:data.toString()
-    })
-
-    .then(r=>r.json())
-
-    .then(result=>{
-
-        if(result.result==="Updated"){
-            
-           
-            // إعادة الصف للحالة الطبيعية بعد Undo
-            row.classList.remove("locked-row");
-            
-            row.querySelectorAll(".locked-field").forEach(cell => {
-                cell.classList.remove("locked-row");
-            });
-            updateRowState(row, selectedDepartment);
-            row.querySelector(".save-btn").disabled = false;
-            row.querySelector(".undo-btn").disabled = true;
-            alert("تم التراجع بنجاح");
-        }
-        else{
-            alert("فشل التراجع");
-        }
+        cell.classList.remove("locked-row");
 
     });
+
+
+
+    // تفعيل الحفظ
+    row.querySelector(".save-btn").disabled = false;
+
+
+    // تعطيل Undo حتى يتم حفظ تعديل جديد
+    row.querySelector(".undo-btn").disabled = true;
+
+
+    alert("تم الرجوع للتعديل");
 
 }
 //////اختيار جهه الحفظ والتعديل ل WSP //////
