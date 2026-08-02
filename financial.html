@@ -393,6 +393,26 @@ const hasResources =
 
 let saveDisabled = false;
 let undoDisabled = true;
+    // تحديد هل يوجد حفظ سابق يمكن التراجع عنه
+let hasPreviousProjects = hasApproximate || hasResources;
+let hasPreviousPlanning = hasExpense || hasRemarks;
+if(department === "المشروعات"){
+
+    undoDisabled = !hasPreviousProjects;
+
+}
+
+else if(department === "التخطيط"){
+
+    undoDisabled = !hasPreviousPlanning;
+
+}
+
+else if(department === "WSP"){
+
+    undoDisabled = !(hasPreviousProjects || hasPreviousPlanning);
+
+}    
 
 if (department === "WSP") {
 
@@ -754,6 +774,9 @@ async function saveFinancial(btn) {
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
             updateRowState(row, selectedDepartment);
+            // بعد الحفظ أصبح هناك إمكانية Undo
+            row.querySelector(".undo-btn").disabled = false;
+            row.querySelector(".save-btn").disabled = true;
 
             alert("تم حفظ البيانات بنجاح");
         } else {
@@ -847,15 +870,27 @@ async function undoFinancial(btn){
 
     });
 
-
-
-    // تفعيل الحفظ
     row.querySelector(".save-btn").disabled = false;
 
 
-    // تعطيل Undo حتى يتم حفظ تعديل جديد
+    // بعد التراجع لا يوجد حفظ سابق
+    if(selectedDepartment === "المشروعات"){
+    
+        row.dataset.previousProjects = JSON.stringify({
+            aproximatevalue:"",
+            resources:""
+        });
+    
+    }else if(selectedDepartment === "التخطيط"){
+    
+        row.dataset.previousPlanning = JSON.stringify({
+            expensedvalue:"",
+            remarks:""
+        });    
+    }
+    
+    
     row.querySelector(".undo-btn").disabled = true;
-
 
     alert("تم الرجوع للتعديل");
 
