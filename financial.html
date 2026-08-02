@@ -598,6 +598,15 @@ function updateRowState(row, selectedDepartment = null){
         row.querySelector(".expense").value.trim() !== "" ||
         row.querySelector(".remarks").value.trim() !== "";
 
+
+    const canUndoProjects =
+        row.dataset.canUndoProjects === "true";
+
+    const canUndoPlanning =
+        row.dataset.canUndoPlanning === "true";
+
+
+
     if(department === "WSP"){
 
         if(hasApprox && !hasExpense){
@@ -608,8 +617,6 @@ function updateRowState(row, selectedDepartment = null){
             row.querySelector(".expense").disabled = false;
             row.querySelector(".remarks").disabled = false;
 
-            row.querySelector(".save-btn").disabled = false;
-            row.querySelector(".undo-btn").disabled = false;
         }
 
         else if(!hasApprox && hasExpense){
@@ -620,8 +627,6 @@ function updateRowState(row, selectedDepartment = null){
             row.querySelector(".expense").disabled = true;
             row.querySelector(".remarks").disabled = true;
 
-            row.querySelector(".save-btn").disabled = false;
-            row.querySelector(".undo-btn").disabled = false;
         }
 
         else if(hasApprox && hasExpense){
@@ -632,81 +637,87 @@ function updateRowState(row, selectedDepartment = null){
             row.querySelector(".expense").disabled = true;
             row.querySelector(".remarks").disabled = true;
 
-            row.querySelector(".save-btn").disabled = true;
-            row.querySelector(".undo-btn").disabled = false;
         }
 
-       else{
 
-    if(selectedDepartment === "المشروعات"){
+        row.querySelector(".save-btn").disabled = false;
 
-        row.querySelector(".approximate").disabled = false;
-        row.querySelector(".resources").disabled = false;
+        row.querySelector(".undo-btn").disabled =
+            !(canUndoProjects || canUndoPlanning);
+
+
+    }
+
+
+    else if(department === "المشروعات"){
+
 
         row.querySelector(".expense").disabled = true;
         row.querySelector(".remarks").disabled = true;
 
+
+        if(hasApprox){
+
+            row.querySelector(".approximate").disabled = true;
+            row.querySelector(".resources").disabled = true;
+
+        }
+        else{
+
+            row.querySelector(".approximate").disabled = false;
+            row.querySelector(".resources").disabled = false;
+
+        }
+
+
+        row.querySelector(".save-btn").disabled = hasApprox;
+
+        // Undo يعمل فقط إذا:
+        // 1- توجد بيانات قديمة
+        // أو
+        // 2- تم حفظ بيانات جديدة
+        row.querySelector(".undo-btn").disabled =
+            !(canUndoProjects);
+
+
     }
-    else if(selectedDepartment === "التخطيط"){
+
+
+    else if(department === "التخطيط"){
+
 
         row.querySelector(".approximate").disabled = true;
         row.querySelector(".resources").disabled = true;
 
-        row.querySelector(".expense").disabled = false;
-        row.querySelector(".remarks").disabled = false;
 
-    }
-    else{
+        if(hasExpense){
 
-        row.querySelector(".approximate").disabled = false;
-        row.querySelector(".resources").disabled = false;
+            row.querySelector(".expense").disabled = true;
+            row.querySelector(".remarks").disabled = true;
 
-        row.querySelector(".expense").disabled = false;
-        row.querySelector(".remarks").disabled = false;
+        }
+        else{
 
-    }
-
-    row.querySelector(".save-btn").disabled = false;
-    row.querySelector(".undo-btn").disabled = true;
-}
-    }
-
-    else{
-
-        if(department==="المشروعات"){
-
-            row.querySelector(".expense").disabled=true;
-            row.querySelector(".remarks").disabled=true;
-
-            if(hasApprox){
-                row.querySelector(".approximate").disabled=true;
-                row.querySelector(".resources").disabled=true;
-
-                row.querySelector(".save-btn").disabled=true;
-                row.querySelector(".undo-btn").disabled=false;
-            }
+            row.querySelector(".expense").disabled = false;
+            row.querySelector(".remarks").disabled = false;
 
         }
 
-        else if(department==="التخطيط"){
 
-            row.querySelector(".approximate").disabled=true;
-            row.querySelector(".resources").disabled=true;
+        row.querySelector(".save-btn").disabled = hasExpense;
 
-            if(hasExpense){
-                row.querySelector(".expense").disabled=true;
-                row.querySelector(".remarks").disabled=true;
 
-                row.querySelector(".save-btn").disabled=true;
-                row.querySelector(".undo-btn").disabled=false;
-            }
+        // Undo يعمل فقط إذا:
+        // 1- توجد بيانات قديمة
+        // أو
+        // 2- تم حفظ بيانات جديدة
+        row.querySelector(".undo-btn").disabled =
+            !(canUndoPlanning);
 
-        }
 
     }
 
 }
-
 async function saveFinancial(btn) {
     let row = btn.closest("tr");
     const selectedDepartment = await chooseSection();
