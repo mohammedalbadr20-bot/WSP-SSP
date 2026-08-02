@@ -356,7 +356,8 @@ if(department === "التخطيط" && row.checkbox !== true){
 
 let tr=document.createElement("tr");
 
-
+tr.dataset.canUndoProjects = "false";
+tr.dataset.canUndoPlanning = "false";
 tr.dataset.location=row.location;
 tr.dataset.risk=row.risk;
 tr.dataset.coraction=row.corraction;    
@@ -369,6 +370,7 @@ tr.dataset.previousPlanning = JSON.stringify({
     expensedvalue: row.expensedvalue ?? "",
     remarks: row.remarks || ""
 });
+
 
 let approxDisabled="";
 let expenseDisabled="";
@@ -393,26 +395,40 @@ const hasResources =
 
 let saveDisabled = false;
 let undoDisabled = true;
-    // تحديد هل يوجد حفظ سابق يمكن التراجع عنه
+
+
+// بيانات موجودة مسبقاً من قاعدة البيانات
 let hasPreviousProjects = hasApproximate || hasResources;
 let hasPreviousPlanning = hasExpense || hasRemarks;
+
+
+// حالة وجود حفظ جديد
+let canUndoProjects = tr.dataset.canUndoProjects === "true";
+let canUndoPlanning = tr.dataset.canUndoPlanning === "true";
+
+
 if(department === "المشروعات"){
 
-    undoDisabled = !hasPreviousProjects;
+    undoDisabled = !(hasPreviousProjects || canUndoProjects);
 
 }
 
 else if(department === "التخطيط"){
 
-    undoDisabled = !hasPreviousPlanning;
+    undoDisabled = !(hasPreviousPlanning || canUndoPlanning);
 
 }
 
 else if(department === "WSP"){
 
-    undoDisabled = !(hasPreviousProjects || hasPreviousPlanning);
+    undoDisabled = !(
+        hasPreviousProjects ||
+        hasPreviousPlanning ||
+        canUndoProjects ||
+        canUndoPlanning
+    );
 
-}    
+}
 
 if (department === "WSP") {
 
@@ -750,7 +766,14 @@ async function saveFinancial(btn) {
     .then(result => {
 
         if(result.result === "Updated"){
-             // حفظ البيانات الحالية قبل الإرسال
+            if(selectedDepartment === "المشروعات"){
+                row.dataset.canUndoProjects = "true";
+            
+            }else if(selectedDepartment === "التخطيط"){            
+                row.dataset.canUndoPlanning = "true";            
+            }
+            
+            // حفظ البيانات الحالية قبل الإرسال
            if (selectedDepartment === "المشروعات") {
     
                 row.dataset.previousProjects = JSON.stringify({
@@ -874,19 +897,16 @@ async function undoFinancial(btn){
 
 
     // بعد التراجع لا يوجد حفظ سابق
-    if(selectedDepartment === "المشروعات"){
+   if(selectedDepartment === "المشروعات"){
+
+        row.dataset.canUndoProjects = "false";
     
-        row.dataset.previousProjects = JSON.stringify({
-            aproximatevalue:"",
-            resources:""
-        });
+    }
     
-    }else if(selectedDepartment === "التخطيط"){
+    else if(selectedDepartment === "التخطيط"){
     
-        row.dataset.previousPlanning = JSON.stringify({
-            expensedvalue:"",
-            remarks:""
-        });    
+        row.dataset.canUndoPlanning = "false";
+    
     }
     
     
