@@ -599,12 +599,16 @@ function updateRowState(row, selectedDepartment = null){
         row.querySelector(".remarks").value.trim() !== "";
 
 
-    const canUndoProjects =
-        row.dataset.canUndoProjects === "true";
+   const canUndoProjects = row.dataset.canUndoProjects === "true" ||
+    (department === "المشروعات" &&
+        (row.querySelector(".approximate").value.trim() !== "" ||  row.querySelector(".resources").value.trim() !== "")
+    );
 
-    const canUndoPlanning =
-        row.dataset.canUndoPlanning === "true";
 
+   const canUndoPlanning = row.dataset.canUndoPlanning === "true" ||
+    (department === "التخطيط" &&
+        (row.querySelector(".expense").value.trim() !== "" || row.querySelector(".remarks").value.trim() !== "")
+    );
 
 
     if(department === "WSP"){
@@ -808,9 +812,17 @@ async function saveFinancial(btn) {
             row.dataset.oldRemarks = row.querySelector(".remarks").value;
             // تعطيل جميع المدخلات في الصف
             updateRowState(row, selectedDepartment);
-            // بعد الحفظ أصبح هناك إمكانية Undo
-            row.querySelector(".undo-btn").disabled = false;
             row.querySelector(".save-btn").disabled = true;
+
+            if(selectedDepartment === "المشروعات"){
+                row.dataset.canUndoProjects = "true";
+            }
+            
+            if(selectedDepartment === "التخطيط"){
+                row.dataset.canUndoPlanning = "true";
+            }
+            
+            updateRowState(row, selectedDepartment);
 
             alert("تم حفظ البيانات بنجاح");
         } else {
