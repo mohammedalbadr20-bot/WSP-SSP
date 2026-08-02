@@ -697,22 +697,7 @@ async function saveFinancial(btn) {
     let oldProjects = JSON.parse(row.dataset.previousProjects);
     let oldPlanning = JSON.parse(row.dataset.previousPlanning);
 
-    // حفظ البيانات الحالية قبل الإرسال
-       if (selectedDepartment === "المشروعات") {
-
-            row.dataset.previousProjects = JSON.stringify({
-                aproximatevalue: row.querySelector(".approximate").value,
-                resources: row.querySelector(".resources").value
-            });
-        
-        } else {
-        
-            row.dataset.previousPlanning = JSON.stringify({
-                expensedvalue: row.querySelector(".expense").value,
-                remarks: row.querySelector(".remarks").value
-            });
-        
-        }
+   
 
 
     let data = new URLSearchParams();
@@ -745,6 +730,22 @@ async function saveFinancial(btn) {
     .then(result => {
 
         if(result.result === "Updated"){
+             // حفظ البيانات الحالية قبل الإرسال
+           if (selectedDepartment === "المشروعات") {
+    
+                row.dataset.previousProjects = JSON.stringify({
+                    aproximatevalue: row.querySelector(".approximate").value,
+                    resources: row.querySelector(".resources").value
+                });
+            
+            } else {
+            
+                row.dataset.previousPlanning = JSON.stringify({
+                    expensedvalue: row.querySelector(".expense").value,
+                    remarks: row.querySelector(".remarks").value
+                });
+            
+            }
 
             // تحديث القيم القديمة بعد نجاح الحفظ
             row.dataset.oldApproximate = row.querySelector(".approximate").value;
@@ -781,26 +782,22 @@ if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
 }
 
 
-    let oldData;
+    let oldProjects = JSON.parse(row.dataset.previousProjects);
+    let oldPlanning = JSON.parse(row.dataset.previousPlanning);
 
-    if(selectedDepartment === "المشروعات"){
-        oldData = JSON.parse(row.dataset.previousProjects);
-    }
-    else{
-        oldData = JSON.parse(row.dataset.previousPlanning);
-    }
+    
 
     // إرجاع القيم في الشاشة
     if(selectedDepartment === "المشروعات"){
 
-        row.querySelector(".approximate").value = oldData.aproximatevalue;
-        row.querySelector(".resources").value = oldData.resources;
+        row.querySelector(".approximate").value = oldProjects.aproximatevalue;
+        row.querySelector(".resources").value = oldProjects.resources;
     
     }
     else{
     
-        row.querySelector(".expense").value = oldData.expensedvalue;
-        row.querySelector(".remarks").value = oldData.remarks;
+        row.querySelector(".expense").value = oldPlanning.expensedvalue;
+        row.querySelector(".remarks").value = oldPlanning.remarks;
     
     }
 
@@ -812,17 +809,10 @@ if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
     data.append("station",currentStation);
     data.append("location",row.dataset.location);
     data.append("risk",row.dataset.risk);
-    if(selectedDepartment === "المشروعات"){
-        data.append("aproximatevalue", row.querySelector(".approximate").value);
-        data.append("resources", row.querySelector(".resources").value);
-        data.append("expensedvalue", oldData.expensedvalue);
-        data.append("remarks", oldData.remarks);
-    }else{
-        data.append("aproximatevalue", oldData.aproximatevalue);
-        data.append("resources", oldData.resources);
-        data.append("expensedvalue", row.querySelector(".expense").value);
-        data.append("remarks", row.querySelector(".remarks").value);
-    }
+    data.append("aproximatevalue", row.querySelector(".approximate").value);
+    data.append("resources", row.querySelector(".resources").value);
+    data.append("expensedvalue", row.querySelector(".expense").value);
+    data.append("remarks", row.querySelector(".remarks").value);
     data.append("email",email);
     data.append("department", selectedDepartment);
 
@@ -841,19 +831,7 @@ if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
     .then(result=>{
 
         if(result.result==="Updated"){
-            if(selectedDepartment === "المشروعات"){
-
-    row.dataset.previousProjects = JSON.stringify({
-        aproximatevalue: row.querySelector(".approximate").value,
-        resources: row.querySelector(".resources").value
-        });    
-    }
-    else{
-        row.dataset.previousPlanning = JSON.stringify({
-            expensedvalue: row.querySelector(".expense").value,
-            remarks: row.querySelector(".remarks").value
-        });    
-    }
+            
            
             // إعادة الصف للحالة الطبيعية بعد Undo
             row.classList.remove("locked-row");
