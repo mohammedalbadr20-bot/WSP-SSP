@@ -199,64 +199,40 @@ loadStations(this.value);
 
 function loadStations(branch){
 
+    console.time("getStations");
 
-let station =
-document.getElementById("station");
-station.innerHTML=
-`
-<option>
-Loading...
-</option>
-`;
+    fetch(
+        scriptURL +
+        "?action=getStations&branch=" +
+        encodeURIComponent(branch)
+    )
+    .then(r => r.json())
+    .then(data => {
 
+        console.timeEnd("getStations");
 
+        console.time("fillStations");
 
-fetch(
-scriptURL+
-"?action=getStations&branch="+
-encodeURIComponent(branch)
+        let station = document.getElementById("station");
 
-)
+        station.innerHTML = '<option value="">Select Station</option>';
 
+        data.stations.forEach(s => {
 
-.then(r=>r.json())
+            let op = document.createElement("option");
 
+            op.value = s;
+            op.textContent = s;
 
-.then(data=>{
+            station.appendChild(op);
 
+        });
 
-station.innerHTML=
-`
-<option value="">
-Select Station
-</option>
-`;
+        console.timeEnd("fillStations");
 
-
-
-data.stations.forEach(s=>{
-
-
-let op=document.createElement("option");
-
-op.value=s;
-
-op.textContent=s;
-
-
-station.appendChild(op);
-
-
-
-});
-
-
-});
-
-
+    });
 
 }
-
 
 
 
