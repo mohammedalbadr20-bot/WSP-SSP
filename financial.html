@@ -748,18 +748,18 @@ async function saveFinancial(btn) {
             
             // حفظ البيانات الحالية قبل الإرسال
            if (selectedDepartment === "المشروعات") {
-    
-                row.dataset.previousProjects = JSON.stringify({
+
+                row.previousProjects = {
                     aproximatevalue: row.querySelector(".approximate").value,
                     resources: row.querySelector(".resources").value
-                });
+                };
             
             } else {
             
-                row.dataset.previousPlanning = JSON.stringify({
+                row.previousPlanning = {
                     expensedvalue: row.querySelector(".expense").value,
                     remarks: row.querySelector(".remarks").value
-                });
+                };
             
             }
 
@@ -800,15 +800,14 @@ async function undoFinancial(btn){
     }
 
 
-    if(selectedDepartment === "المشروعات" && !row.dataset.previousProjects){
+    if(selectedDepartment === "المشروعات" && !row.previousProjects){
 
         alert("لا يوجد تعديل سابق للمشروعات");
         return;
     }
 
 
-    if(selectedDepartment === "التخطيط" && !row.dataset.previousPlanning){
-
+    if(selectedDepartment === "التخطيط" && !row.previousPlanning){
         alert("لا يوجد تعديل سابق للتخطيط");
         return;
     }
