@@ -638,9 +638,9 @@ function updateRowState(row, selectedDepartment = null){
         }
 
 
-        save-btn.disabled = false;
+        saveBtn.disabled = false;
 
-        undo-btn.disabled =
+        undoBtn.disabled =
             !(canUndoProjects || canUndoPlanning);
     }
 
@@ -665,13 +665,13 @@ function updateRowState(row, selectedDepartment = null){
         }
 
 
-        save-btn.disabled = hasApprox;
+        saveBtn.disabled = hasApprox;
 
         // Undo يعمل فقط إذا:
         // 1- توجد بيانات قديمة
         // أو
         // 2- تم حفظ بيانات جديدة
-        undo-btn.disabled =
+        undoBtn.disabled =
             !(canUndoProjects);
     }
 
@@ -693,14 +693,14 @@ function updateRowState(row, selectedDepartment = null){
             remarks.disabled = false;
         }
 
-        save-btn.disabled = hasExpense;
+        saveBtn.disabled = hasExpense;
 
 
         // Undo يعمل فقط إذا:
         // 1- توجد بيانات قديمة
         // أو
         // 2- تم حفظ بيانات جديدة
-        undo-btn.disabled =
+        undoBtn.disabled =
             !(canUndoPlanning);
     }
 }
