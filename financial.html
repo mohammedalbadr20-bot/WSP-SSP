@@ -318,23 +318,15 @@ createFinancialTable(data.details);
 
 
 function createFinancialTable(details){
-
       
 const branch = document.getElementById("branch").value;
 let tbody =
 document.getElementById("financialTableBody");
-
-tbody.innerHTML="";
-
-
+tbody.innerHTML = "";
+const fragment = document.createDocumentFragment();
 details.forEach(row=>{
-console.log("Branch:", branch);
-console.log("Executor:", row.executor);
-console.log(
-        row.expensedvalue,
-        typeof row.expensedvalue,
-        JSON.stringify(row.expensedvalue)
-    );
+
+
 
 // إظهار الصف إذا كانت الجهة المنفذة تحتوي على:
 // الفرع أو التشغيل والصيانة - جنوب أو المشروعات أو التخطيط
@@ -361,15 +353,15 @@ tr.dataset.canUndoPlanning = "false";
 tr.dataset.location=row.location;
 tr.dataset.risk=row.risk;
 tr.dataset.coraction=row.corraction;    
-tr.dataset.previousProjects = JSON.stringify({
+tr.previousProjects = {
     aproximatevalue: row.aproximatevalue ?? "",
     resources: row.resources || ""
-});
+};
 
-tr.dataset.previousPlanning = JSON.stringify({
+tr.previousPlanning = {
     expensedvalue: row.expensedvalue ?? "",
     remarks: row.remarks || ""
-});
+};
 
 
 let approxDisabled="";
@@ -580,16 +572,21 @@ tr.innerHTML=`
 
 `;
 
-
-tbody.appendChild(tr);
+fragment.appendChild(tr);
 updateRowState(tr);
 
 });
-
+tbody.appendChild(fragment);
 }
 
 function updateRowState(row, selectedDepartment = null){
 
+    const approximate = row.querySelector(".approximate");
+    const resources = row.querySelector(".resources");
+    const expense = row.querySelector(".expense");
+    const remarks = row.querySelector(".remarks");
+    const saveBtn = row.querySelector(".save-btn");
+    const undoBtn = row.querySelector(".undo-btn");
     const hasApprox =
         row.querySelector(".approximate").value.trim() !== "" ||
         row.querySelector(".resources").value.trim() !== "";
@@ -615,113 +612,99 @@ function updateRowState(row, selectedDepartment = null){
 
         if(hasApprox && !hasExpense){
 
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
+            approximate.disabled = true;
+            resources.disabled = true;
 
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
-
+            expense.disabled = false;
+            remarks.disabled = false;
         }
 
         else if(!hasApprox && hasExpense){
 
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
+            approximate.disabled = false;
+            resources.disabled = false;
 
-            row.querySelector(".expense").disabled = true;
-            row.querySelector(".remarks").disabled = true;
-
+            expense.disabled = true;
+            remarks.disabled = true;
         }
 
         else if(hasApprox && hasExpense){
 
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
+            approximate.disabled = true;
+            resources.disabled = true;
 
-            row.querySelector(".expense").disabled = true;
-            row.querySelector(".remarks").disabled = true;
-
+            expense.disabled = true;
+            remarks.disabled = true;
         }
 
 
-        row.querySelector(".save-btn").disabled = false;
+        save-btn.disabled = false;
 
-        row.querySelector(".undo-btn").disabled =
+        undo-btn.disabled =
             !(canUndoProjects || canUndoPlanning);
-
-
     }
 
 
     else if(department === "المشروعات"){
 
-
-        row.querySelector(".expense").disabled = true;
-        row.querySelector(".remarks").disabled = true;
+       expense.disabled = true;
+       remarks.disabled = true;
 
 
         if(hasApprox){
 
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
+            approximate.disabled = true;
+            resources.disabled = true;
 
         }
         else{
 
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
+            approximate.disabled = false;
+            resources.disabled = false;
 
         }
 
 
-        row.querySelector(".save-btn").disabled = hasApprox;
+        save-btn.disabled = hasApprox;
 
         // Undo يعمل فقط إذا:
         // 1- توجد بيانات قديمة
         // أو
         // 2- تم حفظ بيانات جديدة
-        row.querySelector(".undo-btn").disabled =
+        undo-btn.disabled =
             !(canUndoProjects);
-
-
     }
 
 
     else if(department === "التخطيط"){
 
-
-        row.querySelector(".approximate").disabled = true;
-        row.querySelector(".resources").disabled = true;
+        approximate.disabled = true;
+        resources.disabled = true;
 
 
         if(hasExpense){
 
-            row.querySelector(".expense").disabled = true;
-            row.querySelector(".remarks").disabled = true;
-
+           expense.disabled = true;
+           remarks.disabled = true;
         }
         else{
 
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
-
+            expense.disabled = false;
+            remarks.disabled = false;
         }
 
-
-        row.querySelector(".save-btn").disabled = hasExpense;
+        save-btn.disabled = hasExpense;
 
 
         // Undo يعمل فقط إذا:
         // 1- توجد بيانات قديمة
         // أو
         // 2- تم حفظ بيانات جديدة
-        row.querySelector(".undo-btn").disabled =
+        undo-btn.disabled =
             !(canUndoPlanning);
-
-
     }
-
 }
+    
 async function saveFinancial(btn) {
     let row = btn.closest("tr");
     const selectedDepartment = await chooseSection();
@@ -745,9 +728,8 @@ async function saveFinancial(btn) {
     
 
   
-    let oldProjects = JSON.parse(row.dataset.previousProjects);
-    let oldPlanning = JSON.parse(row.dataset.previousPlanning);
-
+    let oldProjects = row.previousProjects;
+    let oldPlanning = row.previousPlanning;
    
 
 
@@ -857,8 +839,8 @@ async function undoFinancial(btn){
 
 
 
-    let oldProjects = JSON.parse(row.dataset.previousProjects);
-    let oldPlanning = JSON.parse(row.dataset.previousPlanning);
+    let oldProjects = row.previousProjects;
+    let oldPlanning = row.previousPlanning;
 
 
 
