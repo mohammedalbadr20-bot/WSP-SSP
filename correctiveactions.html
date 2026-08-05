@@ -609,7 +609,8 @@
         branchSelect.addEventListener("change", () => fetchStations(branchSelect.value));
       
       } 
-      else if (department === "التوعية" || department === "التشغيل والصيانة جنوب") {
+      else if (department === "التوعية" || department === "التشغيل والصيانة جنوب" || department === "التخطيط" || 
+               department === "المشروعات" || department === "التشغيل والصيانة شمال" || department === "الدعم الفنى") {
       
         branchSelect.disabled = false;     
         branchcomment.disabled = false;
