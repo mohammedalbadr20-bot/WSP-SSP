@@ -935,8 +935,9 @@
                 let allLocations = detailsData.details;
                      
                       if (
-                          department === "التوعية" ||
-                          department === "التشغيل والصيانة جنوب" || department === "المشروعات"
+                          department === "التوعية" || department === "التخطيط" ||
+                          department === "التشغيل والصيانة جنوب" || department === "المشروعات" ||
+                          department === "التشغيل والصيانة شمال"
                       ) {
                           allLocations = allLocations.filter(item => {
                             const executor = item.executor || "";
@@ -1145,8 +1146,9 @@
                            let allLocations = detailsData.details;
 
                            if (
-                                department === "التوعية" ||
-                                department === "التشغيل والصيانة جنوب" || department === "المشروعات"
+                               department === "التوعية" || department === "التخطيط" ||
+                               department === "التشغيل والصيانة جنوب" || department === "المشروعات" ||
+                               department === "التشغيل والصيانة شمال"
                             ) {
                         
                                 allLocations = allLocations.filter(item => {
@@ -2292,8 +2294,9 @@ detailsData.details.forEach(detail => {
 if(detail.checkbox === true) return;
  // فلترة حسب القسم
     if (
-        department === "التوعية" ||
-        department === "التشغيل والصيانة جنوب" || department === "المشروعات"
+       department === "التوعية" || department === "التخطيط" ||
+       department === "التشغيل والصيانة جنوب" || department === "المشروعات" ||
+       department === "التشغيل والصيانة شمال"
     ) {
 
         const executor = detail.executor || "";
