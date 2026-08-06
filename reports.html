@@ -670,8 +670,9 @@
            let allLocations = Object.values(detailsMap) || [];
            
             if (
-                department === "التوعية" ||
-                department === "التشغيل والصيانة جنوب" || department === "المشروعات"
+                department === "التوعية" || department === "التخطيط" ||
+                department === "التشغيل والصيانة جنوب" || department === "المشروعات" ||
+                department === "التشغيل والصيانة شمال"
               
             ) {
                 allLocations = allLocations.filter(item => {
