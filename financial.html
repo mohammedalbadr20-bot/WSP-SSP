@@ -165,41 +165,30 @@ Select Station
 
 
 <script>
-
+<script>
 
 const scriptURL = "https://script.google.com/macros/s/AKfycbwriKdbmI9Tx7_sT1lpcDI9MQvY6Y4GtCvpRroThLZ2-YUTILElbYXZ4Qr7A6-eOdxDiw/exec";
-
-
 
 let department = "";
 let email = "";
 let currentStation = "";
 
-
-
 window.onload = function(){
 
+    email = sessionStorage.getItem("email");
+    department = sessionStorage.getItem("department");
 
-email = sessionStorage.getItem("email");
-department = sessionStorage.getItem("department");
-document.getElementById("section").value = department || "";
+    document.getElementById("section").value = department || "";
 
-loadStations(department);
+    loadStations(department);
 
+    document.getElementById("branch").addEventListener("change", function(){
+        loadStations(this.value);
+    });
 
-document.getElementById("branch").addEventListener("change",function(){
-loadStations(this.value);
-});
 };
 
-
-
-
-
-
 function loadStations(branch){
-
-    console.time("getStations");
 
     fetch(
         scriptURL +
@@ -208,10 +197,6 @@ function loadStations(branch){
     )
     .then(r => r.json())
     .then(data => {
-
-        console.timeEnd("getStations");
-
-        console.time("fillStations");
 
         let station = document.getElementById("station");
 
@@ -228,403 +213,591 @@ function loadStations(branch){
 
         });
 
-        console.timeEnd("fillStations");
+    });
+
+}
+
+
+document.getElementById("station")
+.addEventListener("change", function(){
+
+    currentStation = this.value;
+
+    loadFinancialData(this.value);
+
+});
+
+
+function loadFinancialData(station){
+
+    fetch(
+        scriptURL +
+        "?action=getStationDetails&station=" +
+        encodeURIComponent(station)
+    )
+    .then(r => r.json())
+    .then(data => {
+
+        createFinancialTable(data.details);
 
     });
 
 }
 
 
+/*
+========================================================
+اختيار القسم الذي سيعمل WSP من خلاله
+========================================================
+*/
 
+async function chooseSection(){
 
+    // المستخدم العادي
+    if(department !== "WSP"){
+        return department;
+    }
 
+    // مستخدم WSP
+    const choice = prompt(
+`اختر الجزء المطلوب:
 
-document.getElementById("station")
-.addEventListener("change",function(){
+1 - المشروعات
 
+2 - التخطيط
 
-currentStation=this.value;
-
-
-loadFinancialData(this.value);
-
-
-});
-
-
-
-
-
-
-
-
-
-function loadFinancialData(station){
-
-fetch(
-scriptURL+
-"?action=getStationDetails&station="+
-encodeURIComponent(station)
-
-)
-
-
-.then(r=>r.json())
-
-
-.then(data=>{
-
-
-createFinancialTable(data.details);
-
-
-
-});
-
-
-
-}
-
-
-
-
-
-
-
-
-
-function createFinancialTable(details){
-      
-const branch = document.getElementById("branch").value;
-let tbody =
-document.getElementById("financialTableBody");
-tbody.innerHTML = "";
-const fragment = document.createDocumentFragment();
-details.forEach(row=>{
-
-
-
-// إظهار الصف إذا كانت الجهة المنفذة تحتوي على:
-// الفرع أو التشغيل والصيانة - جنوب أو المشروعات أو التخطيط
-const allowedExecutors = [
-    branch,
-    "التشغيل والصيانة - جنوب",
-    "المشروعات",
-    "التخطيط"
-];
-
-if (!allowedExecutors.some(executor => String(row.executor || "").includes(executor))){
-    return;
-}
-// إخفاء الإجراءات غير المعتمدة عن التخطيط
-if(department === "التخطيط" && row.checkbox !== true){
-    return;
-}
-
-
-let tr=document.createElement("tr");
-
-tr.dataset.canUndoProjects = "false";
-tr.dataset.canUndoPlanning = "false";
-tr.dataset.location=row.location;
-tr.dataset.risk=row.risk;
-tr.dataset.coraction=row.corraction;    
-tr.previousProjects = {
-    aproximatevalue: row.aproximatevalue ?? "",
-    resources: row.resources || ""
-};
-
-tr.previousPlanning = {
-    expensedvalue: row.expensedvalue ?? "",
-    remarks: row.remarks || ""
-};
-
-
-let approxDisabled="";
-let expenseDisabled="";
-let remarksDisabled="";
-let resourcesDisabled="";
-const hasApproximate =
-    row.aproximatevalue !== null &&
-    row.aproximatevalue !== undefined &&
-    String(row.aproximatevalue).trim() !== "";
-const hasExpense =
-    row.expensedvalue !== null &&
-    row.expensedvalue !== undefined &&
-    String(row.expensedvalue).trim() !== "";
-const hasRemarks =
-    row.remarks !== null &&
-    row.remarks !== undefined &&
-    String(row.remarks).trim() !== "";
-const hasResources =
-    row.resources !== null &&
-    row.resources !== undefined &&
-    String(row.resources).trim() !== "";    
-
-let saveDisabled = false;
-let undoDisabled = true;
-
-
-// بيانات موجودة مسبقاً من قاعدة البيانات
-let hasPreviousProjects = hasApproximate || hasResources;
-let hasPreviousPlanning = hasExpense || hasRemarks;
-
-
-// حالة وجود حفظ جديد
-let canUndoProjects = tr.dataset.canUndoProjects === "true";
-let canUndoPlanning = tr.dataset.canUndoPlanning === "true";
-
-
-if(department === "المشروعات"){
-
-    undoDisabled = !(hasPreviousProjects || canUndoProjects);
-
-}
-
-else if(department === "التخطيط"){
-
-    undoDisabled = !(hasPreviousPlanning || canUndoPlanning);
-
-}
-
-else if(department === "WSP"){
-
-    undoDisabled = !(
-        hasPreviousProjects ||
-        hasPreviousPlanning ||
-        canUndoProjects ||
-        canUndoPlanning
+0 - إلغاء`
     );
 
-}
+    switch(choice){
 
-if (department === "WSP") {
+        case "1":
+            return "المشروعات";
 
-    if (hasApproximate && !hasExpense) {
+        case "2":
+            return "التخطيط";
 
-        // المشروعات انتهت
-        approxDisabled = "disabled";
-        resourcesDisabled = "disabled";
-
-        // التخطيط مازال يعمل
-        expenseDisabled = "";
-        remarksDisabled = "";
-
-        saveDisabled = false;
-        undoDisabled = false;
-    }
-
-    else if (!hasApproximate && hasExpense) {
-
-        approxDisabled = "";
-        resourcesDisabled = "";
-
-        expenseDisabled = "disabled";
-        remarksDisabled = "disabled";
-
-        saveDisabled = false;
-        undoDisabled = false;
-    }
-
-    else if (hasApproximate && hasExpense) {
-
-        approxDisabled = "disabled";
-        resourcesDisabled = "disabled";
-        expenseDisabled = "disabled";
-        remarksDisabled = "disabled";
-
-        saveDisabled = true;
-        undoDisabled = false;
-    }
-
-    else {
-
-        saveDisabled = false;
-        undoDisabled = true;
+        default:
+            return null;
     }
 
 }
-else {
-
-    let hasChanges = false;
-
-    if (department === "المشروعات")
-        hasChanges = hasApproximate || hasResources;
-
-    if (department === "التخطيط")
-        hasChanges = hasExpense || hasRemarks;
-
-    saveDisabled = hasChanges;
-    undoDisabled = !hasChanges;
-}
-    
-
-// صلاحيات قسم التخطيط
-if(department === "التخطيط"){
-
-    approxDisabled = "disabled";
-    resourcesDisabled = "disabled";
-
-}
 
 
-// صلاحيات قسم المشروعات
-if(department === "المشروعات"){
+/*
+========================================================
+إنشاء الجدول
+========================================================
+*/
 
-    expenseDisabled = "disabled";
-    remarksDisabled = "disabled";
+function createFinancialTable(details){
 
-}
+    const branch = document.getElementById("branch").value;
 
+    let tbody =
+        document.getElementById("financialTableBody");
 
-// إذا كان هناك قيمة منصرفة فعلية
-if (department !== "WSP") {
+    tbody.innerHTML = "";
 
-    if (hasExpense) {
-        tr.classList.add("locked-row");
-        expenseDisabled = "disabled";
-        remarksDisabled = "disabled";
-    }
-
-    if (hasApproximate) {
-        tr.classList.add("locked-row");
-        approxDisabled = "disabled";
-        resourcesDisabled = "disabled";
-    }
-
-}
-    
-
-if(department === "المشروعات" && (hasApproximate || hasResources)){
-    expenseDisabled = "disabled";
-    remarksDisabled = "disabled";
-}
-
-else if(department==="التخطيط" && (hasExpense || hasRemarks)){
-    approxDisabled = "disabled";
-    resourcesDisabled = "disabled";
-}
+    const fragment =
+        document.createDocumentFragment();
 
 
+    details.forEach(row => {
 
-tr.innerHTML=`
 
-<td class="locked-field">${row.location}</td>
-<td class="locked-field">${row.risk}</td>
-<td class="locked-field">${row.corraction}</td>
+        /*
+        --------------------------------------------
+        تحديد الجهات المسموح ظهورها
+        --------------------------------------------
+        */
+
+        const allowedExecutors = [
+            branch,
+            "التشغيل والصيانة - جنوب",
+            "المشروعات",
+            "التخطيط"
+        ];
+
+
+        if(
+            !allowedExecutors.some(
+                executor =>
+                String(row.executor || "")
+                .includes(executor)
+            )
+        ){
+            return;
+        }
+
+
+        /*
+        --------------------------------------------
+        التخطيط يرى فقط الإجراءات المعتمدة
+        --------------------------------------------
+        */
+
+        if(
+            department === "التخطيط" &&
+            row.checkbox !== true
+        ){
+            return;
+        }
+
+
+        let tr = document.createElement("tr");
+
+
+        /*
+        --------------------------------------------
+        حفظ البيانات السابقة
+        --------------------------------------------
+        */
+
+        tr.dataset.canUndoProjects = "false";
+        tr.dataset.canUndoPlanning = "false";
+
+        tr.dataset.location = row.location;
+        tr.dataset.risk = row.risk;
+        tr.dataset.coraction = row.corraction;
+
+
+        tr.previousProjects = {
+
+            aproximatevalue:
+                row.aproximatevalue ?? "",
+
+            resources:
+                row.resources || ""
+
+        };
+
+
+        tr.previousPlanning = {
+
+            expensedvalue:
+                row.expensedvalue ?? "",
+
+            remarks:
+                row.remarks || ""
+
+        };
+
+
+        /*
+        --------------------------------------------
+        هل توجد بيانات؟
+        --------------------------------------------
+        */
+
+        const hasApproximate =
+            row.aproximatevalue !== null &&
+            row.aproximatevalue !== undefined &&
+            String(row.aproximatevalue).trim() !== "";
+
+
+        const hasExpense =
+            row.expensedvalue !== null &&
+            row.expensedvalue !== undefined &&
+            String(row.expensedvalue).trim() !== "";
+
+
+        const hasRemarks =
+            row.remarks !== null &&
+            row.remarks !== undefined &&
+            String(row.remarks).trim() !== "";
+
+
+        const hasResources =
+            row.resources !== null &&
+            row.resources !== undefined &&
+            String(row.resources).trim() !== "";
+
+
+        const hasPreviousProjects =
+            hasApproximate || hasResources;
+
+
+        const hasPreviousPlanning =
+            hasExpense || hasRemarks;
+
+
+        /*
+        --------------------------------------------
+        الحالات الابتدائية
+        --------------------------------------------
+        */
+
+        let approxDisabled = "";
+        let expenseDisabled = "";
+        let remarksDisabled = "";
+        let resourcesDisabled = "";
+
+        let saveDisabled = false;
+        let undoDisabled = true;
+
+
+        /*
+        ============================================
+        المستخدم WSP
+        ============================================
+        */
+
+        if(department === "WSP"){
+
+            /*
+            ----------------------------------------
+            لو المشروع موجود والتخطيط غير موجود
+            ----------------------------------------
+            */
+
+            if(hasApproximate && !hasExpense){
+
+                approxDisabled = "disabled";
+                resourcesDisabled = "disabled";
+
+                expenseDisabled = "";
+                remarksDisabled = "";
+
+                saveDisabled = false;
+                undoDisabled = false;
+
+            }
+
+
+            /*
+            ----------------------------------------
+            لو التخطيط موجود والمشروع غير موجود
+            ----------------------------------------
+            */
+
+            else if(!hasApproximate && hasExpense){
+
+                approxDisabled = "";
+                resourcesDisabled = "";
+
+                expenseDisabled = "disabled";
+                remarksDisabled = "disabled";
+
+                saveDisabled = false;
+                undoDisabled = false;
+
+            }
+
+
+            /*
+            ----------------------------------------
+            الاثنين موجودين
+            ----------------------------------------
+            */
+
+            else if(hasApproximate && hasExpense){
+
+                approxDisabled = "disabled";
+                resourcesDisabled = "disabled";
+
+                expenseDisabled = "disabled";
+                remarksDisabled = "disabled";
+
+                saveDisabled = true;
+                undoDisabled = false;
+
+            }
+
+
+            /*
+            ----------------------------------------
+            لا توجد بيانات
+            ----------------------------------------
+            */
+
+            else{
+
+                saveDisabled = false;
+                undoDisabled = true;
+
+            }
+
+        }
+
+
+        /*
+        ============================================
+        مستخدم المشروعات
+        ============================================
+        */
+
+        else if(department === "المشروعات"){
+
+            expenseDisabled = "disabled";
+            remarksDisabled = "disabled";
+
+
+            if(hasPreviousProjects){
+
+                approxDisabled = "disabled";
+                resourcesDisabled = "disabled";
+
+                saveDisabled = true;
+                undoDisabled = true;
+
+            }
+
+        }
+
+
+        /*
+        ============================================
+        مستخدم التخطيط
+        ============================================
+        */
+
+        else if(department === "التخطيط"){
+
+            approxDisabled = "disabled";
+            resourcesDisabled = "disabled";
+
+
+            if(hasPreviousPlanning){
+
+                expenseDisabled = "disabled";
+                remarksDisabled = "disabled";
+
+                saveDisabled = true;
+                undoDisabled = true;
+
+            }
+
+        }
+
+
+        /*
+        ============================================
+        البيانات الموجودة تقفل الصف
+        ============================================
+        */
+
+        if(department !== "WSP"){
+
+            if(hasExpense){
+
+                tr.classList.add("locked-row");
+
+                expenseDisabled = "disabled";
+                remarksDisabled = "disabled";
+
+            }
+
+
+            if(hasApproximate){
+
+                tr.classList.add("locked-row");
+
+                approxDisabled = "disabled";
+                resourcesDisabled = "disabled";
+
+            }
+
+        }
+
+
+        /*
+        ============================================
+        HTML الخاص بالصف
+        ============================================
+        */
+
+        tr.innerHTML = `
+
+<td class="locked-field">
+    ${row.location}
+</td>
+
+<td class="locked-field">
+    ${row.risk}
+</td>
+
+<td class="locked-field">
+    ${row.corraction}
+</td>
 
 <td>
-    <input type="number" class="approximate" value="${row.aproximatevalue ?? ""}" ${approxDisabled}>
-</td>
-<td>
-    <textarea class="resources" ${resourcesDisabled}>${row.resources || ""}</textarea>
-</td>
 
-<td>
-    <input type="number" class="expense" value="${row.expensedvalue ?? ""}" ${expenseDisabled}>
+    <input
+        type="number"
+        class="approximate"
+        value="${row.aproximatevalue ?? ""}"
+        ${approxDisabled}
+    >
+
 </td>
-
-
 
 <td>
-    <textarea class="remarks" ${remarksDisabled}>${row.remarks || ""}</textarea>
+
+    <textarea
+        class="resources"
+        ${resourcesDisabled}
+    >${row.resources || ""}</textarea>
+
 </td>
 
+<td>
 
+    <input
+        type="number"
+        class="expense"
+        value="${row.expensedvalue ?? ""}"
+        ${expenseDisabled}
+    >
+
+</td>
+
+<td>
+
+    <textarea
+        class="remarks"
+        ${remarksDisabled}
+    >${row.remarks || ""}</textarea>
+
+</td>
 
 <td class="action-cell">
+
     <div class="action-buttons">
-        <button class="icon-btn save-btn" onclick="saveFinancial(this)" title="Save" ${saveDisabled ? "disabled" : ""}>
+
+        <button
+            class="icon-btn save-btn"
+            onclick="saveFinancial(this)"
+            title="Save"
+            ${saveDisabled ? "disabled" : ""}
+        >
             <i class="fa-solid fa-floppy-disk"></i>
         </button>
-        
-        <button class="icon-btn undo-btn" onclick="undoFinancial(this)" title="Undo" ${undoDisabled ? "" : "disabled"}>
+
+        <button
+            class="icon-btn undo-btn"
+            onclick="undoFinancial(this)"
+            title="Undo"
+            ${undoDisabled ? "disabled" : ""}
+        >
             <i class="fa-solid fa-rotate-left"></i>
         </button>
+
     </div>
+
 </td>
-
-
 
 `;
 
-fragment.appendChild(tr);
-updateRowState(tr);
 
-});
-tbody.appendChild(fragment);
+        fragment.appendChild(tr);
+
+    });
+
+
+    tbody.appendChild(fragment);
+
 }
 
-function updateRowState(row, selectedDepartment = null){
 
-    const approximate = row.querySelector(".approximate");
-    const resources = row.querySelector(".resources");
-    const expense = row.querySelector(".expense");
-    const remarks = row.querySelector(".remarks");
-    const saveBtn = row.querySelector(".save-btn");
-    const undoBtn = row.querySelector(".undo-btn");
+/*
+========================================================
+تحديث حالة الصف
+========================================================
+*/
+
+function updateRowState(row, selectedDepartment){
+
+    const approximate =
+        row.querySelector(".approximate");
+
+    const resources =
+        row.querySelector(".resources");
+
+    const expense =
+        row.querySelector(".expense");
+
+    const remarks =
+        row.querySelector(".remarks");
+
+    const saveBtn =
+        row.querySelector(".save-btn");
+
+    const undoBtn =
+        row.querySelector(".undo-btn");
+
+
     const hasApprox =
-        row.querySelector(".approximate").value.trim() !== "" ||
-        row.querySelector(".resources").value.trim() !== "";
+        approximate.value.trim() !== "" ||
+        resources.value.trim() !== "";
+
 
     const hasExpense =
-        row.querySelector(".expense").value.trim() !== "" ||
-        row.querySelector(".remarks").value.trim() !== "";
+        expense.value.trim() !== "" ||
+        remarks.value.trim() !== "";
 
 
-   const canUndoProjects = row.dataset.canUndoProjects === "true" ||
-    (department === "المشروعات" &&
-        (row.querySelector(".approximate").value.trim() !== "" ||  row.querySelector(".resources").value.trim() !== "")
-    );
-
-
-   const canUndoPlanning = row.dataset.canUndoPlanning === "true" ||
-    (department === "التخطيط" &&
-        (row.querySelector(".expense").value.trim() !== "" || row.querySelector(".remarks").value.trim() !== "")
-    );
-
+    /*
+    ============================================
+    WSP
+    ============================================
+    */
 
     if(department === "WSP"){
 
-        if(hasApprox && !hasExpense){
+        /*
+        WSP يعمل الآن كمشروعات
+        */
 
-            approximate.disabled = true;
-            resources.disabled = true;
-
-            expense.disabled = false;
-            remarks.disabled = false;
-        }
-
-        else if(!hasApprox && hasExpense){
+        if(selectedDepartment === "المشروعات"){
 
             approximate.disabled = false;
             resources.disabled = false;
 
             expense.disabled = true;
             remarks.disabled = true;
+
+            saveBtn.disabled = hasApprox;
+
+            undoBtn.disabled =
+                row.dataset.canUndoProjects !== "true";
+
         }
 
-        else if(hasApprox && hasExpense){
+
+        /*
+        WSP يعمل الآن كتخطيط
+        */
+
+        else if(selectedDepartment === "التخطيط"){
 
             approximate.disabled = true;
             resources.disabled = true;
 
-            expense.disabled = true;
-            remarks.disabled = true;
+            expense.disabled = false;
+            remarks.disabled = false;
+
+            saveBtn.disabled = hasExpense;
+
+            undoBtn.disabled =
+                row.dataset.canUndoPlanning !== "true";
+
         }
 
-
-        saveBtn.disabled = false;
-
-        undoBtn.disabled =
-            !(canUndoProjects || canUndoPlanning);
+        return;
     }
 
 
-    else if(department === "المشروعات"){
+    /*
+    ============================================
+    المشروعات
+    ============================================
+    */
 
-       expense.disabled = true;
-       remarks.disabled = true;
+    if(department === "المشروعات"){
+
+        expense.disabled = true;
+        remarks.disabled = true;
 
 
         if(hasApprox){
@@ -643,14 +816,18 @@ function updateRowState(row, selectedDepartment = null){
 
         saveBtn.disabled = hasApprox;
 
-        // Undo يعمل فقط إذا:
-        // 1- توجد بيانات قديمة
-        // أو
-        // 2- تم حفظ بيانات جديدة
+
         undoBtn.disabled =
-            !(canUndoProjects);
+            row.dataset.canUndoProjects !== "true";
+
     }
 
+
+    /*
+    ============================================
+    التخطيط
+    ============================================
+    */
 
     else if(department === "التخطيط"){
 
@@ -660,280 +837,581 @@ function updateRowState(row, selectedDepartment = null){
 
         if(hasExpense){
 
-           expense.disabled = true;
-           remarks.disabled = true;
+            expense.disabled = true;
+            remarks.disabled = true;
+
         }
         else{
 
             expense.disabled = false;
             remarks.disabled = false;
+
         }
+
 
         saveBtn.disabled = hasExpense;
 
 
-        // Undo يعمل فقط إذا:
-        // 1- توجد بيانات قديمة
-        // أو
-        // 2- تم حفظ بيانات جديدة
         undoBtn.disabled =
-            !(canUndoPlanning);
+            row.dataset.canUndoPlanning !== "true";
+
     }
+
 }
-    
-async function saveFinancial(btn) {
-    let row = btn.closest("tr");
-    const selectedDepartment = await chooseSection();
-    if (selectedDepartment === null) {
+
+
+/*
+========================================================
+الحفظ
+========================================================
+*/
+
+async function saveFinancial(btn){
+
+    const row = btn.closest("tr");
+
+
+    /*
+    --------------------------------------------
+    تحديد القسم الذي ستتم عملية الحفظ باسمه
+    --------------------------------------------
+    */
+
+    const selectedDepartment =
+        await chooseSection();
+
+
+    if(selectedDepartment === null){
+
         return;
+
     }
-    if (department === "WSP") {
-
-        if (selectedDepartment === "المشروعات") {
-            row.querySelector(".approximate").disabled = false;
-            row.querySelector(".resources").disabled = false;
-            row.querySelector(".expense").disabled = true;
-            row.querySelector(".remarks").disabled = true;
-        } else {
-            row.querySelector(".approximate").disabled = true;
-            row.querySelector(".resources").disabled = true;
-            row.querySelector(".expense").disabled = false;
-            row.querySelector(".remarks").disabled = false;
-        }
-    }
-    
-
-  
-    let oldProjects = row.previousProjects;
-    let oldPlanning = row.previousPlanning;
-   
 
 
-    let data = new URLSearchParams();
+    /*
+    --------------------------------------------
+    البيانات القديمة
+    --------------------------------------------
+    */
 
-    data.append("action", "financialStationDetails");
-    data.append("station", currentStation);
-    data.append("location", row.dataset.location);
-    data.append("risk", row.dataset.risk);
+    const oldProjects =
+        row.previousProjects;
+
+    const oldPlanning =
+        row.previousPlanning;
+
+
+    /*
+    --------------------------------------------
+    تجهيز البيانات
+    --------------------------------------------
+    */
+
+    let data =
+        new URLSearchParams();
+
+
+    data.append(
+        "action",
+        "financialStationDetails"
+    );
+
+
+    data.append(
+        "station",
+        currentStation
+    );
+
+
+    data.append(
+        "location",
+        row.dataset.location
+    );
+
+
+    data.append(
+        "risk",
+        row.dataset.risk
+    );
+
+
+    /*
+    ============================================
+    الحفظ كمشروعات
+    ============================================
+    */
+
     if(selectedDepartment === "المشروعات"){
-        data.append("aproximatevalue", row.querySelector(".approximate").value);
-        data.append("resources", row.querySelector(".resources").value);
-        data.append("expensedvalue", oldPlanning.expensedvalue);
-        data.append("remarks", oldPlanning.remarks);
-    }else{
-        data.append("aproximatevalue", oldProjects.aproximatevalue);
-        data.append("resources", oldProjects.resources);
-        data.append("expensedvalue", row.querySelector(".expense").value);
-        data.append("remarks", row.querySelector(".remarks").value);
+
+        data.append(
+            "aproximatevalue",
+            row.querySelector(".approximate").value
+        );
+
+
+        data.append(
+            "resources",
+            row.querySelector(".resources").value
+        );
+
+
+        /*
+        نحافظ على بيانات التخطيط القديمة
+        */
+
+        data.append(
+            "expensedvalue",
+            oldPlanning.expensedvalue
+        );
+
+
+        data.append(
+            "remarks",
+            oldPlanning.remarks
+        );
+
     }
-    data.append("email", email);
-    data.append("department", selectedDepartment);
-    fetch(scriptURL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        },
-        body: data.toString()
-    })
-    .then(r => r.json())
-    .then(result => {
 
-        if(result.result === "Updated"){
-            if(selectedDepartment === "المشروعات"){
-                row.dataset.canUndoProjects = "true";
-            
-            }else if(selectedDepartment === "التخطيط"){            
-                row.dataset.canUndoPlanning = "true";            
-            }
-            
-            // حفظ البيانات الحالية قبل الإرسال
-           if (selectedDepartment === "المشروعات") {
 
-                row.previousProjects = {
-                    aproximatevalue: row.querySelector(".approximate").value,
-                    resources: row.querySelector(".resources").value
-                };
-            
-            } else {
-            
-                row.previousPlanning = {
-                    expensedvalue: row.querySelector(".expense").value,
-                    remarks: row.querySelector(".remarks").value
-                };
-            
-            }
+    /*
+    ============================================
+    الحفظ كتخطيط
+    ============================================
+    */
 
-            // تحديث القيم القديمة بعد نجاح الحفظ
-            row.dataset.oldApproximate = row.querySelector(".approximate").value;
-            row.dataset.oldResources = row.querySelector(".resources").value;
-            row.dataset.oldExpense = row.querySelector(".expense").value;
-            row.dataset.oldRemarks = row.querySelector(".remarks").value;
-            // تعطيل جميع المدخلات في الصف
-            updateRowState(row, selectedDepartment);
-            row.querySelector(".save-btn").disabled = true;
+    else if(selectedDepartment === "التخطيط"){
 
-            if(selectedDepartment === "المشروعات"){
-                row.dataset.canUndoProjects = "true";
-            }
-            
-            if(selectedDepartment === "التخطيط"){
-                row.dataset.canUndoPlanning = "true";
-            }
-            
-            updateRowState(row, selectedDepartment);
+        /*
+        نحافظ على بيانات المشروعات القديمة
+        */
 
-            alert("تم حفظ البيانات بنجاح");
-        } else {
+        data.append(
+            "aproximatevalue",
+            oldProjects.aproximatevalue
+        );
+
+
+        data.append(
+            "resources",
+            oldProjects.resources
+        );
+
+
+        data.append(
+            "expensedvalue",
+            row.querySelector(".expense").value
+        );
+
+
+        data.append(
+            "remarks",
+            row.querySelector(".remarks").value
+        );
+
+    }
+
+
+    /*
+    --------------------------------------------
+    البيانات المشتركة
+    --------------------------------------------
+    */
+
+    data.append(
+        "email",
+        email
+    );
+
+
+    /*
+    مهم جدًا:
+    هنا لا نرسل WSP
+    وإنما القسم الذي اختاره WSP
+    */
+
+    data.append(
+        "department",
+        selectedDepartment
+    );
+
+
+    /*
+    --------------------------------------------
+    إرسال البيانات إلى GS
+    --------------------------------------------
+    */
+
+    try{
+
+        const response =
+            await fetch(
+                scriptURL,
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/x-www-form-urlencoded"
+                    },
+
+                    body: data.toString()
+                }
+            );
+
+
+        const result =
+            await response.json();
+
+
+        if(result.result !== "Updated"){
+
             alert("حدث خطأ أثناء الحفظ");
+
+            return;
+
         }
-    });
+
+
+        /*
+        ========================================
+        تحديث بيانات المشروعات
+        ========================================
+        */
+
+        if(selectedDepartment === "المشروعات"){
+
+            row.previousProjects = {
+
+                aproximatevalue:
+                    row.querySelector(".approximate").value,
+
+                resources:
+                    row.querySelector(".resources").value
+
+            };
+
+
+            row.dataset.canUndoProjects = "true";
+
+        }
+
+
+        /*
+        ========================================
+        تحديث بيانات التخطيط
+        ========================================
+        */
+
+        else if(selectedDepartment === "التخطيط"){
+
+            row.previousPlanning = {
+
+                expensedvalue:
+                    row.querySelector(".expense").value,
+
+                remarks:
+                    row.querySelector(".remarks").value
+
+            };
+
+
+            row.dataset.canUndoPlanning = "true";
+
+        }
+
+
+        /*
+        --------------------------------------------
+        تحديث حالة الصف
+        --------------------------------------------
+        */
+
+        updateRowState(
+            row,
+            selectedDepartment
+        );
+
+
+        alert("تم حفظ البيانات بنجاح");
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        alert("حدث خطأ أثناء الحفظ");
+
+    }
+
 }
-    
+
+
+/*
+========================================================
+التعديل / Undo
+========================================================
+*/
+
 async function undoFinancial(btn){
 
-    let row = btn.closest("tr");
+    const row = btn.closest("tr");
 
-    const selectedDepartment = await chooseSection();
 
-    if (selectedDepartment === null) {
+    /*
+    --------------------------------------------
+    تحديد القسم
+    --------------------------------------------
+    */
+
+    const selectedDepartment =
+        await chooseSection();
+
+
+    if(selectedDepartment === null){
+
         return;
+
     }
 
 
-    if(selectedDepartment === "المشروعات" && !row.previousProjects){
+    /*
+    ============================================
+    WSP اختار المشروعات
+    ============================================
+    */
 
-        alert("لا يوجد تعديل سابق للمشروعات");
-        return;
-    }
-
-
-    if(selectedDepartment === "التخطيط" && !row.previousPlanning){
-        alert("لا يوجد تعديل سابق للتخطيط");
-        return;
-    }
-
-
-
-    let oldProjects = row.previousProjects;
-    let oldPlanning = row.previousPlanning;
-
-
-
-    // إعادة آخر بيانات محفوظة في الشاشة فقط
     if(selectedDepartment === "المشروعات"){
 
+        if(!row.previousProjects){
+
+            alert(
+                "لا يوجد تعديل سابق للمشروعات"
+            );
+
+            return;
+
+        }
+
+
+        /*
+        إعادة آخر بيانات المشروعات
+        */
+
         row.querySelector(".approximate").value =
-            oldProjects.aproximatevalue;
+            row.previousProjects.aproximatevalue;
+
 
         row.querySelector(".resources").value =
-            oldProjects.resources;
+            row.previousProjects.resources;
 
 
-        // فتح جزء المشروعات للتعديل
-        row.querySelector(".approximate").disabled = false;
-        row.querySelector(".resources").disabled = false;
+        /*
+        فتح المشروعات
+        */
+
+        row.querySelector(".approximate").disabled =
+            false;
+
+        row.querySelector(".resources").disabled =
+            false;
 
 
-        // إغلاق جزء التخطيط
-        row.querySelector(".expense").disabled = true;
-        row.querySelector(".remarks").disabled = true;
+        /*
+        إغلاق التخطيط
+        */
 
+        row.querySelector(".expense").disabled =
+            true;
+
+        row.querySelector(".remarks").disabled =
+            true;
+
+
+        /*
+        أصبح الصف قابلًا للتعديل مرة أخرى
+        */
+
+        row.dataset.canUndoProjects =
+            "false";
+
+
+        row.querySelector(".save-btn").disabled =
+            false;
+
+
+        row.querySelector(".undo-btn").disabled =
+            true;
+
+
+        row.classList.remove("locked-row");
 
     }
+
+
+    /*
+    ============================================
+    WSP اختار التخطيط
+    ============================================
+    */
+
     else if(selectedDepartment === "التخطيط"){
 
+        if(!row.previousPlanning){
+
+            alert(
+                "لا يوجد تعديل سابق للتخطيط"
+            );
+
+            return;
+
+        }
+
+
+        /*
+        إعادة آخر بيانات التخطيط
+        */
 
         row.querySelector(".expense").value =
-            oldPlanning.expensedvalue;
+            row.previousPlanning.expensedvalue;
+
 
         row.querySelector(".remarks").value =
-            oldPlanning.remarks;
+            row.previousPlanning.remarks;
 
 
+        /*
+        فتح التخطيط
+        */
 
-        // فتح جزء التخطيط للتعديل
-        row.querySelector(".expense").disabled = false;
-        row.querySelector(".remarks").disabled = false;
+        row.querySelector(".expense").disabled =
+            false;
+
+        row.querySelector(".remarks").disabled =
+            false;
 
 
-        // إغلاق جزء المشروعات
-        row.querySelector(".approximate").disabled = true;
-        row.querySelector(".resources").disabled = true;
+        /*
+        إغلاق المشروعات
+        */
+
+        row.querySelector(".approximate").disabled =
+            true;
+
+        row.querySelector(".resources").disabled =
+            true;
+
+
+        /*
+        أصبح الصف قابلًا للتعديل مرة أخرى
+        */
+
+        row.dataset.canUndoPlanning =
+            "false";
+
+
+        row.querySelector(".save-btn").disabled =
+            false;
+
+
+        row.querySelector(".undo-btn").disabled =
+            true;
+
+
+        row.classList.remove("locked-row");
 
     }
 
 
+    /*
+    ============================================
+    مستخدم المشروعات العادي
+    ============================================
+    */
 
-    // إزالة حالة القفل المرئي
-    row.classList.remove("locked-row");
+    else if(
+        department === "المشروعات" &&
+        selectedDepartment === "المشروعات"
+    ){
 
-    row.querySelectorAll(".locked-field").forEach(cell=>{
+        row.querySelector(".approximate").disabled =
+            false;
 
-        cell.classList.remove("locked-row");
+        row.querySelector(".resources").disabled =
+            false;
 
-    });
+        row.querySelector(".expense").disabled =
+            true;
 
-    row.querySelector(".save-btn").disabled = false;
+        row.querySelector(".remarks").disabled =
+            true;
 
-
-    // بعد التراجع لا يوجد حفظ سابق
-   if(selectedDepartment === "المشروعات"){
-
-        row.dataset.canUndoProjects = "false";
-    
     }
-    
-    else if(selectedDepartment === "التخطيط"){
-    
-        row.dataset.canUndoPlanning = "false";
-    
+
+
+    /*
+    ============================================
+    مستخدم التخطيط العادي
+    ============================================
+    */
+
+    else if(
+        department === "التخطيط" &&
+        selectedDepartment === "التخطيط"
+    ){
+
+        row.querySelector(".approximate").disabled =
+            true;
+
+        row.querySelector(".resources").disabled =
+            true;
+
+        row.querySelector(".expense").disabled =
+            false;
+
+        row.querySelector(".remarks").disabled =
+            false;
+
     }
-    
-    
-    row.querySelector(".undo-btn").disabled = true;
+
 
     alert("تم الرجوع للتعديل");
 
 }
-//////اختيار جهه الحفظ والتعديل ل WSP //////
-async function chooseSection() {
 
-    if (department !== "WSP") {
-        return department;
-    }
 
-    let choice = prompt(
-    `اختر الجزء المطلوب:
-    
-    1 - المشروعات
-   
-    2 - التخطيط
-        
-    0 - إلغاء`
-    );
-
-    switch (choice) {
-        case "1":
-            return "المشروعات";
-
-        case "2":
-            return "التخطيط";
-
-        default:
-            return null;
-    }
-}    
+/*
+========================================================
+Logout
+========================================================
+*/
 
 function logout(){
+
     sessionStorage.clear();
-    window.location.href="index.html";
+
+    window.location.href =
+        "index.html";
+
 }
 
 
+/*
+========================================================
+الصفحة الرئيسية
+========================================================
+*/
 
 function AccessedToPage(pagename){
-    window.location.href=pagename+".html";
+
+    window.location.href =
+        pagename + ".html";
+
 }
+
+</script>
+
+
 
 
 
