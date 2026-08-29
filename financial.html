@@ -223,21 +223,29 @@ document.getElementById("station")
 });
 
 
-function loadFinancialData(station){
+async function loadFinancialData(station){
 
-    fetch(
-        scriptURL +
-        "?action=getStationDetails&station=" +
-        encodeURIComponent(station)
-    )
-    .then(r => r.json())
-    .then(data => {
+    try {
+        const response = await fetch(
+            scriptURL +
+            "?action=getStationDetails&station=" +
+            encodeURIComponent(station)
+        );
+
+        const data = await response.json();
 
         createFinancialTable(data.details);
 
-    });
+    } catch(error) {
+
+        console.error(error);
+
+        alert("حدث خطأ أثناء تحميل البيانات");
+
+    }
 
 }
+
 
 
 /*
@@ -1128,6 +1136,9 @@ async function saveFinancial(btn){
 
 
         alert("تم حفظ البيانات بنجاح");
+        await loadFinancialData(currentStation);
+
+
 
     }
 
