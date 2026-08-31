@@ -99,7 +99,6 @@
             </button> 
              
             <button onclick="AccessedToPage('financial')" class="buttonlabel">
-                
                 <img src="financial.png" alt="Financial" title="Financial">
                 <span>Financial</span>
             </button>
@@ -121,8 +120,8 @@
             }
         const buttons = document.querySelectorAll(".buttonlabel");
         const waterMonitoringButton = buttons[0];
-        const reportsButton = buttons[2];  
-        const financialButton = buttons[1];            
+        const financialButton = buttons[2];  
+        const reportsButton = buttons[3];                    
         const dep = department?.trim().toLowerCase();
         
         const reportsAllowed = [
@@ -162,7 +161,7 @@
         }
 
         //تعطيل financial لاى قسم غير مسموح له
-         if (!financialAllowed.inculdes(dep)){
+         if (!financialAllowed.includes(dep)){
             financialButton.disabled =true;
             financialButton.style.opacity = "0.5";
             financialButton.style.pointerEvents = "none";
