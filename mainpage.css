@@ -47,7 +47,8 @@ body {
 }
 
 .changepassword-button,
-.add-user-button {
+.add-user-button,
+.addstation-button{
     background: #3c94e7;
     color: white;
     padding: 2px 4px;
@@ -59,13 +60,15 @@ body {
 
 .logout-button:hover,
 .changepassword-button:hover,
-.add-user-button:hover {
+.add-user-button:hover,
+.addstation-button:hover{
     background: #c0392b;
 }
 
 .logout-button img,
 .changepassword-button img,
-.add-user-button img {
+.add-user-button img,
+.addstation-button img{
     width: 35px; 
     height: 35px; 
     object-fit: cover;
