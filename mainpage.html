@@ -369,9 +369,7 @@
                     console.log("User Role:", userRole)
                     userAddButton.disabled = true;
                     userAddButton.style.opacity = "0.5";
-                    userAddButton.style.pointerEvents = "none";
-                    alert("Only admin can add users.");
-                    return;
+                    userAddButton.style.pointerEvents = "none";               
                 }
                 document.getElementById("addUserPopup").style.display = "flex";
             }
