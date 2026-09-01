@@ -697,8 +697,7 @@ stationSelectModal.addEventListener("change", () => {
 
     capacityInputModal.value = "";
   }
-});
-    function submitStation() {
+});function submitStation() {
 
   const branch = branchSelectModal.value;
   const selectedStation = stationSelectModal.value;
@@ -717,25 +716,28 @@ stationSelectModal.addEventListener("change", () => {
     }
   }
 
-  // التحقق من البيانات
+  // التحقق من الفرع
   if (!branch) {
     alert("من فضلك اختر الفرع");
     return;
   }
 
+  // التحقق من المحطة
   if (!station || station === "__new__") {
     alert("من فضلك اختر المحطة");
     return;
   }
 
-  const url =
-    scriptURL +
-    "?action=addAndUpdateStation" +
-    "&branch=" + encodeURIComponent(branch) +
-    "&station=" + encodeURIComponent(station) +
-    "&capacity=" + encodeURIComponent(capacity);
+  // تجهيز البيانات للإرسال
+  const params = new URLSearchParams({
+    action: "addAndUpdateStation",
+    branch: branch,
+    station: station,
+    capacity: capacity
+  });
 
-  fetch(url)
+  // إرسال البيانات
+  fetch(scriptURL + "?" + params.toString())
     .then(res => res.json())
     .then(data => {
 
@@ -759,7 +761,7 @@ stationSelectModal.addEventListener("change", () => {
 
       alert("حدث خطأ في الاتصال");
     });
-}        
+}
             //  تسجيل الخروج
             function logout() {
                 sessionStorage.clear(); // مسح بيانات الجلسة
