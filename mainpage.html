@@ -367,7 +367,9 @@
                 const userRole = sessionStorage.getItem("role");
                 if (userRole !== "Admin") {
                     console.log("User Role:", userRole)
-                    adduserbutton
+                    userAddButton.disabled = true;
+                    userAddButton.style.opacity = "0.5";
+                    userAddButton.style.pointerEvents = "none";
                     alert("Only admin can add users.");
                     return;
                 }
@@ -500,11 +502,8 @@
             // فتح نافذة حذف مستخدم
             function openDeleteUserPopup() {
                 const userRole = sessionStorage.getItem("role");
-                const userAddButton = document.getElementById("add-user-button");
                 if (userRole !== "admin") {
-                    userAddButton.disabled = true;
-                    userAddButton.style.opacity = "0.5";
-                    userAddButton.style.pointerEvents = "none";
+                   
                     alert("Only admin can delete users.");
                     return;
                 }
