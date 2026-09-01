@@ -746,7 +746,7 @@ function submitStation() {
       alert(res.message);
 
       if (res.status === "added" || res.status === "updated") {
-        clearCertifiedStationAdditionModal();
+        clearStationAdditionModal();
       }
 
     })
@@ -757,6 +757,13 @@ function submitStation() {
 
     });
 }
+   function clearStationAdditionModal() {
+      document.getElementById("branchmodalselect").selectedIndex = 0;
+      document.getElementById("stationmodalselect").selectedIndex = 0;
+      document.getElementById("newstationmodal").value = "";
+      document.getElementById("capacity").value = "";  
+    }
+
             
             //  تسجيل الخروج
             function logout() {
