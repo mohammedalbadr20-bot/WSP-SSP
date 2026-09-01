@@ -697,24 +697,23 @@ stationSelectModal.addEventListener("change", () => {
 
     capacityInputModal.value = "";
   }
-});function submitStation() {
+});
+            // حفظ المحطة الجديدة أو تحديث Capacity
+function submitStation() {
 
-  const branch = branchSelectModal.value;
-  const selectedStation = stationSelectModal.value;
-  const capacity = capacityInputModal.value;
+  // جلب القيم من النموذج
+  const branchSelect = document.getElementById("branchmodalselect");
+  const stationSelect = document.getElementById("stationmodalselect");
+  const newStationInput = document.getElementById("newstationmodal");
+  const capacityInput = document.getElementById("capacity").value.trim();
 
-  let station = selectedStation;
+  const branch = branchSelect.value;
 
-  // إذا اختار إضافة محطة جديدة
-  if (selectedStation === "__new__") {
-
-    station = newStationInput.value.trim();
-
-    if (!station) {
-      alert("من فضلك أدخل اسم المحطة الجديدة");
-      return;
-    }
-  }
+  // إذا اختار محطة جديدة نأخذ الاسم من حقل المحطة الجديدة
+  const station =
+    stationSelect.value === "__new__"
+      ? newStationInput.value.trim()
+      : stationSelect.value;
 
   // التحقق من الفرع
   if (!branch) {
@@ -723,7 +722,7 @@ stationSelectModal.addEventListener("change", () => {
   }
 
   // التحقق من المحطة
-  if (!station || station === "__new__") {
+  if (!station) {
     alert("من فضلك اختر المحطة");
     return;
   }
@@ -733,35 +732,32 @@ stationSelectModal.addEventListener("change", () => {
     action: "addAndUpdateStation",
     branch: branch,
     station: station,
-    capacity: capacity
+    capacity: capacityInput
   });
 
-  // إرسال البيانات
-  fetch(scriptURL + "?" + params.toString())
+  // إرسال البيانات إلى السيرفر
+  fetch(scriptURL, {
+    method: "POST",
+    body: params
+  })
     .then(res => res.json())
-    .then(data => {
+    .then(res => {
 
-      if (data.status === "added") {
+      alert(res.message);
 
-        alert("تم إضافة المحطة بنجاح");
-
-      } else if (data.status === "updated") {
-
-        alert("تم تحديث المحطة بنجاح");
-
-      } else {
-
-        alert(data.message || "حدث خطأ");
+      if (res.status === "added" || res.status === "updated") {
+        clearCertifiedStationAdditionModal();
       }
 
     })
     .catch(err => {
 
-      console.error("Error saving station:", err);
+      console.error("Error:", err);
+      alert("حدث خطأ أثناء الحفظ");
 
-      alert("حدث خطأ في الاتصال");
     });
 }
+            
             //  تسجيل الخروج
             function logout() {
                 sessionStorage.clear(); // مسح بيانات الجلسة
