@@ -190,7 +190,31 @@ body {
      text-decoration: none;
      cursor: pointer;
 }
-
+.modal{
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.5);
+}
+.modal-content{
+  background: #fff;
+  width: 400px;
+  padding: 20px;
+  margin: auto;
+  border-radius: 8px;
+}
+.modal-content select{
+  width:100%;
+  
+}
+.modal-content input{
+  width:96%;
+  
+}
+#newStationmodal {
+    display:none;
+    margin-top:5px;
+}
 
 /* ===== منطقة الأزرار ===== */
 .options {
