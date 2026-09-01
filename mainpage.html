@@ -15,6 +15,10 @@
                     <img src="change password.webp" alt="Change password" title="Change password">
                     
                 </button>
+                <button class="addstation-button" id="addstation-button">
+                    <img src="https://cdn-icons-png.freepik.com/512/10302/10302325.png" title="Add Station">
+
+                </button>    
                 <button class="add-user-button" onclick="openAddUserPopup()"> <!-- زر إضافة مستخدم -->
                     <img src="users settings.webp" alt="add and remove user" title="Add and Remove user">
                 </button>
@@ -84,6 +88,43 @@
             </div>
         </div>
 
+        <div id="stationModal" class="modal">
+          <div class="modal-content">
+            <h3>Station Addition</h3>
+        
+            <label>Branch</label>
+            <select id="branchmodalselect">
+                  <option value="" selected disabled>Select Branch</option>
+                  <option value="العدوه">العدوه</option>
+                  <option value="مغاغة">مغاغة</option>
+                  <option value="بنى مزار">بنى مزار</option>
+                  <option value="مطاى">مطاى</option>
+                  <option value="سمالوط">سمالوط</option>
+                  <option value="المنيا">المنيا</option>
+                  <option value="ابوقرقاص">ابوقرقاص</option>
+                  <option value="ملوى">ملوى</option>
+                  <option value="ديرمواس">ديرمواس</option>
+            </select>
+              
+            <label>Station</label>
+            <select id="stationmodalselect">
+              <option value="" selected disabled>Select Station</option>   
+            </select>
+
+            <input type="text" id="newstationmodal" placeholder="Enter new station name">
+            
+            <label>Capacity</label>
+            <input type="number" id="capacity" placeholder="m&sup3;/day">
+        
+            
+        
+            <div style="margin-top:10px">
+              <button onclick="submitStation()">Submit</button>
+              <button onclick="closeModal()">Cancel</button>
+            </div>
+          </div>
+        </div>
+
 
                
         <div class="options">
@@ -118,6 +159,15 @@
                 
                 window.location.href= pagename+".html";
             }
+            
+            document.getElementById("addstation-button").onclick = () => {
+          document.getElementById("stationModal").style.display = "flex";
+        };
+        
+        function closeModal(){
+          document.getElementById("stationModal").style.display = "none";
+        }
+            
         const buttons = document.querySelectorAll(".buttonlabel");
         const waterMonitoringButton = buttons[0];
         const financialButton = buttons[2];  
