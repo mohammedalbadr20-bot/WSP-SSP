@@ -190,6 +190,7 @@ body {
      text-decoration: none;
      cursor: pointer;
 }
+/*station addition modal*/
 .modal{
   display: none;
   position: fixed;
