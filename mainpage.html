@@ -216,6 +216,12 @@
             financialButton.style.opacity = "0.5";
             financialButton.style.pointerEvents = "none";
          }
+          // تعطيل زر add station لكل المستخدمين عدا WSP
+          if(department!=="WSP"){
+              addstation-button.disabled =true;
+              addstation-button.style.opacity = "0.5";
+              addstation-button.style.pointerEvents = "none";
+          }
             // ================= Users Management =================
 
           let usersData = [];
