@@ -367,11 +367,10 @@
                 const userRole = sessionStorage.getItem("role");
                 if (userRole !== "Admin") {
                     console.log("User Role:", userRole)
-                    userAddButton.disabled = true;
-                    userAddButton.style.opacity = "0.5";
-                    userAddButton.style.pointerEvents = "none";               
+                    return
                 }
-                
+                document.getElementById("addUserPopup").style.display = "flex";
+            }
 
             // غلق نافذة إضافة مستخدم
             function closeAddUserPopup() {
