@@ -173,7 +173,8 @@
         const financialButton = buttons[2];  
         const reportsButton = buttons[3];                    
         const dep = department?.trim().toLowerCase();
-        
+        const addStationButton = document.getElementById("addstation-button");
+
         const reportsAllowed = [
             "wsp",
             "التوعية",
@@ -216,12 +217,13 @@
             financialButton.style.opacity = "0.5";
             financialButton.style.pointerEvents = "none";
          }
-          // تعطيل زر add station لكل المستخدمين عدا WSP
-          if(department!=="WSP"){
-              addstation-button.disabled =true;
-              addstation-button.style.opacity = "0.5";
-              addstation-button.style.pointerEvents = "none";
-          }
+            
+        // تعطيل Add Station لكل المستخدمين عدا WSP
+        if (dep !== "wsp" && addStationButton) {
+            addStationButton.disabled = true;
+            addStationButton.style.opacity = "0.5";
+            addStationButton.style.pointerEvents = "none";
+        }
             // ================= Users Management =================
 
           let usersData = [];
