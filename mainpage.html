@@ -174,7 +174,7 @@
         const reportsButton = buttons[3];                    
         const dep = department?.trim().toLowerCase();
         const addStationButton = document.getElementById("addstation-button");
-        const adduserButton = document.getElementById("add-user-button");
+        const userAddButton = document.getElementById("add-user-button");
 
         const reportsAllowed = [
             "wsp",
@@ -500,6 +500,7 @@
             // فتح نافذة حذف مستخدم
             function openDeleteUserPopup() {
                 const userRole = sessionStorage.getItem("role");
+                const userAddButton = document.getElementById("add-user-button");
                 if (userRole !== "admin") {
                     userAddButton.disabled = true;
                     userAddButton.style.opacity = "0.5";
