@@ -174,7 +174,9 @@
         const reportsButton = buttons[3];                    
         const dep = department?.trim().toLowerCase();
         const addStationButton = document.getElementById("addstation-button");
-        
+        const userRole = sessionStorage.getItem("role");
+        const addUserButton = document.getElementById("add-user-button");
+            
         const reportsAllowed = [
             "wsp",
             "التوعية",
@@ -224,6 +226,12 @@
             addStationButton.style.opacity = "0.5";
             addStationButton.style.pointerEvents = "none";
         }
+        if (userRole !== "admin"){
+            addUserButton.disabled = true;
+            addUserButton.style.opacity = "0.5";
+            addUserButton.style.pointerEvents = "none";   
+        }
+            
             // ================= Users Management =================
 
           let usersData = [];
