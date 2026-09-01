@@ -558,6 +558,208 @@
                   })
                   .catch(err => alert(err.message));         
               }
+            ///اضافة وتعديل محطات///
+            // --- عناصر المودال إضافة المحطات ---
+const branchSelectModal = document.getElementById("branchmodalselect");
+const stationSelectModal = document.getElementById("stationmodalselect");
+const capacityInputModal = document.getElementById("capacity");
+const newStationInput = document.getElementById("newstationmodal");
+
+// مصفوفات لحفظ بيانات المحطات
+let modalStations = [];
+let modalCapacity = [];
+
+
+// --- جلب المحطات عند اختيار الفرع ---
+function fetchStationsModal(branch) {
+
+  if (!branch) return;
+
+  stationSelectModal.innerHTML =
+    '<option value="" disabled selected>Loading Stations...</option>';
+
+  const url =
+    scriptURL +
+    "?action=getStations&branch=" +
+    encodeURIComponent(branch);
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.status === "success") {
+
+        stationSelectModal.innerHTML = `
+          <option value="" disabled selected>Select Station</option>
+          <option value="__new__">إضافة محطة</option>
+        `;
+
+        // حفظ أسماء المحطات والسعات
+        modalStations = data.stations || [];
+        modalCapacity = data.capacity || [];
+
+        // إضافة المحطات الموجودة
+        modalStations.forEach(station => {
+
+          const option = document.createElement("option");
+
+          option.value = station;
+          option.textContent = station;
+
+          stationSelectModal.appendChild(option);
+        });
+
+      } else {
+
+        stationSelectModal.innerHTML = `
+          <option value="" disabled selected>Not found</option>
+          <option value="__new__">إضافة محطة</option>
+        `;
+      }
+
+    })
+    .catch(err => {
+
+      console.error("Error fetching stations:", err);
+
+      stationSelectModal.innerHTML = `
+        <option value="" disabled selected>Connection Error</option>
+        <option value="__new__">إضافة محطة</option>
+      `;
+    });
+}
+
+
+// --- عند تغيير الفرع ---
+branchSelectModal.addEventListener("change", () => {
+
+  const selectedBranch = branchSelectModal.value;
+
+  // تفريغ البيانات القديمة
+  modalStations = [];
+  modalCapacity = [];
+
+  capacityInputModal.value = "";
+  newStationInput.value = "";
+
+  newStationInput.style.display = "none";
+
+  // إعادة قائمة المحطات
+  stationSelectModal.innerHTML = `
+    <option value="" disabled selected>Select Station</option>
+    <option value="__new__">إضافة محطة</option>
+  `;
+
+  // جلب المحطات الخاصة بالفرع
+  fetchStationsModal(selectedBranch);
+});
+
+
+// --- عند تغيير المحطة ---
+stationSelectModal.addEventListener("change", () => {
+
+  const selectedStation = stationSelectModal.value;
+
+  // =========================
+  // إضافة محطة جديدة
+  // =========================
+  if (selectedStation === "__new__") {
+
+    newStationInput.style.display = "block";
+
+    newStationInput.value = "";
+
+    capacityInputModal.value = "";
+
+    return;
+  }
+
+
+  // =========================
+  // محطة موجودة
+  // =========================
+
+  newStationInput.style.display = "none";
+  newStationInput.value = "";
+
+  const index = modalStations.indexOf(selectedStation);
+
+  // تحديث Capacity
+  if (
+    index !== -1 &&
+    modalCapacity[index] != null &&
+    modalCapacity[index] !== ""
+  ) {
+
+    capacityInputModal.value = modalCapacity[index];
+
+  } else {
+
+    capacityInputModal.value = "";
+  }
+});
+    function saveStation() {
+
+  const branch = branchSelectModal.value;
+  const selectedStation = stationSelectModal.value;
+  const capacity = capacityInputModal.value;
+
+  let station = selectedStation;
+
+  // إذا اختار إضافة محطة جديدة
+  if (selectedStation === "__new__") {
+
+    station = newStationInput.value.trim();
+
+    if (!station) {
+      alert("من فضلك أدخل اسم المحطة الجديدة");
+      return;
+    }
+  }
+
+  // التحقق من البيانات
+  if (!branch) {
+    alert("من فضلك اختر الفرع");
+    return;
+  }
+
+  if (!station || station === "__new__") {
+    alert("من فضلك اختر المحطة");
+    return;
+  }
+
+  const url =
+    scriptURL +
+    "?action=addAndUpdateStation" +
+    "&branch=" + encodeURIComponent(branch) +
+    "&station=" + encodeURIComponent(station) +
+    "&capacity=" + encodeURIComponent(capacity);
+
+  fetch(url)
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.status === "added") {
+
+        alert("تم إضافة المحطة بنجاح");
+
+      } else if (data.status === "updated") {
+
+        alert("تم تحديث المحطة بنجاح");
+
+      } else {
+
+        alert(data.message || "حدث خطأ");
+      }
+
+    })
+    .catch(err => {
+
+      console.error("Error saving station:", err);
+
+      alert("حدث خطأ في الاتصال");
+    });
+}        
             //  تسجيل الخروج
             function logout() {
                 sessionStorage.clear(); // مسح بيانات الجلسة
