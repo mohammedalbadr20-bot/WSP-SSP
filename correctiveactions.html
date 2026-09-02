@@ -170,11 +170,6 @@
       <select id="stationmodalselect">
         <option value="" selected disabled>Select Station</option>   
       </select>
-
-      <input type="text" id="newstationmodal" placeholder="Enter new station name">
-      
-      <label>Capacity</label>
-      <input type="number" id="capacity" placeholder="m&sup3;/day">
   
       <label>Certified Date</label>
       <input type="date" id="certifieddatemodal">
@@ -1231,12 +1226,10 @@
     const branchSelectModal = document.getElementById("branchmodalselect");
     const stationSelectModal = document.getElementById("stationmodalselect");
     const certifiedDateModal = document.getElementById("certifieddatemodal");
-    const capacityInputModal = document.getElementById("capacity");
     
     // مصفوفات لحفظ بيانات الفرع
     let modalStations = [];
-    let modalDates = [];
-    let modalCapacity = [];
+    let modalDates = [];  
     
     // --- جلب المحطات عند اختيار الفرع ---
     function fetchStationsModal(branch) {
@@ -1252,13 +1245,12 @@
           if (data.status === "success") {
             stationSelectModal.innerHTML = `
             <option value="" disabled selected>Select Station</option>
-            <option value="__new__">إضافة محطة</option>
           `;
               
     
             modalStations = data.stations;      // حفظ أسماء المحطات
             modalDates = data.certifiedDates;   // حفظ التواريخ
-            modalCapacity = data.capacity;
+            
             
             data.stations.forEach(station => {
               const option = document.createElement("option");
@@ -1282,12 +1274,11 @@
       certifiedDateModal.value = ""; // تفريغ التاريخ
       modalStations = [];
       modalDates = [];
-      modalCapacity = [];
+      
       
       stationSelectModal.innerHTML = `
             <option value="" disabled selected>Select Station</option>
-            <option value="__new__">إضافة محطة</option>
-          `;
+           `;
     
       fetchStationsModal(selectedBranch);
     });
@@ -1307,24 +1298,7 @@
         certifiedDateModal.value = `${year}-${month}-${day}`; // YYYY-MM-DD
       } else {
         certifiedDateModal.value = "";
-      }
-       // تحديث السعة
-      if (index !== -1 && modalCapacity[index] != null) {
-        capacityInputModal.value = modalCapacity[index];
-      } else {
-        capacityInputModal.value = "";
-      }
-
-      // --- إظهار أو إخفاء حقل إضافة محطة جديدة ---
-      const newStationInput = document.getElementById("newstationmodal");
-      if (selectedStation === "__new__") { 
-        newStationInput.style.display = "block"; // إظهار الحقل
-        newStationInput.value = "";              // تفريغ أي قيمة سابقة
-        capacityInputModal.value = "";  // تفريغ السعة عند اضافة محطة جديدة      
-      } else {
-        newStationInput.style.display = "none"; // إخفاء الحقل
-        newStationInput.value = "";              // تفريغ القيمة
-      }
+      }    
       
     });
     
@@ -1333,12 +1307,10 @@
       // جلب القيم من النموذج
       const branchSelect = document.getElementById("branchmodalselect");
       const stationSelect = document.getElementById("stationmodalselect");
-      const newStationInput = document.getElementById("newstationmodal");
       const certifiedDateInput = document.getElementById("certifieddatemodal").value;
-      const capacityInput = document.getElementById("capacity").value.trim();
-    
+         
       const branch = branchSelect.value;
-      const station = stationSelect.value === "__new__" ? newStationInput.value.trim() : stationSelect.value;
+      const station = stationSelect.value;
     
       // التحقق من اكتمال الحقول
       if (!branch || !station ) {
@@ -1356,7 +1328,6 @@
         branch: branch,
         station: station,
         certifiedDate: certifiedDateInput, // أو certifiedDate إذا السيرفر يريد DD/MM/YYYY
-        capacity: capacityInput
       });
     
       // إرسال البيانات إلى السيرفر
@@ -1376,9 +1347,7 @@
     function clearCertifiedStationAdditionModal() {
       document.getElementById("branchmodalselect").selectedIndex = 0;
       document.getElementById("stationmodalselect").selectedIndex = 0;
-      document.getElementById("newstationmodal").value = "";
-      document.getElementById("certifieddatemodal").value = "";  
-      document.getElementById("capacity").value = "";  
+      document.getElementById("certifieddatemodal").value = "";      
     }
 
    // عرض جميع المرفقات
