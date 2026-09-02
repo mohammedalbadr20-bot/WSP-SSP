@@ -130,6 +130,61 @@ body {
   width:96%;
   
 }
+#stationModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#stationModal .modal-content {
+    background: white;
+    width: 400px;
+    max-width: 90%;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+#stationModal h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+#stationModal label {
+    display: block;
+    margin: 10px 0 5px;
+}
+
+#stationModal select,
+#stationModal input {
+    width: 100%;
+    padding: 9px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#stationModal button {
+    padding: 8px 18px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+#stationModal button:first-child {
+    background: #007bff;
+    color: white;
+}
+
+#stationModal button:last-child {
+    background: #ddd;
+    color: #333;
+}
 
 /* ===== Modal Box ===== */
 .modal-content1 {
